@@ -1,0 +1,20 @@
+{% import "_includes/forms" as forms %}
+
+
+{{ forms.textarea( {
+		label: 'Twig code to parse' | t,
+		instructions: 'Enter the twig code that you want to parse after the entry has been saved.' | t,
+		id: 'fieldTwig',
+		name: 'fieldTwig',
+		value: settings.fieldTwig
+}) }}
+
+{{ forms.lightswitchField({
+	label: 'Show field' | t,
+	instructions: 'If you turn this on, the field will be visible in the edit page.' | t,
+	id: 'showField',
+	name: 'showField',
+	on: settings.showField,
+	onLabel: "Yes"|t,
+	offLabel: "no"|t
+}) }}

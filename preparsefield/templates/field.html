@@ -1,0 +1,14 @@
+{% if not settings.showField %}
+<style>
+	#fields-{{ name }}-field { display: none; }
+</style>
+{% endif %}
+
+{% import "_includes/forms" as forms %}
+
+{# Setup our field #}
+{{ forms.text({
+	id: name,
+  name: name,
+  value: value
+}) }}
