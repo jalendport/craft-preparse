@@ -23,7 +23,11 @@ class PreparseField_PreparseFieldType extends BaseFieldType
         $elementType = $this->element->getElementType();
         $elementTemplateName = strtolower($elementType);
         
+        $oldPath = craft()->path->getTemplatesPath();
+        craft()->path->setTemplatesPath(craft()->path->getSiteTemplatesPath());
         $parsedData = craft()->templates->renderString($fieldTwig, array($elementTemplateName => $this->element));
+        craft()->path->setTemplatesPath($oldPath);
+        
         if ($this->element->getContent()->getAttribute($fieldHandle)!==$parsedData) {
             $this->element->getContent()->setAttribute($fieldHandle, $parsedData);
             $success = craft()->elements->saveElement($this->element);

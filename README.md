@@ -62,6 +62,11 @@ Or you could just use it to do some bulk work when saving, like pregenerating a 
 	    ]) %}
 	{% endif %}
 	
+The template path is set to your site template path, so you can even include whole templates if you want to do more 
+advanced stuff and/or want to keep your fields Twig in version control:
+ 	
+    {% include '_fields/myFieldInclude' %}
+	
 Make sure that you always write solid Twig, taking into account that fields may not be populated yet. If an error occurs
 in your Twig, the element will not be saved. 
  
