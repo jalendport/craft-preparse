@@ -16,26 +16,26 @@ class PreparseField_PreparseFieldType extends BaseFieldType
     /**
      * onAfterElementSave hook
      */
-    public function onAfterElementSave()
-    {
-        $fieldHandle = $this->model->handle;
-        $fieldTwig = $this->getSettings()->fieldTwig;
-        $elementId = $this->element->id;
-        $elementType = $this->element->getElementType();
-        $elementTemplateName = strtolower($elementType);
-
-        $criteria = craft()->elements->getCriteria($elementType);
-        $criteria->id = $elementId;
-        $element = $criteria->first();
-
-        $parsedData = craft()->templates->renderString($fieldTwig, array($elementTemplateName => $element));
-
-        if ($this->element->$fieldHandle != $parsedData) { // only run when data was updated to keep it from looping
-            $newData = array( $fieldHandle => $parsedData );
-            $element->setContentFromPost($newData);
-            $success = craft()->elements->saveElement($element);
-        }
-    }
+    // public function onAfterElementSave()
+    // {
+    //     $fieldHandle = $this->model->handle;
+    //     $fieldTwig = $this->getSettings()->fieldTwig;
+    //     $elementId = $this->element->id;
+    //     $elementType = $this->element->getElementType();
+    //     $elementTemplateName = strtolower($elementType);
+    //
+    //     $criteria = craft()->elements->getCriteria($elementType);
+    //     $criteria->id = $elementId;
+    //     $element = $criteria->first();
+    //
+    //     $parsedData = craft()->templates->renderString($fieldTwig, array($elementTemplateName => $element));
+    //
+    //     if ($this->element->$fieldHandle != $parsedData) { // only run when data was updated to keep it from looping
+    //         $newData = array( $fieldHandle => $parsedData );
+    //         $element->setContentFromPost($newData);
+    //         $success = craft()->elements->saveElement($element);
+    //     }
+    // }
 
     /**
      * Display our fieldtype
@@ -52,13 +52,13 @@ class PreparseField_PreparseFieldType extends BaseFieldType
           'id' => $namespaceInputId,
           'name' => $name,
           'value' => $value,
-          'settings' => $this->getSettings() 
+          'settings' => $this->getSettings()
         ));
     }
 
     /**
-     * Validates 
-     * 
+     * Validates
+     *
      * Always returns 'true'
      *
      * @param array $value
@@ -71,7 +71,7 @@ class PreparseField_PreparseFieldType extends BaseFieldType
 
     /**
      * Define fieldtype settings
-     * 
+     *
      * @return array
      */
     protected function defineSettings()
@@ -84,7 +84,7 @@ class PreparseField_PreparseFieldType extends BaseFieldType
 
     /**
      * Render settings html
-     * 
+     *
      * @return mixed
      */
     public function getSettingsHtml()
@@ -93,7 +93,7 @@ class PreparseField_PreparseFieldType extends BaseFieldType
           'settings' => $this->getSettings()
         ));
     }
-    
+
     /**
      * Define database column
      *
