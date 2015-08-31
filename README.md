@@ -82,7 +82,8 @@ Locales gotchas
 The preparse field is made to work with localized sites, but there is one gotcha. It is important that the fields that
 you process, and the preparse field itself, has the same locales setup. If the target field is set up to be localized to 
 two different languages, and your preparse field is not, the value will be updated to the target field value in the 
-language that was saved last. If your target field is  
+language that was saved last. If your target field is not localized, but you localize your preparse field, you will need
+to save the entry in both languages if you change the target field.   
 
 
 Price, license and support
