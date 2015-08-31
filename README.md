@@ -1,7 +1,8 @@
 Preparse Field for Craft
 ===
 
-A fieltype that parses Twig when an element is saved, and saves the result as plain text. All in the name of performance.
+A fieldtype that parses Twig when an element is saved, and saves the result as plain text.
+**All in the name of performance.**
 
 
 Installation
@@ -19,17 +20,19 @@ saved, the element that is saved will be passed to the code, with the same name 
 is attached to an entry, `entry` will be available. If it is attached to a category, user or global set, `category`, `user`
 and `globalset` will be available.
   
-If, for instance you have a category field in your entry, named `entryCategory`, you can save the category title to the
+### Examples  
+  
+If you have a category field in your entry named `entryCategory`, you can save the category title to the
 preparse field by adding the following Twig to the field settings:
 
     {{ entry.entryCategory | length ? entry.entryCategory.first().title }}
  
-This is useful for saving preparsed values to a field for use with sorting or similar things.
+This is useful for saving preparsed values to a field for use with sorting, searching or similar things.
  
-You can also more advanced stuff, for performance optimizing. Let's say you have three different asset fields that may
-or may not be populated. having to check these in the template may require a bunch of queries since you can't check if 
-a field has a relation in Craft, without actually querying for it. You could do something like this to get the id of
-the asset to use:
+You can also do more advanced stuff, for instance for performance optimizing. Let's say you have three different asset 
+fields that may or may not be populated. having to check these in the template may require a bunch of queries since you 
+can't check if a field has a relation in Craft, without actually querying for it. You could do something like this to 
+get the id of the asset to use:
 
     {% if entry.smallListImage | length %}
         {{ entry.smallListImage.first().id }}
