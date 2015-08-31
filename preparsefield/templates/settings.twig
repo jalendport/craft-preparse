@@ -2,11 +2,12 @@
 
 
 {{ forms.textarea( {
-		label: 'Twig code to parse' | t,
-		instructions: 'Enter the twig code that you want to parse after the entry has been saved.' | t,
-		id: 'fieldTwig',
-		name: 'fieldTwig',
-		value: settings.fieldTwig
+	label: 'Twig code to parse' | t,
+	instructions: 'Enter the twig code that you want to parse after the entry has been saved.' | t,
+	id: 'fieldTwig',
+	name: 'fieldTwig',
+	value: settings.fieldTwig,
+	rows: 10
 }) }}
 
 {{ forms.lightswitchField({

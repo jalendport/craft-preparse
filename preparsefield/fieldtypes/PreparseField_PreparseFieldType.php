@@ -20,20 +20,18 @@ class PreparseField_PreparseFieldType extends BaseFieldType
     {
         $fieldHandle = $this->model->handle;
         $fieldTwig = $this->getSettings()->fieldTwig;
-        $elementId = $this->element->id;
         $elementType = $this->element->getElementType();
         $elementTemplateName = strtolower($elementType);
-
-        $criteria = craft()->elements->getCriteria($elementType);
-        $criteria->id = $elementId;
-        $element = $criteria->first();
-
-        $parsedData = craft()->templates->renderString($fieldTwig, array($elementTemplateName => $element));
-
-        if ($this->element->$fieldHandle != $parsedData) { // only run when data was updated to keep it from looping
-            $newData = array( $fieldHandle => $parsedData );
-            $element->setContentFromPost($newData);
-            $success = craft()->elements->saveElement($element);
+        
+        $parsedData = craft()->templates->renderString($fieldTwig, array($elementTemplateName => $this->element));
+        if ($this->element->getContent()->getAttribute($fieldHandle)!==$parsedData) {
+            $this->element->getContent()->setAttribute($fieldHandle, $parsedData);
+            $success = craft()->elements->saveElement($this->element);
+            
+            if (!$success) {
+                PreparseFieldPlugin::log('Couldn’t save element with id "' . $element->id . '" and preparse field "' . $fieldHandle . '"',
+                  LogLevel::Error);
+            }
         }
     }
 

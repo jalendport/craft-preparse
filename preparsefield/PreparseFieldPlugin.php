@@ -27,3 +27,4 @@ class PreparseFieldPlugin extends BasePlugin
         return 'http://vaersaagod.no';
     }
 }
+

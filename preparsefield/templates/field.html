@@ -1,6 +1,8 @@
 {% if not settings.showField %}
 <style>
-	#fields-{{ name }}-field { display: none; }
+  #fields-{{ name }}-field {
+    display: none;
+  }
 </style>
 {% endif %}
 
@@ -8,7 +10,8 @@
 
 {# Setup our field #}
 {{ forms.text({
-	id: name,
-  name: name,
-  value: value
+id: name,
+name: name,
+value: value,
+disabled: true
 }) }}
