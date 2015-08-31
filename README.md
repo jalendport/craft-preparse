@@ -1,7 +1,7 @@
 Preparse Field for Craft
 ===
 
-A fieldtype that parses Twig when an element is saved, and saves the result as plain text.
+A fieldtype that parses Twig when an element is saved, and saves the result as plain text.  
 **All in the name of performance.**
 
 
