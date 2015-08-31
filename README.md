@@ -4,6 +4,7 @@ Preparse Field for Craft
 A fieldtype that parses Twig when an element is saved, and saves the result as plain text.  
 **All in the name of performance.**
 
+*Special thanks to [Mats Mikkel](https://github.com/boboldehampsink) and [Bob Olde Hampsink](https://github.com/boboldehampsink) for invaluable help on Slack :)* 
 
 Installation
 ---
