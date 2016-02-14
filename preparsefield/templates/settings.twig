@@ -12,10 +12,20 @@
 
 {{ forms.lightswitchField({
 	label: 'Show field' | t,
-	instructions: 'If you turn this on, the field will be visible in the edit page.' | t,
+	instructions: 'If you turn this on, the field will be visible on the edit page.' | t,
 	id: 'showField',
 	name: 'showField',
 	on: settings.showField,
+	onLabel: "Yes"|t,
+	offLabel: "no"|t
+}) }}
+
+{{ forms.lightswitchField({
+	label: 'Enable table column' | t,
+	instructions: 'If you turn this on, a column for the field can be shown on the element index page.' | t,
+	id: 'showColumn',
+	name: 'showColumn',
+	on: settings.showColumn,
 	onLabel: "Yes"|t,
 	offLabel: "no"|t
 }) }}
