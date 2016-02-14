@@ -18,6 +18,11 @@ class PreparseField_PreparseFieldType extends BaseFieldType
      */
     public function onAfterElementSave()
     {
+        // Set generateTransformsBeforePageLoad = true
+        $configService = craft()->config;
+        $generateTransformsBeforePageLoad = $configService->get('generateTransformsBeforePageLoad');
+        $configService->set('generateTransformsBeforePageLoad', true);
+        
         $fieldHandle = $this->model->handle;
         $fieldTwig = $this->getSettings()->fieldTwig;
         $elementType = $this->element->getElementType();
@@ -37,6 +42,9 @@ class PreparseField_PreparseFieldType extends BaseFieldType
                   LogLevel::Error);
             }
         }
+        
+        // Set generateTransformsBeforePageLoad back to whatever it was
+        $configService->set('generateTransformsBeforePageLoad', $generateTransformsBeforePageLoad);
     }
 
     /**
