@@ -27,6 +27,7 @@ class PreparseFieldPlugin extends BasePlugin
         return 'http://vaersaagod.no';
     }
 
+    /* one for each supported element type: */
     public function defineAdditionalEntryTableAttributes()
     {
         return $this->_getEnabledPreparseColumns('entry');
@@ -47,6 +48,22 @@ class PreparseFieldPlugin extends BasePlugin
         return $this->_getEnabledPreparseColumns('user');
     }
 
+    public function defineAdditionalCommerce_ProductTableAttributes()
+    {
+        return $this->_getEnabledPreparseColumns('Commerce_Product');
+    }
+
+    public function defineAdditionalCommerce_VariantTableAttributes()
+    {
+        return $this->_getEnabledPreparseColumns('Commerce_Variant');
+    }
+
+    public function defineAdditionalCommerce_OrderTableAttributes()
+    {
+        return $this->_getEnabledPreparseColumns('Commerce_Order');
+    }
+
+    /* one for each supported element type: */
     public function getEntryTableAttributeHtml($element, $attribute)
     {
         if (array_key_exists($attribute, $this->defineAdditionalEntryTableAttributes())) {
@@ -71,6 +88,27 @@ class PreparseFieldPlugin extends BasePlugin
     public function getUserTableAttributeHtml($element, $attribute)
     {
         if (array_key_exists($attribute, $this->defineAdditionalUserTableAttributes())) {
+            return $element[$attribute];
+        }
+    }
+
+    public function getCommerce_ProductTableAttributeHtml($element, $attribute)
+    {
+        if (array_key_exists($attribute, $this->defineAdditionalCommerce_ProductTableAttributes())) {
+            return $element[$attribute];
+        }
+    }
+
+    public function getCommerce_VariantTableAttributeHtml($element, $attribute)
+    {
+        if (array_key_exists($attribute, $this->defineAdditionalCommerce_VariantTableAttributes())) {
+            return $element[$attribute];
+        }
+    }
+
+    public function getCommerce_OrderTableAttributeHtml($element, $attribute)
+    {
+        if (array_key_exists($attribute, $this->defineAdditionalOrderTableAttributes())) {
             return $element[$attribute];
         }
     }
