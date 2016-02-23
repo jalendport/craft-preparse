@@ -1,7 +1,7 @@
 <?php
 namespace Craft;
 
-class PreparseField_PreparseFieldType extends BaseFieldType
+class PreparseField_PreparseFieldType extends BaseFieldType implements IPreviewableFieldType
 {
     /**
      * Fieldtype name
@@ -22,27 +22,27 @@ class PreparseField_PreparseFieldType extends BaseFieldType
         $configService = craft()->config;
         $generateTransformsBeforePageLoad = $configService->get('generateTransformsBeforePageLoad');
         $configService->set('generateTransformsBeforePageLoad', true);
-        
+
         $fieldHandle = $this->model->handle;
         $fieldTwig = $this->getSettings()->fieldTwig;
         $elementType = $this->element->getElementType();
         $elementTemplateName = strtolower($elementType);
-        
+
         $oldPath = craft()->path->getTemplatesPath();
         craft()->path->setTemplatesPath(craft()->path->getSiteTemplatesPath());
         $parsedData = craft()->templates->renderString($fieldTwig, array($elementTemplateName => $this->element));
         craft()->path->setTemplatesPath($oldPath);
-        
+
         if ($this->element->getContent()->getAttribute($fieldHandle)!==$parsedData) {
             $this->element->getContent()->setAttribute($fieldHandle, $parsedData);
             $success = craft()->elements->saveElement($this->element);
-            
+
             if (!$success) {
                 PreparseFieldPlugin::log('Couldn’t save element with id "' . $element->id . '" and preparse field "' . $fieldHandle . '"',
                   LogLevel::Error);
             }
         }
-        
+
         // Set generateTransformsBeforePageLoad back to whatever it was
         $configService->set('generateTransformsBeforePageLoad', $generateTransformsBeforePageLoad);
     }
@@ -62,13 +62,13 @@ class PreparseField_PreparseFieldType extends BaseFieldType
           'id' => $namespaceInputId,
           'name' => $name,
           'value' => $value,
-          'settings' => $this->getSettings() 
+          'settings' => $this->getSettings()
         ));
     }
 
     /**
-     * Validates 
-     * 
+     * Validates
+     *
      * Always returns 'true'
      *
      * @param array $value
@@ -81,7 +81,7 @@ class PreparseField_PreparseFieldType extends BaseFieldType
 
     /**
      * Define fieldtype settings
-     * 
+     *
      * @return array
      */
     protected function defineSettings()
@@ -95,7 +95,7 @@ class PreparseField_PreparseFieldType extends BaseFieldType
 
     /**
      * Render settings html
-     * 
+     *
      * @return mixed
      */
     public function getSettingsHtml()
@@ -104,7 +104,7 @@ class PreparseField_PreparseFieldType extends BaseFieldType
           'settings' => $this->getSettings()
         ));
     }
-    
+
     /**
      * Define database column
      *
