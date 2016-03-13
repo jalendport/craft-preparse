@@ -17,9 +17,9 @@ The Preparse fieldtype is now available when you create a new field.
 Usage
 ---
 When creating a new Preparse field, you can add the Twig that you want to run to the fields settings. When the entry is 
-saved, the element that is saved will be passed to the code, with the same name as it's element type. So, if the field 
-is attached to an entry, `entry` will be available. If it is attached to a category, user or global set, `category`, `user`
-and `globalset` will be available.  
+saved, the element that is saved will be passed to the code, with the same name as it's element type (in lower case). So, if the field 
+is attached to an entry, `entry` will be available. If it is attached to a category, user or global set, `category`, `user` and `globalset` will be available.  If attached to Commerce elements, it's `commerce_product`, `commerce_variant` or `commerce_order`.
+
 
 **Usage in Matrix**  
 When a Preparse field is added to a Matrix block, that block will be available to the Twig code as the variable `matrixblock`. The element (entry, category, global set etc) the Matrix field belongs to will be available under `matrixblock.owner`.  
