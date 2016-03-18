@@ -30,37 +30,58 @@ class PreparseFieldPlugin extends BasePlugin
     /* one for each supported element type: */
     public function defineAdditionalEntryTableAttributes()
     {
-        return $this->_getEnabledPreparseColumns('entry');
+        if (!$this->_disableElementTables()) {
+            return $this->_getEnabledPreparseColumns('entry');
+        }
+        return array();
     }
 
     public function defineAdditionalCategoryTableAttributes()
     {
-        return $this->_getEnabledPreparseColumns('category');
+        if (!$this->_disableElementTables()) {
+            return $this->_getEnabledPreparseColumns('category');
+        }
+        return array();
     }
 
     public function defineAdditionalAssetTableAttributes()
     {
-        return $this->_getEnabledPreparseColumns('asset');
+        if (!$this->_disableElementTables()) {
+            return $this->_getEnabledPreparseColumns('asset');
+        }
+        return array();
     }
 
     public function defineAdditionalUserTableAttributes()
     {
-        return $this->_getEnabledPreparseColumns('user');
+        if (!$this->_disableElementTables()) {
+            return $this->_getEnabledPreparseColumns('user');
+        }
+        return array();
     }
 
     public function defineAdditionalCommerce_ProductTableAttributes()
     {
-        return $this->_getEnabledPreparseColumns('Commerce_Product');
+        if (!$this->_disableElementTables()) {
+            return $this->_getEnabledPreparseColumns('Commerce_Product');
+        }
+        return array();
     }
 
     public function defineAdditionalCommerce_VariantTableAttributes()
     {
-        return $this->_getEnabledPreparseColumns('Commerce_Variant');
+        if (!$this->_disableElementTables()) {
+            return $this->_getEnabledPreparseColumns('Commerce_Variant');
+        }
+        return array();
     }
 
     public function defineAdditionalCommerce_OrderTableAttributes()
     {
-        return $this->_getEnabledPreparseColumns('Commerce_Order');
+        if (!$this->_disableElementTables()) {
+            return $this->_getEnabledPreparseColumns('Commerce_Order');
+        }
+        return array();
     }
 
     /* one for each supported element type: */
@@ -113,6 +134,24 @@ class PreparseFieldPlugin extends BasePlugin
         }
     }
 
+    protected function defineSettings()
+    {
+        return array(
+            'disableElementTables' => array(
+                AttributeType::Bool,
+                'default' => false
+            )
+        );
+    }
+
+    public function getSettingsHtml()
+    {
+       return craft()->templates->render('preparsefield/global.twig', array(
+           'settings' => $this->getSettings()
+       ));
+    }
+
+
     private function _getEnabledPreparseColumns($elementTypeClass)
     {
         $fields = craft()->fields->getFieldsByElementType($elementTypeClass);
@@ -130,5 +169,9 @@ class PreparseFieldPlugin extends BasePlugin
 
         return $attributes;
     }
-}
 
+    private function _disableElementTables()
+    {
+        return craft()->plugins->getPlugin('preparsefield')->getSettings()->disableElementTables;
+    }
+}
