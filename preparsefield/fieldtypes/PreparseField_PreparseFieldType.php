@@ -18,33 +18,39 @@ class PreparseField_PreparseFieldType extends BaseFieldType implements IPreviewa
      */
     public function onAfterElementSave()
     {
-        // Set generateTransformsBeforePageLoad = true
-        $configService = craft()->config;
-        $generateTransformsBeforePageLoad = $configService->get('generateTransformsBeforePageLoad');
-        $configService->set('generateTransformsBeforePageLoad', true);
-
         $fieldHandle = $this->model->handle;
         $fieldTwig = $this->getSettings()->fieldTwig;
         $elementType = $this->element->getElementType();
         $elementTemplateName = strtolower($elementType);
+        $flashId = 'element-' . $this->element->id . '-preparseField-' . $fieldHandle;
+        
+        if (!craft()->userSession->hasFlash($flashId)) { // only run if it hasn't already this session
 
-        $oldPath = craft()->path->getTemplatesPath();
-        craft()->path->setTemplatesPath(craft()->path->getSiteTemplatesPath());
-        $parsedData = craft()->templates->renderString($fieldTwig, array($elementTemplateName => $this->element));
-        craft()->path->setTemplatesPath($oldPath);
-
-        if ($this->element->getContent()->getAttribute($fieldHandle)!==$parsedData) {
+            // Set generateTransformsBeforePageLoad = true
+            $configService = craft()->config;
+            $generateTransformsBeforePageLoad = $configService->get('generateTransformsBeforePageLoad');
+            $configService->set('generateTransformsBeforePageLoad', true);
+            
+            // parse data
+            $oldPath = craft()->path->getTemplatesPath();
+            craft()->path->setTemplatesPath(craft()->path->getSiteTemplatesPath());
+            $parsedData = craft()->templates->renderString($fieldTwig, array($elementTemplateName => $this->element));
+            craft()->path->setTemplatesPath($oldPath);
+            
+            // save element, set flash indicating it has been saved
             $this->element->getContent()->setAttribute($fieldHandle, $parsedData);
+            craft()->userSession->setFlash($flashId, "saved");
             $success = craft()->elements->saveElement($this->element);
 
+            // if no success, log error
             if (!$success) {
-                PreparseFieldPlugin::log('Couldn’t save element with id "' . $element->id . '" and preparse field "' . $fieldHandle . '"',
+                PreparseFieldPlugin::log('Couldn’t save element with id "' . $this->element->id . '" and preparse field "' . $fieldHandle . '"',
                   LogLevel::Error);
             }
-        }
 
-        // Set generateTransformsBeforePageLoad back to whatever it was
-        $configService->set('generateTransformsBeforePageLoad', $generateTransformsBeforePageLoad);
+            // Set generateTransformsBeforePageLoad back to whatever it was
+            $configService->set('generateTransformsBeforePageLoad', $generateTransformsBeforePageLoad);
+        }
     }
 
     /**
