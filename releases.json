@@ -1,0 +1,31 @@
+[
+  {
+    "version": "0.2.0",
+    "downloadUrl": "https://github.com/aelvan/Preparse-Field-Craft/archive/master.zip",
+    "date": "2016-03-22T19:44:00+02:00",
+    "notes": [
+      "[Fixed] Fixed issue where the preparse field would generate an endless loop if the twig code produced a new result every time it was run. Flash variables are now used instead of comparing parse result.",
+      "[Added] I can haz (ugly) icon."
+    ]
+  },
+  {
+    "version": "0.1.1",
+    "downloadUrl": "https://github.com/aelvan/Preparse-Field-Craft/archive/master.zip",
+    "date": "2016-03-20T20:47:00+02:00",
+    "notes": [
+      "[Fixed] Fixed an issue where field is always visible inside Matrix blocks. (mmikkel)",
+      "[Fixed] Added support for displaying on element index pages. (carlcs)",
+      "[Fixed] Set generateTransformsBeforePageLoad = true before running twig. (brandonkelly)",
+      "[Fixed] Added support for displaying commerce element types on element index pages. (marionnewlevant)",
+      "[Fixed] Adds global config setting to disable in element index columns. (mildlygeeky)"
+    ]
+  },
+  {
+    "version": "0.1.0",
+    "downloadUrl": "https://github.com/aelvan/Preparse-Field-Craft/archive/master.zip",
+    "date": "2015-08-28T21:30:00+02:00",
+    "notes": [
+      "[Added] Initial release."
+    ]
+  }
+]

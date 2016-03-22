@@ -7,25 +7,68 @@ namespace Craft;
 
 class PreparseFieldPlugin extends BasePlugin
 {
+    
+    protected $_version = '0.2.0',
+      $_schemaVersion = '1.0.0',
+      $_name = 'Preparse Field',
+      $_url = 'https://github.com/aelvan/Preparse-Field-Craft',
+      $_releaseFeedUrl = 'https://raw.githubusercontent.com/aelvan/Preparse-Field-Craft/master/releases.json',
+      $_documentationUrl = 'https://github.com/aelvan/Preparse-Field-Craft/blob/master/README.md',
+      $_description = 'A fieldtype that parses Twig when an element is saved, and saves the result as plain text.',
+      $_developer = 'André Elvan',
+      $_developerUrl = 'http://vaersaagod.no/',
+      $_minVersion = '2.5';
+    
     public function getName()
     {
-        return 'Preparse Field';
+        return Craft::t($this->_name);
+    }
+
+    public function getUrl()
+    {
+        return $this->_url;
     }
 
     public function getVersion()
     {
-        return '0.1';
+        return $this->_version;
     }
 
     public function getDeveloper()
     {
-        return 'André Elvan';
+        return $this->_developer;
     }
 
     public function getDeveloperUrl()
     {
-        return 'http://vaersaagod.no';
+        return $this->_developerUrl;
     }
+
+    public function getDescription()
+    {
+        return $this->_description;
+    }
+
+    public function getDocumentationUrl()
+    {
+        return $this->_documentationUrl;
+    }
+
+    public function getSchemaVersion()
+    {
+        return $this->_schemaVersion;
+    }
+
+    public function getReleaseFeedUrl()
+    {
+        return $this->_releaseFeedUrl;
+    }
+
+    public function getCraftRequiredVersion()
+    {
+        return $this->_minVersion;
+    }
+
 
     /* one for each supported element type: */
     public function defineAdditionalEntryTableAttributes()
