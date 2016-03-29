@@ -73,7 +73,8 @@ advanced stuff and/or want to keep your fields Twig in version control:
 	
 Make sure that you always write solid Twig, taking into account that fields may not be populated yet. If an error occurs
 in your Twig, the element will not be saved. 
- 
+
+
 Cache gotchas
 ---
 The preparse field is only updated when an element is saved. If you grab data from a related element (like in the category 
@@ -98,6 +99,5 @@ here on github if you have one, and I'll see what I can do. :)
 
 Changelog
 ---
-### Version 0.1
- - Initial Public Release.
+See [releases.json](https://raw.githubusercontent.com/aelvan/Preparse-Field-Craft/master/releases.json).
 

@@ -1,5 +1,13 @@
 [
   {
+    "version": "0.2.1",
+    "downloadUrl": "https://github.com/aelvan/Preparse-Field-Craft/archive/master.zip",
+    "date": "2016-03-29T23:14:00+02:00",
+    "notes": [
+      "[Fixed] Fix for deprecated methods PathsService::getTemplatesPath() and setTemplatesPath() in Craft 2.6.2778 and newer."
+    ]
+  },
+  {
     "version": "0.2.0",
     "downloadUrl": "https://github.com/aelvan/Preparse-Field-Craft/archive/master.zip",
     "date": "2016-03-22T19:44:00+02:00",
