@@ -1,5 +1,13 @@
 [
   {
+    "version": "0.2.2",
+    "downloadUrl": "https://github.com/aelvan/Preparse-Field-Craft/archive/master.zip",
+    "date": "2016-05-06T10:56:00+02:00",
+    "notes": [
+      "[Added] Database column type can now be set pr field. (marionnewlevant)"
+    ]
+  },
+  {
     "version": "0.2.1",
     "downloadUrl": "https://github.com/aelvan/Preparse-Field-Craft/archive/master.zip",
     "date": "2016-03-29T23:14:00+02:00",
