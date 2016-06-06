@@ -2,30 +2,46 @@
 
 
 {{ forms.textarea( {
-	label: 'Twig code to parse' | t,
-	instructions: 'Enter the twig code that you want to parse after the entry has been saved.' | t,
-	id: 'fieldTwig',
-	name: 'fieldTwig',
-	value: settings.fieldTwig,
-	rows: 10
+  label: 'Twig code to parse' | t,
+  instructions: 'Enter the twig code that you want to parse after the entry has been saved.' | t,
+  id: 'fieldTwig',
+  name: 'fieldTwig',
+  value: settings.fieldTwig,
+  rows: 10
 }) }}
 
 {{ forms.lightswitchField({
-	label: 'Show field' | t,
-	instructions: 'If you turn this on, the field will be visible on the edit page.' | t,
-	id: 'showField',
-	name: 'showField',
-	on: settings.showField,
-	onLabel: "Yes"|t,
-	offLabel: "no"|t
+  label: 'Show field' | t,
+  instructions: 'If you turn this on, the field will be visible on the edit page.' | t,
+  id: 'showField',
+  name: 'showField',
+  on: settings.showField,
+  onLabel: "Yes"|t,
+  offLabel: "no"|t
 }) }}
 
 {{ forms.lightswitchField({
-	label: 'Enable table column' | t,
-	instructions: 'If you turn this on, a column for the field can be shown on the element index page.' | t,
-	id: 'showColumn',
-	name: 'showColumn',
-	on: settings.showColumn,
-	onLabel: "Yes"|t,
-	offLabel: "no"|t
+  label: 'Enable table column' | t,
+  instructions: 'If you turn this on, a column for the field can be shown on the element index page.' | t,
+  id: 'showColumn',
+  name: 'showColumn',
+  on: settings.showColumn,
+  onLabel: "Yes"|t,
+  offLabel: "no"|t
 }) }}
+
+{% set columnType %}
+  {{ forms.select({
+    id: 'columnType',
+    name: 'columnType',
+    options: columns,
+    value: settings.columnType
+  }) }}
+{% endset %}
+
+{{ forms.field({
+  label: "Column Type"|t,
+  instructions: "The underlying database column type to use when saving content."|t,
+  id: 'columnType',
+  warning: (existing ? "Changing this may result in data loss."|t),
+}, columnType) }}
