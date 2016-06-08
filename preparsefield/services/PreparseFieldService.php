@@ -3,6 +3,13 @@ namespace Craft;
 
 class PreparseFieldService extends BaseApplicationComponent
 {
+    /**
+     * Returns element content with values set for its Preparse fields.
+     *
+     * @param $element BaseElementModel
+     * @param $eventHandle string
+     * @return array
+     */
     public function getPreparseFieldsContent($element, $eventHandle)
     {
         $content = array();
@@ -18,7 +25,7 @@ class PreparseFieldService extends BaseApplicationComponent
 
                     if ($fieldType && $fieldType->getClassHandle() === 'PreparseField_Preparse') {
 
-                        // Only get field content for the right event listener
+                        // only get field content for the right event listener
                         $isBeforeSave = $eventHandle == 'onBeforeSave';
                         $parseBeforeSave = (bool) $fieldType->getSettings()->parseBeforeSave;
 
@@ -39,6 +46,12 @@ class PreparseFieldService extends BaseApplicationComponent
         return $content;
     }
 
+    /**
+     * Renders a Preparse field's template.
+     *
+     * @param $fieldType PreparseField_PreparseFieldType
+     * @return string|null
+     */
     public function parseField($fieldType)
     {
         $fieldTwig = $fieldType->getSettings()->fieldTwig;
@@ -47,7 +60,7 @@ class PreparseFieldService extends BaseApplicationComponent
         $elementType = $element->getElementType();
         $elementTemplateName = strtolower($elementType);
 
-        // Set generateTransformsBeforePageLoad = true
+        // set generateTransformsBeforePageLoad = true
         $configService = craft()->config;
         $generateTransformsBeforePageLoad = $configService->get('generateTransformsBeforePageLoad');
         $configService->set('generateTransformsBeforePageLoad', true);
@@ -61,7 +74,7 @@ class PreparseFieldService extends BaseApplicationComponent
             craft()->templates->setTemplateMode(TemplateMode::Site);
         }
 
-        // Render value from the field template
+        // render value from the field template
         try {
             $fieldValue = craft()->templates->renderString($fieldTwig, array($elementTemplateName => $element));
         } catch (\Exception $e) {
@@ -76,7 +89,7 @@ class PreparseFieldService extends BaseApplicationComponent
             craft()->templates->setTemplateMode($oldMode);
         }
 
-        // Set generateTransformsBeforePageLoad back to whatever it was
+        // set generateTransformsBeforePageLoad back to whatever it was
         $configService->set('generateTransformsBeforePageLoad', $generateTransformsBeforePageLoad);
 
         if (!isset($fieldValue)) {

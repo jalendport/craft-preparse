@@ -1,8 +1,8 @@
 {% import "_includes/forms" as forms %}
 
 {{ forms.textareaField( {
-  label: 'Twig code to parse' | t,
-  instructions: 'Enter the twig code that you want to parse after the entry has been saved.' | t,
+  label: "Twig code to parse"|t,
+  instructions: "Enter the twig code that you want to parse after the entry has been saved."|t,
   id: 'fieldTwig',
   name: 'fieldTwig',
   value: settings.fieldTwig,
@@ -27,8 +27,8 @@
 }, columnType) }}
 
 {{ forms.lightswitchField({
-  label: 'Parse before save' | t,
-  instructions: 'If you turn this on, the field will be parsed before the element is saved.' | t,
+  label: "Parse before save"|t,
+  instructions: "If you turn this on, the field will be parsed before the element is saved."|t,
   id: 'parseBeforeSave',
   name: 'parseBeforeSave',
   on: settings.parseBeforeSave,
@@ -37,8 +37,8 @@
 }) }}
 
 {{ forms.lightswitchField({
-  label: 'Show field' | t,
-  instructions: 'If you turn this on, the field will be visible on the edit page.' | t,
+  label: "Show field"|t,
+  instructions: "If you turn this on, the field will be visible on the edit page."|t,
   id: 'showField',
   name: 'showField',
   on: settings.showField,

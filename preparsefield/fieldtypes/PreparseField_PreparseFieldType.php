@@ -72,6 +72,7 @@ class PreparseField_PreparseFieldType extends BaseFieldType implements IPreviewa
           ColumnType::MediumText => Craft::t('MediumText (stores about 4GB)'),
           'number' => Craft::t('Number'),
         );
+
         return craft()->templates->render('preparsefield/settings', array(
           'settings' => $this->getSettings(),
           'columns' => $columns,
@@ -89,19 +90,17 @@ class PreparseField_PreparseFieldType extends BaseFieldType implements IPreviewa
         $settings = $this->getSettings();
 
         // It hasn't always been a settings, so default to Text if it's not set.
-        if (!$settings->getAttribute('columnType'))
-        {
+        if (!$settings->getAttribute('columnType')) {
             return array(AttributeType::String, 'column' => ColumnType::Text);
         }
-        // $settings->columnType exists
 
-        if ($settings->columnType === 'number')
-        {
+        if ($settings->columnType === 'number') {
             $attribute = ModelHelper::getNumberAttributeConfig();
             $attribute['default'] = 0;
 
             return $attribute;
         }
+
         return array(AttributeType::String, 'column' => $settings->columnType);
     }
 

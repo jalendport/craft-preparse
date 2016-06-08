@@ -7,7 +7,6 @@ namespace Craft;
 
 class PreparseFieldPlugin extends BasePlugin
 {
-
     protected $_version = '0.2.2',
       $_schemaVersion = '1.0.0',
       $_name = 'Preparse Field',
@@ -77,6 +76,14 @@ class PreparseFieldPlugin extends BasePlugin
     private $_preparsedElements;
 
     /**
+     * Initializes the plugin
+     */
+    public function init()
+    {
+        $this->_initEventListeners();
+    }
+
+    /**
      * Make sure requirements are met before installation.
      *
      * @return bool
@@ -87,11 +94,6 @@ class PreparseFieldPlugin extends BasePlugin
         if (version_compare(craft()->getVersion(), $this->getCraftRequiredVersion(), '<=')) {
             throw new Exception($this->getName().' plugin requires Craft '.$this->getCraftRequiredVersion().'+');
         }
-    }
-
-    public function init()
-    {
-        $this->_initEventListeners();
     }
 
     /**
@@ -128,6 +130,7 @@ class PreparseFieldPlugin extends BasePlugin
 
                 if (!empty($content)) {
                     $element->setContentFromPost($content);
+
                     $success = craft()->elements->saveElement($element);
 
                     // if no success, log error
@@ -138,4 +141,5 @@ class PreparseFieldPlugin extends BasePlugin
             }
         });
     }
+
 }
