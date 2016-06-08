@@ -19,36 +19,10 @@ class PreparseField_PreparseFieldType extends BaseFieldType implements IPreviewa
     public function onAfterElementSave()
     {
         $fieldHandle = $this->model->handle;
-        $fieldTwig = $this->getSettings()->fieldTwig;
-        $elementType = $this->element->getElementType();
-        $elementTemplateName = strtolower($elementType);
         $flashId = 'element-' . $this->element->id . '-preparseField-' . $fieldHandle;
 
         if (!craft()->userSession->hasFlash($flashId)) { // only run if it hasn't already this session
-
-            // Set generateTransformsBeforePageLoad = true
-            $configService = craft()->config;
-            $generateTransformsBeforePageLoad = $configService->get('generateTransformsBeforePageLoad');
-            $configService->set('generateTransformsBeforePageLoad', true);
-
-            // save cp template path and set to site templates
-            if (craft()->getBuild()<2778) {
-                $oldPath = craft()->path->getTemplatesPath();
-                craft()->path->setTemplatesPath(craft()->path->getSiteTemplatesPath());
-            } else {
-                $oldMode = craft()->templates->getTemplateMode();
-                craft()->templates->setTemplateMode(TemplateMode::Site);
-            }
-
-            // parse data
-            $parsedData = craft()->templates->renderString($fieldTwig, array($elementTemplateName => $this->element));
-
-            // restore cp template paths
-            if (craft()->getBuild()<2778) {
-                craft()->path->setTemplatesPath($oldPath);
-            } else {
-                craft()->templates->setTemplateMode($oldMode);
-            }
+            $parsedData = craft()->preparseField->parseField($this);
 
             // save element, set flash indicating it has been saved
             $this->element->getContent()->setAttribute($fieldHandle, $parsedData);
@@ -60,9 +34,6 @@ class PreparseField_PreparseFieldType extends BaseFieldType implements IPreviewa
                 PreparseFieldPlugin::log('Couldn’t save element with id "' . $this->element->id . '" and preparse field "' . $fieldHandle . '"',
                   LogLevel::Error);
             }
-
-            // Set generateTransformsBeforePageLoad back to whatever it was
-            $configService->set('generateTransformsBeforePageLoad', $generateTransformsBeforePageLoad);
         }
     }
 
