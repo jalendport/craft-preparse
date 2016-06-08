@@ -70,12 +70,11 @@ class PreparseFieldPlugin extends BasePlugin
     }
 
     /**
-     * Stores the elements we did already re-save in our
-     * elements.onSaveElement event listener.
+     * Stores the IDs of elements we already preparsed the fields for.
      *
      * @var array
      */
-    private $_resavedElements = array();
+    private $_preparsedElements = array();
 
     /**
      * Make sure requirements are met before installation.
@@ -102,39 +101,42 @@ class PreparseFieldPlugin extends BasePlugin
     {
         craft()->on('elements.onSaveElement', function(Event $event) {
             $element = $event->params['element'];
-            $fieldLayout = $element->getFieldLayout();
 
-            $elementContent = array();
+            if (!in_array($element->id, $this->_preparsedElements)) {
+                $this->_preparsedElements[] = $element->id;
 
-            if ($fieldLayout) {
-                foreach ($fieldLayout->getFields() as $fieldLayoutField) {
-                    $field = $fieldLayoutField->getField();
+                $fieldLayout = $element->getFieldLayout();
 
-                    if ($field) {
-                        $fieldType = $field->getFieldType();
+                $elementContent = array();
 
-                        if ($fieldType && $fieldType->getClassHandle() === 'PreparseField_Preparse') {
-                            $fieldType->element = $element;
+                if ($fieldLayout) {
+                    foreach ($fieldLayout->getFields() as $fieldLayoutField) {
+                        $field = $fieldLayoutField->getField();
 
-                            $fieldValue = craft()->preparseField->parseField($fieldType);
+                        if ($field) {
+                            $fieldType = $field->getFieldType();
 
-                            if ($fieldValue) {
-                                $elementContent[$field->handle] = $fieldValue;
+                            if ($fieldType && $fieldType->getClassHandle() === 'PreparseField_Preparse') {
+                                $fieldType->element = $element;
+
+                                $fieldValue = craft()->preparseField->parseField($fieldType);
+
+                                if ($fieldValue) {
+                                    $elementContent[$field->handle] = $fieldValue;
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            if (!in_array($element->id, $this->_resavedElements)) {
-                $this->_resavedElements[] = $element->id;
+                if (!empty($elementContent)) {
+                    $element->setContentFromPost($elementContent);
+                    $success = craft()->elements->saveElement($element);
 
-                $element->setContentFromPost($elementContent);
-                $success = craft()->elements->saveElement($element);
-
-                // if no success, log error
-                if (!$success) {
-                    PreparseFieldPlugin::log('Couldn’t save element with id “'.$element->id.'”.', LogLevel::Error);
+                    // if no success, log error
+                    if (!$success) {
+                        PreparseFieldPlugin::log('Couldn’t save element with id “'.$element->id.'”.', LogLevel::Error);
+                    }
                 }
             }
         });
