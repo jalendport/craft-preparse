@@ -25,8 +25,13 @@ class PreparseFieldService extends BaseApplicationComponent
             craft()->templates->setTemplateMode(TemplateMode::Site);
         }
 
-        // parse data
-        $parsedData = craft()->templates->renderString($fieldTwig, array($elementTemplateName => $element));
+        // Render value from the field template
+        try {
+            $fieldValue = craft()->templates->renderString($fieldTwig, array($elementTemplateName => $element));
+        } catch (\Exception $e) {
+            PreparseFieldPlugin::log('Couldn’t render value for element with id “'.$element->id.'” and preparse field “' .
+                $fieldType->model->handle.'” ('.$e->getMessage().').', LogLevel::Error);
+        }
 
         // restore cp template paths
         if (craft()->getBuild()<2778) {
@@ -38,6 +43,10 @@ class PreparseFieldService extends BaseApplicationComponent
         // Set generateTransformsBeforePageLoad back to whatever it was
         $configService->set('generateTransformsBeforePageLoad', $generateTransformsBeforePageLoad);
 
-        return $parsedData;
+        if (!isset($fieldValue)) {
+            return null;
+        }
+
+        return $fieldValue;
     }
 }

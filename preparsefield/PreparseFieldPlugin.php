@@ -117,7 +117,10 @@ class PreparseFieldPlugin extends BasePlugin
                             $fieldType->element = $element;
 
                             $fieldValue = craft()->preparseField->parseField($fieldType);
-                            $elementContent[$field->handle] = $fieldValue;
+
+                            if ($fieldValue) {
+                                $elementContent[$field->handle] = $fieldValue;
+                            }
                         }
                     }
                 }
@@ -131,8 +134,7 @@ class PreparseFieldPlugin extends BasePlugin
 
                 // if no success, log error
                 if (!$success) {
-                    PreparseFieldPlugin::log('Couldn’t save element with id "' . $this->element->id . '" and preparse field "' . $fieldHandle . '"',
-                      LogLevel::Error);
+                    PreparseFieldPlugin::log('Couldn’t save element with id “'.$element->id.'”.', LogLevel::Error);
                 }
             }
         });
