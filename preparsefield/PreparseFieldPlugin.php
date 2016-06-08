@@ -7,7 +7,7 @@ namespace Craft;
 
 class PreparseFieldPlugin extends BasePlugin
 {
-    
+
     protected $_version = '0.2.2',
       $_schemaVersion = '1.0.0',
       $_name = 'Preparse Field',
@@ -18,7 +18,7 @@ class PreparseFieldPlugin extends BasePlugin
       $_developer = 'André Elvan',
       $_developerUrl = 'http://vaersaagod.no/',
       $_minVersion = '2.5';
-    
+
     public function getName()
     {
         return Craft::t($this->_name);
@@ -69,6 +69,18 @@ class PreparseFieldPlugin extends BasePlugin
         return $this->_minVersion;
     }
 
+    /**
+     * Make sure requirements are met before installation.
+     *
+     * @return bool
+     * @throws Exception
+     */
+    public function onBeforeInstall()
+    {
+        if (version_compare(craft()->getVersion(), $this->getCraftRequiredVersion(), '<=')) {
+            throw new Exception($this->getName().' plugin requires Craft '.$this->getCraftRequiredVersion().'+');
+        }
+    }
 
     /* one for each supported element type: */
     public function defineAdditionalEntryTableAttributes()
