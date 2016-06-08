@@ -70,6 +70,14 @@ class PreparseFieldPlugin extends BasePlugin
     }
 
     /**
+     * Stores the elements we did already re-save in our
+     * elements.onSaveElement event listener.
+     *
+     * @var array
+     */
+    private $_resavedElements = array();
+
+    /**
      * Make sure requirements are met before installation.
      *
      * @return bool
@@ -115,10 +123,8 @@ class PreparseFieldPlugin extends BasePlugin
                 }
             }
 
-            $flashId = 'element-' . $element->id;
-
-            if (!craft()->userSession->hasFlash($flashId)) {
-                craft()->userSession->setFlash($flashId, "saved");
+            if (!in_array($element->id, $this->_resavedElements)) {
+                $this->_resavedElements[] = $element->id;
 
                 $element->setContentFromPost($elementContent);
                 $success = craft()->elements->saveElement($element);
