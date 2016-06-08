@@ -3,6 +3,35 @@ namespace Craft;
 
 class PreparseFieldService extends BaseApplicationComponent
 {
+    public function getPreparseFieldsContent($element)
+    {
+        $content = array();
+
+        $fieldLayout = $element->getFieldLayout();
+
+        if ($fieldLayout) {
+            foreach ($fieldLayout->getFields() as $fieldLayoutField) {
+                $field = $fieldLayoutField->getField();
+
+                if ($field) {
+                    $fieldType = $field->getFieldType();
+
+                    if ($fieldType && $fieldType->getClassHandle() === 'PreparseField_Preparse') {
+                        $fieldType->element = $element;
+
+                        $fieldValue = $this->parseField($fieldType);
+
+                        if ($fieldValue) {
+                            $content[$field->handle] = $fieldValue;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $content;
+    }
+
     public function parseField($fieldType)
     {
         $fieldTwig = $fieldType->getSettings()->fieldTwig;

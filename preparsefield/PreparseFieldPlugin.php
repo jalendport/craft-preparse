@@ -105,32 +105,10 @@ class PreparseFieldPlugin extends BasePlugin
             if (!in_array($element->id, $this->_preparsedElements)) {
                 $this->_preparsedElements[] = $element->id;
 
-                $fieldLayout = $element->getFieldLayout();
+                $content = craft()->preparseField->getPreparseFieldsContent($element);
 
-                $elementContent = array();
-
-                if ($fieldLayout) {
-                    foreach ($fieldLayout->getFields() as $fieldLayoutField) {
-                        $field = $fieldLayoutField->getField();
-
-                        if ($field) {
-                            $fieldType = $field->getFieldType();
-
-                            if ($fieldType && $fieldType->getClassHandle() === 'PreparseField_Preparse') {
-                                $fieldType->element = $element;
-
-                                $fieldValue = craft()->preparseField->parseField($fieldType);
-
-                                if ($fieldValue) {
-                                    $elementContent[$field->handle] = $fieldValue;
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (!empty($elementContent)) {
-                    $element->setContentFromPost($elementContent);
+                if (!empty($content)) {
+                    $element->setContentFromPost($content);
                     $success = craft()->elements->saveElement($element);
 
                     // if no success, log error
