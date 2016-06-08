@@ -20,16 +20,6 @@
   offLabel: "no"|t
 }) }}
 
-{{ forms.lightswitchField({
-  label: 'Enable table column' | t,
-  instructions: 'If you turn this on, a column for the field can be shown on the element index page.' | t,
-  id: 'showColumn',
-  name: 'showColumn',
-  on: settings.showColumn,
-  onLabel: "Yes"|t,
-  offLabel: "no"|t
-}) }}
-
 {% set columnType %}
   {{ forms.select({
     id: 'columnType',
