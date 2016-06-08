@@ -96,6 +96,8 @@ class PreparseFieldPlugin extends BasePlugin
             $element = $event->params['element'];
             $fieldLayout = $element->getFieldLayout();
 
+            $elementContent = array();
+
             if ($fieldLayout) {
                 foreach ($fieldLayout->getFields() as $fieldLayoutField) {
                     $field = $fieldLayoutField->getField();
@@ -104,33 +106,27 @@ class PreparseFieldPlugin extends BasePlugin
                         $fieldType = $field->getFieldType();
 
                         if ($fieldType && $fieldType->getClassHandle() === 'PreparseField_Preparse') {
+                            $fieldType->element = $element;
 
-                            $fieldHandle = $fieldType->model->handle;
-                            $flashId = 'element-' . $element->id . '-preparseField-' . $fieldHandle;
-
-                            if (!craft()->userSession->hasFlash($flashId)) {
-
-                                craft()->userSession->setFlash($flashId, "saved");
-
-                                $fieldType->element = $element;
-
-                                $fieldValue = craft()->preparseField->parseField($fieldType);
-
-                                $element->setContentFromPost(array(
-                                    $field->handle => $fieldValue
-                                ));
-
-                                $success = craft()->elements->saveElement($element);
-
-                                // if no success, log error
-                                if (!$success) {
-                                    PreparseFieldPlugin::log('Couldn’t save element with id "' . $this->element->id . '" and preparse field "' . $fieldHandle . '"',
-                                      LogLevel::Error);
-                                }
-
-                            }
+                            $fieldValue = craft()->preparseField->parseField($fieldType);
+                            $elementContent[$field->handle] = $fieldValue;
                         }
                     }
+                }
+            }
+
+            $flashId = 'element-' . $element->id;
+
+            if (!craft()->userSession->hasFlash($flashId)) {
+                craft()->userSession->setFlash($flashId, "saved");
+
+                $element->setContentFromPost($elementContent);
+                $success = craft()->elements->saveElement($element);
+
+                // if no success, log error
+                if (!$success) {
+                    PreparseFieldPlugin::log('Couldn’t save element with id "' . $this->element->id . '" and preparse field "' . $fieldHandle . '"',
+                      LogLevel::Error);
                 }
             }
         });
