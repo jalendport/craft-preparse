@@ -74,7 +74,7 @@ class PreparseFieldPlugin extends BasePlugin
      *
      * @var array
      */
-    private $_preparsedElements = array();
+    private $_preparsedElements;
 
     /**
      * Make sure requirements are met before installation.
@@ -99,13 +99,32 @@ class PreparseFieldPlugin extends BasePlugin
      */
     private function _initEventListeners()
     {
+        $this->_preparsedElements = array(
+            'onBeforeSave' => array(),
+            'onSave' => array(),
+        );
+
+        craft()->on('elements.onBeforeSaveElement', function(Event $event) {
+            $element = $event->params['element'];
+
+            if (!in_array($element->id, $this->_preparsedElements['onBeforeSave'])) {
+                $this->_preparsedElements['onBeforeSave'][] = $element->id;
+
+                $content = craft()->preparseField->getPreparseFieldsContent($element, 'onBeforeSave');
+
+                if (!empty($content)) {
+                    $element->setContentFromPost($content);
+                }
+            }
+        });
+
         craft()->on('elements.onSaveElement', function(Event $event) {
             $element = $event->params['element'];
 
-            if (!in_array($element->id, $this->_preparsedElements)) {
-                $this->_preparsedElements[] = $element->id;
+            if (!in_array($element->id, $this->_preparsedElements['onSave'])) {
+                $this->_preparsedElements['onSave'][] = $element->id;
 
-                $content = craft()->preparseField->getPreparseFieldsContent($element);
+                $content = craft()->preparseField->getPreparseFieldsContent($element, 'onSave');
 
                 if (!empty($content)) {
                     $element->setContentFromPost($content);

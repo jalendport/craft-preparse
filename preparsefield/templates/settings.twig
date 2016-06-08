@@ -11,6 +11,16 @@
 }) }}
 
 {{ forms.lightswitchField({
+  label: 'Parse before save' | t,
+  instructions: 'If you turn this on, the field will be parsed before the element is saved.' | t,
+  id: 'parseBeforeSave',
+  name: 'parseBeforeSave',
+  on: settings.parseBeforeSave,
+  onLabel: "Yes"|t,
+  offLabel: "no"|t
+}) }}
+
+{{ forms.lightswitchField({
   label: 'Show field' | t,
   instructions: 'If you turn this on, the field will be visible on the edit page.' | t,
   id: 'showField',

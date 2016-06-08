@@ -56,6 +56,7 @@ class PreparseField_PreparseFieldType extends BaseFieldType implements IPreviewa
           'fieldTwig' => array(AttributeType::String, 'default' => ''),
           'showField' => array(AttributeType::Bool, 'default' => false),
           'columnType' => array(AttributeType::String),
+          'parseBeforeSave' => array(AttributeType::Bool, 'default' => false),
         );
     }
 

@@ -3,7 +3,7 @@ namespace Craft;
 
 class PreparseFieldService extends BaseApplicationComponent
 {
-    public function getPreparseFieldsContent($element)
+    public function getPreparseFieldsContent($element, $eventHandle)
     {
         $content = array();
 
@@ -17,12 +17,19 @@ class PreparseFieldService extends BaseApplicationComponent
                     $fieldType = $field->getFieldType();
 
                     if ($fieldType && $fieldType->getClassHandle() === 'PreparseField_Preparse') {
-                        $fieldType->element = $element;
 
-                        $fieldValue = $this->parseField($fieldType);
+                        // Only get field content for the right event listener
+                        $isBeforeSave = $eventHandle == 'onBeforeSave';
+                        $parseBeforeSave = (bool) $fieldType->getSettings()->parseBeforeSave;
 
-                        if ($fieldValue) {
-                            $content[$field->handle] = $fieldValue;
+                        if ($isBeforeSave === $parseBeforeSave) {
+                            $fieldType->element = $element;
+
+                            $fieldValue = $this->parseField($fieldType);
+
+                            if ($fieldValue) {
+                                $content[$field->handle] = $fieldValue;
+                            }
                         }
                     }
                 }
