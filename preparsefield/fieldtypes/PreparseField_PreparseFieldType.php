@@ -14,30 +14,6 @@ class PreparseField_PreparseFieldType extends BaseFieldType implements IPreviewa
     }
 
     /**
-     * onAfterElementSave hook
-     */
-    public function onAfterElementSave()
-    {
-        $fieldHandle = $this->model->handle;
-        $flashId = 'element-' . $this->element->id . '-preparseField-' . $fieldHandle;
-
-        if (!craft()->userSession->hasFlash($flashId)) { // only run if it hasn't already this session
-            $parsedData = craft()->preparseField->parseField($this);
-
-            // save element, set flash indicating it has been saved
-            $this->element->getContent()->setAttribute($fieldHandle, $parsedData);
-            craft()->userSession->setFlash($flashId, "saved");
-            $success = craft()->elements->saveElement($this->element);
-
-            // if no success, log error
-            if (!$success) {
-                PreparseFieldPlugin::log('Couldn’t save element with id "' . $this->element->id . '" and preparse field "' . $fieldHandle . '"',
-                  LogLevel::Error);
-            }
-        }
-    }
-
-    /**
      * Display our fieldtype
      *
      * @param string $name Our fieldtype handle

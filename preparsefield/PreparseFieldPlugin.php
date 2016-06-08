@@ -81,4 +81,58 @@ class PreparseFieldPlugin extends BasePlugin
             throw new Exception($this->getName().' plugin requires Craft '.$this->getCraftRequiredVersion().'+');
         }
     }
+
+    public function init()
+    {
+        $this->_initEventListeners();
+    }
+
+    /**
+     * Initializes event listeners
+     */
+    private function _initEventListeners()
+    {
+        craft()->on('elements.onSaveElement', function(Event $event) {
+            $element = $event->params['element'];
+            $fieldLayout = $element->getFieldLayout();
+
+            if ($fieldLayout) {
+                foreach ($fieldLayout->getFields() as $fieldLayoutField) {
+                    $field = $fieldLayoutField->getField();
+
+                    if ($field) {
+                        $fieldType = $field->getFieldType();
+
+                        if ($fieldType && $fieldType->getClassHandle() === 'PreparseField_Preparse') {
+
+                            $fieldHandle = $fieldType->model->handle;
+                            $flashId = 'element-' . $element->id . '-preparseField-' . $fieldHandle;
+
+                            if (!craft()->userSession->hasFlash($flashId)) {
+
+                                craft()->userSession->setFlash($flashId, "saved");
+
+                                $fieldType->element = $element;
+
+                                $fieldValue = craft()->preparseField->parseField($fieldType);
+
+                                $element->setContentFromPost(array(
+                                    $field->handle => $fieldValue
+                                ));
+
+                                $success = craft()->elements->saveElement($element);
+
+                                // if no success, log error
+                                if (!$success) {
+                                    PreparseFieldPlugin::log('Couldn’t save element with id "' . $this->element->id . '" and preparse field "' . $fieldHandle . '"',
+                                      LogLevel::Error);
+                                }
+
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
 }
