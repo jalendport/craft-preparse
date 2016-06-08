@@ -1,14 +1,30 @@
 {% import "_includes/forms" as forms %}
 
-
-{{ forms.textarea( {
+{{ forms.textareaField( {
   label: 'Twig code to parse' | t,
   instructions: 'Enter the twig code that you want to parse after the entry has been saved.' | t,
   id: 'fieldTwig',
   name: 'fieldTwig',
   value: settings.fieldTwig,
+  class: 'code',
   rows: 10
 }) }}
+
+{% set columnType %}
+  {{ forms.select({
+    id: 'columnType',
+    name: 'columnType',
+    options: columns,
+    value: settings.columnType
+  }) }}
+{% endset %}
+
+{{ forms.field({
+  label: "Column Type"|t,
+  instructions: "The underlying database column type to use when saving content."|t,
+  id: 'columnType',
+  warning: (existing ? "Changing this may result in data loss."|t),
+}, columnType) }}
 
 {{ forms.lightswitchField({
   label: 'Parse before save' | t,
@@ -29,19 +45,3 @@
   onLabel: "Yes"|t,
   offLabel: "no"|t
 }) }}
-
-{% set columnType %}
-  {{ forms.select({
-    id: 'columnType',
-    name: 'columnType',
-    options: columns,
-    value: settings.columnType
-  }) }}
-{% endset %}
-
-{{ forms.field({
-  label: "Column Type"|t,
-  instructions: "The underlying database column type to use when saving content."|t,
-  id: 'columnType',
-  warning: (existing ? "Changing this may result in data loss."|t),
-}, columnType) }}
