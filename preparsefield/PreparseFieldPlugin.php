@@ -91,8 +91,8 @@ class PreparseFieldPlugin extends BasePlugin
      */
     public function onBeforeInstall()
     {
-        if (version_compare(craft()->getVersion(), $this->getCraftRequiredVersion(), '<=')) {
-            throw new Exception($this->getName().' plugin requires Craft '.$this->getCraftRequiredVersion().'+');
+        if (version_compare(craft()->getVersion(), $this->getCraftRequiredVersion(), '<')) {
+            throw new Exception($this->getName().' plugin requires Craft '.$this->getCraftRequiredVersion().' or later.');
         }
     }
 
