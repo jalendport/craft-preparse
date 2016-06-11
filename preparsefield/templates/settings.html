@@ -1,0 +1,47 @@
+{% import "_includes/forms" as forms %}
+
+{{ forms.textareaField( {
+  label: "Twig code to parse"|t,
+  instructions: "Enter the twig code that you want to parse after the entry has been saved."|t,
+  id: 'fieldTwig',
+  name: 'fieldTwig',
+  value: settings.fieldTwig,
+  class: 'code',
+  rows: 10
+}) }}
+
+{% set columnType %}
+  {{ forms.select({
+    id: 'columnType',
+    name: 'columnType',
+    options: columns,
+    value: settings.columnType
+  }) }}
+{% endset %}
+
+{{ forms.field({
+  label: "Column Type"|t,
+  instructions: "The underlying database column type to use when saving content."|t,
+  id: 'columnType',
+  warning: (existing ? "Changing this may result in data loss."|t),
+}, columnType) }}
+
+{{ forms.lightswitchField({
+  label: "Parse before save"|t,
+  instructions: "If you turn this on, the field will be parsed before the element is saved."|t,
+  id: 'parseBeforeSave',
+  name: 'parseBeforeSave',
+  on: settings.parseBeforeSave,
+  onLabel: "Yes"|t,
+  offLabel: "no"|t
+}) }}
+
+{{ forms.lightswitchField({
+  label: "Show field"|t,
+  instructions: "If you turn this on, the field will be visible on the edit page."|t,
+  id: 'showField',
+  name: 'showField',
+  on: settings.showField,
+  onLabel: "Yes"|t,
+  offLabel: "no"|t
+}) }}

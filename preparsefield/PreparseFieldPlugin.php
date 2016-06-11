@@ -7,7 +7,6 @@ namespace Craft;
 
 class PreparseFieldPlugin extends BasePlugin
 {
-    
     protected $_version = '0.2.2',
       $_schemaVersion = '1.0.0',
       $_name = 'Preparse Field',
@@ -18,7 +17,7 @@ class PreparseFieldPlugin extends BasePlugin
       $_developer = 'André Elvan',
       $_developerUrl = 'http://vaersaagod.no/',
       $_minVersion = '2.5';
-    
+
     public function getName()
     {
         return Craft::t($this->_name);
@@ -69,152 +68,78 @@ class PreparseFieldPlugin extends BasePlugin
         return $this->_minVersion;
     }
 
+    /**
+     * Stores the IDs of elements we already preparsed the fields for.
+     *
+     * @var array
+     */
+    private $_preparsedElements;
 
-    /* one for each supported element type: */
-    public function defineAdditionalEntryTableAttributes()
+    /**
+     * Initializes the plugin
+     */
+    public function init()
     {
-        if (!$this->_disableElementTables()) {
-            return $this->_getEnabledPreparseColumns('entry');
-        }
-        return array();
+        $this->_initEventListeners();
     }
 
-    public function defineAdditionalCategoryTableAttributes()
+    /**
+     * Make sure requirements are met before installation.
+     *
+     * @return bool
+     * @throws Exception
+     */
+    public function onBeforeInstall()
     {
-        if (!$this->_disableElementTables()) {
-            return $this->_getEnabledPreparseColumns('category');
-        }
-        return array();
-    }
-
-    public function defineAdditionalAssetTableAttributes()
-    {
-        if (!$this->_disableElementTables()) {
-            return $this->_getEnabledPreparseColumns('asset');
-        }
-        return array();
-    }
-
-    public function defineAdditionalUserTableAttributes()
-    {
-        if (!$this->_disableElementTables()) {
-            return $this->_getEnabledPreparseColumns('user');
-        }
-        return array();
-    }
-
-    public function defineAdditionalCommerce_ProductTableAttributes()
-    {
-        if (!$this->_disableElementTables()) {
-            return $this->_getEnabledPreparseColumns('Commerce_Product');
-        }
-        return array();
-    }
-
-    public function defineAdditionalCommerce_VariantTableAttributes()
-    {
-        if (!$this->_disableElementTables()) {
-            return $this->_getEnabledPreparseColumns('Commerce_Variant');
-        }
-        return array();
-    }
-
-    public function defineAdditionalCommerce_OrderTableAttributes()
-    {
-        if (!$this->_disableElementTables()) {
-            return $this->_getEnabledPreparseColumns('Commerce_Order');
-        }
-        return array();
-    }
-
-    /* one for each supported element type: */
-    public function getEntryTableAttributeHtml($element, $attribute)
-    {
-        if (array_key_exists($attribute, $this->defineAdditionalEntryTableAttributes())) {
-            return $element[$attribute];
+        if (version_compare(craft()->getVersion(), $this->getCraftRequiredVersion(), '<')) {
+            throw new Exception($this->getName().' plugin requires Craft '.$this->getCraftRequiredVersion().' or later.');
         }
     }
 
-    public function getCategoryTableAttributeHtml($element, $attribute)
+    /**
+     * Initializes event listeners
+     */
+    private function _initEventListeners()
     {
-        if (array_key_exists($attribute, $this->defineAdditionalCategoryTableAttributes())) {
-            return $element[$attribute];
-        }
-    }
-
-    public function getAssetTableAttributeHtml($element, $attribute)
-    {
-        if (array_key_exists($attribute, $this->defineAdditionalAssetTableAttributes())) {
-            return $element[$attribute];
-        }
-    }
-
-    public function getUserTableAttributeHtml($element, $attribute)
-    {
-        if (array_key_exists($attribute, $this->defineAdditionalUserTableAttributes())) {
-            return $element[$attribute];
-        }
-    }
-
-    public function getCommerce_ProductTableAttributeHtml($element, $attribute)
-    {
-        if (array_key_exists($attribute, $this->defineAdditionalCommerce_ProductTableAttributes())) {
-            return $element[$attribute];
-        }
-    }
-
-    public function getCommerce_VariantTableAttributeHtml($element, $attribute)
-    {
-        if (array_key_exists($attribute, $this->defineAdditionalCommerce_VariantTableAttributes())) {
-            return $element[$attribute];
-        }
-    }
-
-    public function getCommerce_OrderTableAttributeHtml($element, $attribute)
-    {
-        if (array_key_exists($attribute, $this->defineAdditionalOrderTableAttributes())) {
-            return $element[$attribute];
-        }
-    }
-
-    protected function defineSettings()
-    {
-        return array(
-            'disableElementTables' => array(
-                AttributeType::Bool,
-                'default' => false
-            )
+        $this->_preparsedElements = array(
+            'onBeforeSave' => array(),
+            'onSave' => array(),
         );
-    }
 
-    public function getSettingsHtml()
-    {
-       return craft()->templates->render('preparsefield/global.twig', array(
-           'settings' => $this->getSettings()
-       ));
-    }
+        craft()->on('elements.onBeforeSaveElement', function(Event $event) {
+            $element = $event->params['element'];
 
+            if (!in_array($element->id, $this->_preparsedElements['onBeforeSave'])) {
+                $this->_preparsedElements['onBeforeSave'][] = $element->id;
 
-    private function _getEnabledPreparseColumns($elementTypeClass)
-    {
-        $fields = craft()->fields->getFieldsByElementType($elementTypeClass);
-        $attributes = array();
+                $content = craft()->preparseField->getPreparseFieldsContent($element, 'onBeforeSave');
 
-        foreach ($fields as $field) {
-            $fieldType = $field->getFieldType();
-
-            if ($fieldType && $fieldType->getClassHandle() === 'PreparseField_Preparse') {
-                if ($fieldType->getSettings()->showColumn) {
-                    $attributes[$field->handle] = array('label' => Craft::t($field->name));
+                if (!empty($content)) {
+                    $element->setContentFromPost($content);
                 }
             }
-        }
+        });
 
-        return $attributes;
+        craft()->on('elements.onSaveElement', function(Event $event) {
+            $element = $event->params['element'];
+
+            if (!in_array($element->id, $this->_preparsedElements['onSave'])) {
+                $this->_preparsedElements['onSave'][] = $element->id;
+
+                $content = craft()->preparseField->getPreparseFieldsContent($element, 'onSave');
+
+                if (!empty($content)) {
+                    $element->setContentFromPost($content);
+
+                    $success = craft()->elements->saveElement($element);
+
+                    // if no success, log error
+                    if (!$success) {
+                        PreparseFieldPlugin::log('Couldn’t save element with id “'.$element->id.'”.', LogLevel::Error);
+                    }
+                }
+            }
+        });
     }
 
-    private function _disableElementTables()
-    {
-        return craft()->plugins->getPlugin('preparsefield')->getSettings()->disableElementTables;
-    }
 }
