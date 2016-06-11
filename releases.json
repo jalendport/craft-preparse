@@ -1,5 +1,18 @@
 [
   {
+    "version": "0.3.0",
+    "downloadUrl": "https://github.com/aelvan/Preparse-Field-Craft/archive/master.zip",
+    "date": "2016-06-11T23:27:00+02:00",
+    "notes": [
+      "[Added] Added a field setting to parse the field before element save. This makes sure the search index is updated correctly with the field value. (carlcs)",
+      "[Added] The plugin now supports saving elements with Preparse fields from a console command. It keeps track of which fields got already parsed in memory instead of session variables, and thus doesn’t rely on cookies. (carlcs)",
+      "[Improved] Twig errors that might occur when rendering a field’s Twig code now don’t block the elememt from being saved and the error messages are now logged in the preparsefield.log file. (carlcs)",
+      "[Improved] Removed the settings to disable table columns as the plugin requires Craft 2.5+ anyways. (carlcs)",
+      "[Improved] The plugin now makes sure requirements are met before installation. (carlcs)",
+      "[Fixed] Fixed issue with the “Twig Code” field title not displaying in the field settings. (carlcs)"
+    ]
+  },
+  {
     "version": "0.2.2",
     "downloadUrl": "https://github.com/aelvan/Preparse-Field-Craft/archive/master.zip",
     "date": "2016-05-06T10:56:00+02:00",

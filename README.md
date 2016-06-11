@@ -4,7 +4,8 @@ Preparse Field for Craft
 A fieldtype that parses Twig when an element is saved, and saves the result as plain text.  
 **All in the name of performance.**
 
-*Special thanks to [Mats Mikkel](https://github.com/boboldehampsink) and [Bob Olde Hampsink](https://github.com/boboldehampsink) for invaluable help on Slack :)* 
+*Special thanks to [Mats Mikkel](https://github.com/boboldehampsink) and [Bob](https://github.com/boboldehampsink) for invaluable help on Slack 
+when I first built the plugin, and [Carl](https://github.com/carlcs) for massively refactoring and improving the whole thing (v0.3.0). :)* 
 
 Installation
 ---
@@ -18,7 +19,8 @@ Usage
 ---
 When creating a new Preparse field, you can add the Twig that you want to run to the fields settings. When the entry is 
 saved, the element that is saved will be passed to the code, with the same name as it's element type (in lower case). So, if the field 
-is attached to an entry, `entry` will be available. If it is attached to a category, user or global set, `category`, `user` and `globalset` will be available.  If attached to Commerce elements, it's `commerce_product`, `commerce_variant` or `commerce_order`.
+is attached to an entry, `entry` will be available. If it is attached to a category, user or global set, `category`, `user` and `globalset` will be available.
+If attached to Commerce elements, it's `commerce_product`, `commerce_variant` or `commerce_order`.
 
 
 **Usage in Matrix**  
