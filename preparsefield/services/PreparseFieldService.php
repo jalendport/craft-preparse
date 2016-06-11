@@ -34,7 +34,7 @@ class PreparseFieldService extends BaseApplicationComponent
 
                             $fieldValue = $this->parseField($fieldType);
 
-                            if ($fieldValue) {
+                            if ($fieldValue!==null) {
                                 $content[$field->handle] = $fieldValue;
                             }
                         }
