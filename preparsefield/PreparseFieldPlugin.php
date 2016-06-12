@@ -97,6 +97,17 @@ class PreparseFieldPlugin extends BasePlugin
     }
 
     /**
+     * Registers the Twig extension.
+     *
+     * @return PreparseFieldTwigExtension
+     */
+    public function addTwigExtension()
+    {
+        Craft::import('plugins.preparsefield.twigextensions.PreparseFieldTwigExtension');
+        return new PreparseFieldTwigExtension();
+    }
+
+    /**
      * Initializes event listeners
      */
     private function _initEventListeners()
