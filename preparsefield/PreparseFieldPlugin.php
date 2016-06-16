@@ -73,7 +73,7 @@ class PreparseFieldPlugin extends BasePlugin
      *
      * @var array
      */
-    private $_preparsedElements;
+    public $preparsedElements;
 
     /**
      * Initializes the plugin
@@ -101,16 +101,18 @@ class PreparseFieldPlugin extends BasePlugin
      */
     private function _initEventListeners()
     {
-        $this->_preparsedElements = array(
+        $this->preparsedElements = array(
             'onBeforeSave' => array(),
             'onSave' => array(),
         );
-
-        craft()->on('elements.onBeforeSaveElement', function(Event $event) {
+        
+         $obj = &$this; // php 5.3.x fix
+        
+        craft()->on('elements.onBeforeSaveElement', function(Event $event) use (&$obj) {
             $element = $event->params['element'];
 
-            if (!in_array($element->id, $this->_preparsedElements['onBeforeSave'])) {
-                $this->_preparsedElements['onBeforeSave'][] = $element->id;
+            if (!in_array($element->id, $obj->preparsedElements['onBeforeSave'])) {
+                $obj->preparsedElements['onBeforeSave'][] = $element->id;
 
                 $content = craft()->preparseField->getPreparseFieldsContent($element, 'onBeforeSave');
 
@@ -120,11 +122,11 @@ class PreparseFieldPlugin extends BasePlugin
             }
         });
 
-        craft()->on('elements.onSaveElement', function(Event $event) {
+        craft()->on('elements.onSaveElement', function(Event $event) use (&$obj) {
             $element = $event->params['element'];
 
-            if (!in_array($element->id, $this->_preparsedElements['onSave'])) {
-                $this->_preparsedElements['onSave'][] = $element->id;
+            if (!in_array($element->id, $obj->preparsedElements['onSave'])) {
+                $obj->preparsedElements['onSave'][] = $element->id;
 
                 $content = craft()->preparseField->getPreparseFieldsContent($element, 'onSave');
 
