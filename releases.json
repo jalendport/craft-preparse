@@ -1,5 +1,13 @@
 [
   {
+    "version": "0.3.2",
+    "downloadUrl": "https://github.com/aelvan/Preparse-Field-Craft/archive/master.zip",
+    "date": "2016-09-02T11:32:00+02:00",
+    "notes": [
+      "[Improved] Field values are now trimmed if the column type is number (marionnewlevant)"
+    ]
+  },
+  {
     "version": "0.3.1",
     "downloadUrl": "https://github.com/aelvan/Preparse-Field-Craft/archive/master.zip",
     "date": "2016-06-16T12:37:00+02:00",
