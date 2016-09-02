@@ -55,6 +55,7 @@ class PreparseFieldService extends BaseApplicationComponent
     public function parseField($fieldType)
     {
         $fieldTwig = $fieldType->getSettings()->fieldTwig;
+        $columnType = $fieldType->getSettings()->columnType;
 
         $element = $fieldType->element;
         $elementType = $element->getElementType();
@@ -96,6 +97,6 @@ class PreparseFieldService extends BaseApplicationComponent
             return null;
         }
 
-        return $fieldValue;
+        return $columnType == 'number' ? trim($fieldValue) : $fieldValue;
     }
 }
