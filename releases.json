@@ -1,5 +1,13 @@
 [
   {
+    "version": "0.3.3",
+    "downloadUrl": "https://github.com/aelvan/Preparse-Field-Craft/archive/master.zip",
+    "date": "2016-09-12T22:22:00+02:00",
+    "notes": [
+      "[Improved] Added support for decimals when column type is number."
+    ]
+  },
+  {
     "version": "0.3.2",
     "downloadUrl": "https://github.com/aelvan/Preparse-Field-Craft/archive/master.zip",
     "date": "2016-09-02T11:32:00+02:00",
