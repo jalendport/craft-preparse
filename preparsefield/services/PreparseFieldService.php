@@ -54,8 +54,10 @@ class PreparseFieldService extends BaseApplicationComponent
      */
     public function parseField($fieldType)
     {
-        $fieldTwig = $fieldType->getSettings()->fieldTwig;
-        $columnType = $fieldType->getSettings()->columnType;
+        $settings = $fieldType->getSettings();
+        $fieldTwig = $settings->fieldTwig;
+        $columnType = $settings->columnType;
+        $decimals = $settings->decimals;
 
         $element = $fieldType->element;
         $elementType = $element->getElementType();
@@ -96,7 +98,15 @@ class PreparseFieldService extends BaseApplicationComponent
         if (!isset($fieldValue)) {
             return null;
         }
+        
+        if ($columnType == 'number') {
+            if ((int)$decimals>0) {
+                return number_format(trim($fieldValue), (int)$decimals);
+            } else {
+                return number_format(trim($fieldValue), 0);
+            }
+        }
 
-        return $columnType == 'number' ? trim($fieldValue) : $fieldValue;
+        return $fieldValue;
     }
 }

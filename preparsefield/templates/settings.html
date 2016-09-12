@@ -26,6 +26,16 @@
   warning: (existing ? "Changing this may result in data loss."|t),
 }, columnType) }}
 
+{{ forms.textField({
+    label: 'Decimals:'|t,
+    instructions: "Only relevant if the column type is Number."|t,
+    id: 'decimals',
+    name: 'decimals',
+    size: 2,
+    maxlength: 2,
+    value: settings.decimals})
+}}
+
 {{ forms.lightswitchField({
   label: "Parse before save"|t,
   instructions: "If you turn this on, the field will be parsed before the element is saved."|t,

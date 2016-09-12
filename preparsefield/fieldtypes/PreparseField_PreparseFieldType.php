@@ -56,6 +56,7 @@ class PreparseField_PreparseFieldType extends BaseFieldType implements IPreviewa
           'fieldTwig' => array(AttributeType::String, 'default' => ''),
           'showField' => array(AttributeType::Bool, 'default' => false),
           'columnType' => array(AttributeType::String),
+          'decimals' => array(AttributeType::Number, 'default' => 0),
           'parseBeforeSave' => array(AttributeType::Bool, 'default' => false),
         );
     }
@@ -83,7 +84,7 @@ class PreparseField_PreparseFieldType extends BaseFieldType implements IPreviewa
     /**
      * Define database column
      *
-     * @return AttributeType::String
+     * @return mixed
      */
     public function defineContentAttribute()
     {
@@ -95,7 +96,7 @@ class PreparseField_PreparseFieldType extends BaseFieldType implements IPreviewa
         }
 
         if ($settings->columnType === 'number') {
-            $attribute = ModelHelper::getNumberAttributeConfig();
+            $attribute = ModelHelper::getNumberAttributeConfig(null, null, $settings->decimals);
             $attribute['default'] = 0;
 
             return $attribute;
@@ -103,5 +104,4 @@ class PreparseField_PreparseFieldType extends BaseFieldType implements IPreviewa
 
         return array(AttributeType::String, 'column' => $settings->columnType);
     }
-
 }
