@@ -1,5 +1,13 @@
 [
   {
+    "version": "0.3.4",
+    "downloadUrl": "https://github.com/aelvan/Preparse-Field-Craft/archive/master.zip",
+    "date": "2016-09-13T10:03:00+02:00",
+    "notes": [
+      "[Added] Added config setting for resaving element and parsing fields on structures.onMoveElement. Useful if you use .parent() or similar structure-specific code in your preparsed twig."
+    ]
+  },
+  {
     "version": "0.3.3",
     "downloadUrl": "https://github.com/aelvan/Preparse-Field-Craft/archive/master.zip",
     "date": "2016-09-12T22:22:00+02:00",
