@@ -92,7 +92,7 @@ class PreparseFieldPlugin extends BasePlugin
     public function onBeforeInstall()
     {
         if (version_compare(craft()->getVersion(), $this->getCraftRequiredVersion(), '<')) {
-            throw new Exception($this->getName().' plugin requires Craft '.$this->getCraftRequiredVersion().' or later.');
+            throw new Exception($this->getName() . ' plugin requires Craft ' . $this->getCraftRequiredVersion() . ' or later.');
         }
     }
 
@@ -102,13 +102,13 @@ class PreparseFieldPlugin extends BasePlugin
     private function _initEventListeners()
     {
         $this->preparsedElements = array(
-            'onBeforeSave' => array(),
-            'onSave' => array(),
+          'onBeforeSave' => array(),
+          'onSave' => array(),
         );
-        
-         $obj = &$this; // php 5.3.x fix
-        
-        craft()->on('elements.onBeforeSaveElement', function(Event $event) use (&$obj) {
+
+        $obj = &$this; // php 5.3.x fix
+
+        craft()->on('elements.onBeforeSaveElement', function (Event $event) use (&$obj) {
             $element = $event->params['element'];
 
             if (!in_array($element->id, $obj->preparsedElements['onBeforeSave'])) {
@@ -122,7 +122,7 @@ class PreparseFieldPlugin extends BasePlugin
             }
         });
 
-        craft()->on('elements.onSaveElement', function(Event $event) use (&$obj) {
+        craft()->on('elements.onSaveElement', function (Event $event) use (&$obj) {
             $element = $event->params['element'];
 
             if (!in_array($element->id, $obj->preparsedElements['onSave'])) {
@@ -137,8 +137,21 @@ class PreparseFieldPlugin extends BasePlugin
 
                     // if no success, log error
                     if (!$success) {
-                        PreparseFieldPlugin::log('Couldn’t save element with id “'.$element->id.'”.', LogLevel::Error);
+                        PreparseFieldPlugin::log('Couldn’t save element with id “' . $element->id . '”.', LogLevel::Error);
                     }
+                }
+            }
+        });
+        
+        craft()->on('structures.onMoveElement', function (Event $event) use (&$obj) {
+            $element = $event->params['element'];
+            
+            if (craft()->preparseField->shouldParseElementOnMove($element)) {
+                $success = craft()->elements->saveElement($element);
+    
+                // if no success, log error
+                if (!$success) {
+                    PreparseFieldPlugin::log('Couldn’t save element with id “' . $element->id . '” in structures.onMoveElement.', LogLevel::Error);
                 }
             }
         });

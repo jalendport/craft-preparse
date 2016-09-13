@@ -109,4 +109,36 @@ class PreparseFieldService extends BaseApplicationComponent
 
         return $fieldValue;
     }
+
+    /**
+     * Checks to see if an element has a prepase field that should be saved on move
+     * 
+     * @param $element
+     * @return bool
+     */
+    function shouldParseElementOnMove($element)
+    {
+        $fieldLayout = $element->getFieldLayout();
+
+        if ($fieldLayout) {
+            foreach ($fieldLayout->getFields() as $fieldLayoutField) {
+                $field = $fieldLayoutField->getField();
+
+                if ($field) {
+                    $fieldType = $field->getFieldType();
+
+                    if ($fieldType && $fieldType->getClassHandle() === 'PreparseField_Preparse') {
+                        $settings = $fieldType->getSettings();
+                        $parseOnMove = (bool) $fieldType->getSettings()->parseOnMove;
+
+                        if ($parseOnMove) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        
+        return false;
+    }
 }
