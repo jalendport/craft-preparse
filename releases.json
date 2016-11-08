@@ -1,5 +1,14 @@
 [
   {
+    "version": "0.3.5",
+    "downloadUrl": "https://github.com/aelvan/Preparse-Field-Craft/archive/master.zip",
+    "date": "2016-11-08T22:52:00+02:00",
+    "notes": [
+      "[Fixed] Fixed a bug where numbers were being formatted incorrectly for fields with number column type.",
+      "[Added] Add setting to allow visible preparse field contents to be highlighted by the user, toggles input from disabled to readonly. (swixpop)"
+    ]
+  },
+  {
     "version": "0.3.4",
     "downloadUrl": "https://github.com/aelvan/Preparse-Field-Craft/archive/master.zip",
     "date": "2016-09-13T10:03:00+02:00",
