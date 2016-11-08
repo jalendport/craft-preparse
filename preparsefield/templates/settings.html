@@ -65,3 +65,13 @@
   onLabel: "Yes"|t,
   offLabel: "no"|t
 }) }}
+
+{{ forms.lightswitchField({
+  label: "Allow text highlighting"|t,
+  instructions: "If you turn this on and the field is visible, the output of the field will be selectable by the user."|t,
+  id: 'allowSelect',
+  name: 'allowSelect',
+  on: settings.allowSelect,
+  onLabel: "Yes"|t,
+  offLabel: "no"|t
+}) }}

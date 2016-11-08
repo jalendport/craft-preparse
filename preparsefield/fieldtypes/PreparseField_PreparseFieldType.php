@@ -59,6 +59,7 @@ class PreparseField_PreparseFieldType extends BaseFieldType implements IPreviewa
           'decimals' => array(AttributeType::Number, 'default' => 0),
           'parseBeforeSave' => array(AttributeType::Bool, 'default' => false),
           'parseOnMove' => array(AttributeType::Bool, 'default' => false),
+          'allowSelect' => array(AttributeType::Bool, 'default' => false),
         );
     }
 
