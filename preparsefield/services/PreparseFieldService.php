@@ -101,9 +101,9 @@ class PreparseFieldService extends BaseApplicationComponent
         
         if ($columnType == 'number') {
             if ((int)$decimals>0) {
-                return number_format(trim($fieldValue), (int)$decimals);
+                return number_format(trim($fieldValue), (int)$decimals, '.', '');
             } else {
-                return number_format(trim($fieldValue), 0);
+                return number_format(trim($fieldValue), 0, '.', '');
             }
         }
 
