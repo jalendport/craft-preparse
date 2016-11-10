@@ -106,4 +106,25 @@ class PreparseField_PreparseFieldType extends BaseFieldType implements IPreviewa
 
         return array(AttributeType::String, 'column' => $settings->columnType);
     }
+
+    /**
+	 * Preps POST value
+	 *
+	 * @param mixed $data
+	 *
+	 * @return mixed
+	 */
+    public function prepValueFromPost($data)
+    {
+        $settings = $this->getSettings();
+
+        if ($settings->columnType === 'number') {
+            $numberFieldType = new NumberFieldType();
+
+            return $numberFieldType->prepValueFromPost($data);
+        }
+
+        return $data;
+    }
+
 }
