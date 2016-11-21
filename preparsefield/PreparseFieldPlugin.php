@@ -7,7 +7,7 @@ namespace Craft;
 
 class PreparseFieldPlugin extends BasePlugin
 {
-    protected $_version = '0.3.5',
+    protected $_version = '0.3.6',
       $_schemaVersion = '1.0.0',
       $_name = 'Preparse Field',
       $_url = 'https://github.com/aelvan/Preparse-Field-Craft',

@@ -1,5 +1,13 @@
 [
   {
+    "version": "0.3.6",
+    "downloadUrl": "https://github.com/aelvan/Preparse-Field-Craft/archive/master.zip",
+    "date": "2016-11-21T20:56:00+02:00",
+    "notes": [
+      "[Fixed] Fixed a critical error where includes would fail since Craft 2.6.2951 deprecated AND changed the return value of craft()->getBuild()."
+    ]
+  },
+  {
     "version": "0.3.5",
     "downloadUrl": "https://github.com/aelvan/Preparse-Field-Craft/archive/master.zip",
     "date": "2016-11-08T22:52:00+02:00",
