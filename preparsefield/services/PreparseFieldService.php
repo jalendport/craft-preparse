@@ -54,6 +54,7 @@ class PreparseFieldService extends BaseApplicationComponent
      */
     public function parseField($fieldType)
     {
+        $craftVersion = craft()->getVersion();
         $settings = $fieldType->getSettings();
         $fieldTwig = $settings->fieldTwig;
         $columnType = $settings->columnType;
@@ -69,7 +70,7 @@ class PreparseFieldService extends BaseApplicationComponent
         $configService->set('generateTransformsBeforePageLoad', true);
 
         // save cp template path and set to site templates
-        if (craft()->getBuild()<2778) {
+        if (version_compare($craftVersion, '2.6.2951', '<') && craft()->getBuild()<2778) {
             $oldPath = craft()->path->getTemplatesPath();
             craft()->path->setTemplatesPath(craft()->path->getSiteTemplatesPath());
         } else {
@@ -86,7 +87,7 @@ class PreparseFieldService extends BaseApplicationComponent
         }
 
         // restore cp template paths
-        if (craft()->getBuild()<2778) {
+        if (version_compare($craftVersion, '2.6.2951', '<') && craft()->getBuild()<2778) {
             craft()->path->setTemplatesPath($oldPath);
         } else {
             craft()->templates->setTemplateMode($oldMode);
