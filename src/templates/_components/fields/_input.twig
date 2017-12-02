@@ -1,0 +1,43 @@
+{#
+/**
+ * Preparse Field plugin for Craft CMS 3.x
+ *
+ *  Field Input
+ *
+ * @author    André Elvan
+ * @copyright Copyright (c) 2017 André Elvan
+ * @link      https://www.vaersaagod.no
+ * @package   PreparseField
+ * @since     1.0.0
+ */
+#}
+
+{% import "_includes/forms" as forms %}
+
+{% if field['displayType'] == 'hidden' %}
+    <style>
+        #fields-{{ id }}-field {
+            display: none;
+        }
+    </style>
+{% endif %}
+
+{# Setup our field #}
+{% if field['displayType'] == 'textarea' %}
+    {{ forms.textarea( {
+        id: name,
+        name: name,
+        value: value,
+        disabled: not field['allowSelect'],
+        readonly: field['allowSelect'],
+        rows: field['textareaRows']
+    }) }}
+{% else %}
+    {{ forms.text({
+        id: name,
+        name: name,
+        value: value,
+        disabled: not field['allowSelect'],
+        readonly: field['allowSelect']
+    }) }}
+{% endif %}

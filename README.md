@@ -1,37 +1,42 @@
 Preparse Field for Craft
 ===
-
 A fieldtype that parses Twig when an element is saved, and saves the result as plain text.  
-**All in the name of performance.**
 
-*Special thanks to [Mats Mikkel](https://github.com/boboldehampsink) and [Bob](https://github.com/boboldehampsink) for invaluable help on Slack 
-when I first built the plugin, and [Carl](https://github.com/carlcs) for massively refactoring and improving the whole thing (v0.3.0). :)* 
+Requirements
+---
+This plugin requires Craft CMS 3.0.0-RC1 or later. 
+
+*The Craft 2 version can be found in the master branch* 
 
 Installation
 ---
-1. Download the zip from this repository, unzip, and put the preparsefield folder in your Craft plugin folder.
-2. Enable the plugin in Craft (Settings > Plugins)
+To install the plugin, follow these instructions.
 
-The Preparse fieldtype is now available when you create a new field. 
+1. Open your terminal and go to your Craft project:
 
+        cd /path/to/project
+
+2. Then tell Composer to load the plugin:
+
+        composer require aelvan/preparse-field
+
+3. In the Control Panel, go to Settings → Plugins and click the “Install” button for Preparse Field.
 
 Usage
 ---
-When creating a new Preparse field, you can add the Twig that you want to run to the fields settings. When the entry is 
-saved, the element that is saved will be passed to the code, with the same name as it's element type (in lower case). So, if the field 
-is attached to an entry, `entry` will be available. If it is attached to a category, user or global set, `category`, `user` and `globalset` will be available.
-If attached to Commerce elements, it's `commerce_product`, `commerce_variant` or `commerce_order`.
-
+When creating a new Preparse field, you can add the Twig that you want to run to the fields settings. When an element 
+with a preparse field is saved, the code will be parsed. The element itself is available as `element` in twig. 
 
 **Usage in Matrix**  
-When a Preparse field is added to a Matrix block, that block will be available to the Twig code as the variable `matrixblock`. The element (entry, category, global set etc) the Matrix field belongs to will be available under `matrixblock.owner`.  
+When a Preparse field is added to a Matrix block, that block will be available to the Twig code as the variable `element`. 
+The element that the Matrix field belongs to will be available under `element.owner`.  
   
 ### Examples  
   
 If you have a category field in your entry named `entryCategory`, you can save the category title to the
 preparse field by adding the following Twig to the field settings:
 
-    {{ entry.entryCategory | length ? entry.entryCategory.first().title }}
+    {{ element.entryCategory | length ? element.entryCategory.first().title }}
  
 This is useful for saving preparsed values to a field for use with sorting, searching or similar things.
  
@@ -40,21 +45,21 @@ fields that may or may not be populated. having to check these in the template m
 can't check if a field has a relation in Craft, without actually querying for it. You could do something like this to 
 get the id of the asset to use:
 
-    {% if entry.smallListImage | length %}
-        {{ entry.smallListImage.first().id }}
-    {% elseif entry.largeListImage | length %}
-        {{ entry.largeListImage.first().id }}
-    {% elseif entry.mainImage | length %}
-        {{ entry.mainImage.first().id }}
+    {% if element.smallListImage | length %}
+        {{ element.smallListImage.first().id }}
+    {% elseif element.largeListImage | length %}
+        {{ element.largeListImage.first().id }}
+    {% elseif element.mainImage | length %}
+        {{ element.mainImage.first().id }}
     {% endif  %}
  
-You'd probably want to wrap that in `{% spaceless %} ... {% endspaceless %}` to make it a bit more useful.
+You'd probably want to wrap that in `{% spaceless %} ... {% endspaceless %}` to make it more useful.
 
-Or you could just use it to do some bulk work when saving, like pregenerating a bunch of image transforms with 
+Or you could just use it to do some bulk work when saving, like pre-generating a bunch of image transforms with 
 [Imager](https://github.com/aelvan/Imager-Craft) (shameless plug, I know):
 
-    {% if entry.image | length %}
-        {% set transformedImages = craft.imager.transformImage(entry.image.first(), [
+    {% if element.image | length %}
+        {% set transformedImages = craft.imager.transformImage(element.image.first(), [
 		    { width: 1000 }, 
 		    { width: 900 }, 
 		    { width: 800 }, 
@@ -101,5 +106,4 @@ here on github if you have one, and I'll see what I can do. :)
 
 Changelog
 ---
-See [releases.json](https://raw.githubusercontent.com/aelvan/Preparse-Field-Craft/master/releases.json).
-
+See [releases.json](https://raw.githubusercontent.com/aelvan/Preparse-Field-Craft/craft3/CHANGELOG.md).
