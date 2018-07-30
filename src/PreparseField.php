@@ -12,6 +12,7 @@ use aelvan\preparsefield\fields\PreparseFieldType;
 use aelvan\preparsefield\services\PreparseFieldService as PreparseFieldServiceService;
 
 use Craft;
+use craft\base\Element;
 use craft\base\Plugin;
 use craft\events\ElementEvent;
 use craft\events\MoveElementEvent;
@@ -72,10 +73,12 @@ class PreparseField extends Plugin
         // Before save element event handler
         Event::on(Elements::class, Elements::EVENT_BEFORE_SAVE_ELEMENT,
             function(ElementEvent $event) {
+                /** @var Element $element */
                 $element = $event->element;
+                $key = $element->id . '__' . $element->siteId;
 
-                if (!\in_array($element->id, $this->preparsedElements['onBeforeSave'], true)) {
-                    $this->preparsedElements['onBeforeSave'][] = $element->id;
+                if (!\in_array($key, $this->preparsedElements['onBeforeSave'], true)) {
+                    $this->preparsedElements['onBeforeSave'][] = $key;
 
                     $content = self::$plugin->preparseFieldService->getPreparseFieldsContent($element, 'onBeforeSave');
 
@@ -89,16 +92,19 @@ class PreparseField extends Plugin
         // After save element event handler
         Event::on(Elements::class, Elements::EVENT_AFTER_SAVE_ELEMENT,
             function(ElementEvent $event) {
+                /** @var Element $element */
                 $element = $event->element;
-
-                if (!\in_array($element->id, $this->preparsedElements['onSave'], true)) {
-                    $this->preparsedElements['onSave'][] = $element->id;
+                $key = $element->id . '__' . $element->siteId;
+                
+                if (!\in_array($key, $this->preparsedElements['onSave'], true)) {
+                    $this->preparsedElements['onSave'][] = $key;
 
                     $content = self::$plugin->preparseFieldService->getPreparseFieldsContent($element, 'onSave');
+                    
 
                     if (!empty($content)) {
                         $element->setFieldValues($content);
-                        $success = Craft::$app->getElements()->saveElement($element);
+                        $success = Craft::$app->getElements()->saveElement($element, true, false);
 
                         // if no success, log error
                         if (!$success) {
@@ -112,12 +118,14 @@ class PreparseField extends Plugin
         // After move element event handler
         Event::on(Structures::class, Structures::EVENT_AFTER_MOVE_ELEMENT,
             function(MoveElementEvent $event) {
+                /** @var Element $element */
                 $element = $event->element;
+                $key = $element->id . '__' . $element->siteId;
+                
+                if (self::$plugin->preparseFieldService->shouldParseElementOnMove($element) && !\in_array($key, $this->preparsedElements['onMoveElement'], true)) {
+                    $this->preparsedElements['onMoveElement'][] = $key;
 
-                if (self::$plugin->preparseFieldService->shouldParseElementOnMove($element) && !\in_array($element->id, $this->preparsedElements['onMoveElement'], true)) {
-                    $this->preparsedElements['onMoveElement'][] = $element->id;
-
-                    $success = Craft::$app->getElements()->saveElement($element);
+                    $success = Craft::$app->getElements()->saveElement($element, true, false);
 
                     // if no success, log error
                     if (!$success) {
