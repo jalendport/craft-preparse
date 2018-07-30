@@ -12,6 +12,7 @@ use Craft;
 use craft\base\ElementInterface;
 use craft\base\Field;
 use craft\db\mysql\Schema;
+use craft\helpers\Db;
 
 /**
  *  Preparse field type
@@ -83,14 +84,21 @@ class PreparseFieldType extends Field
 
     /**
      * @return string
+     * @throws \yii\base\Exception
      */
     public function getContentColumnType(): string
     {
+        if ($this->columnType === Schema::TYPE_DECIMAL) {
+            return Db::getNumericalColumnType(null, null, $this->decimals);
+        }
+        
         return $this->columnType;
     }
 
     /**
-     * @return string
+     * @return null|string
+     * @throws \Twig_Error_Loader
+     * @throws \yii\base\Exception
      */
     public function getSettingsHtml()
     {
@@ -98,6 +106,7 @@ class PreparseFieldType extends Field
             Schema::TYPE_TEXT => Craft::t('preparse-field', 'Text (stores about 64K)'),
             Schema::TYPE_MEDIUMTEXT => Craft::t('preparse-field', 'Mediumtext (stores about 16MB)'),
             Schema::TYPE_INTEGER => Craft::t('preparse-field', 'Number (integer)'),
+            Schema::TYPE_DECIMAL => Craft::t('preparse-field', 'Number (decimal)'),
             Schema::TYPE_FLOAT => Craft::t('preparse-field', 'Number (float)'),
         ];
         
