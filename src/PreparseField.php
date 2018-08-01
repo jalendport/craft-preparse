@@ -14,6 +14,7 @@ use aelvan\preparsefield\services\PreparseFieldService as PreparseFieldServiceSe
 use Craft;
 use craft\base\Element;
 use craft\base\Plugin;
+use craft\elements\Asset;
 use craft\events\ElementEvent;
 use craft\events\MoveElementEvent;
 use craft\services\Elements;
@@ -103,6 +104,10 @@ class PreparseField extends Plugin
                     
 
                     if (!empty($content)) {
+                        if ($element instanceof Asset) {
+                            $element->setScenario(Element::SCENARIO_DEFAULT);
+                        }
+                        
                         $element->setFieldValues($content);
                         $success = Craft::$app->getElements()->saveElement($element, true, false);
 
@@ -125,6 +130,10 @@ class PreparseField extends Plugin
                 if (self::$plugin->preparseFieldService->shouldParseElementOnMove($element) && !\in_array($key, $this->preparsedElements['onMoveElement'], true)) {
                     $this->preparsedElements['onMoveElement'][] = $key;
 
+                    if ($element instanceof Asset) {
+                        $element->setScenario(Element::SCENARIO_DEFAULT);
+                    }
+                    
                     $success = Craft::$app->getElements()->saveElement($element, true, false);
 
                     // if no success, log error
