@@ -117,6 +117,7 @@ class PreparseFieldPlugin extends BasePlugin
                 $content = craft()->preparseField->getPreparseFieldsContent($element, 'onBeforeSave');
 
                 if (!empty($content)) {
+                    $this->resetUploads();
                     $element->setContentFromPost($content);
                 }
             }
@@ -131,6 +132,7 @@ class PreparseFieldPlugin extends BasePlugin
                 $content = craft()->preparseField->getPreparseFieldsContent($element, 'onSave');
 
                 if (!empty($content)) {
+                    $this->resetUploads();
                     $element->setContentFromPost($content);
 
                     $success = craft()->elements->saveElement($element);
@@ -157,4 +159,14 @@ class PreparseFieldPlugin extends BasePlugin
         });
     }
 
+    /**
+	 * Fix file uploads being processed twice by craft, which causes an error.
+	 *
+	 * @see https://github.com/aelvan/Preparse-Field-Craft/issues/23#issuecomment-284682292
+	 */
+    private function resetUploads()
+    {
+	    unset($_FILES);
+	    UploadedFile::reset();
+    }
 }
