@@ -1,5 +1,9 @@
 # Preparse Field Changelog
 
+## 1.0.3 - 2018-10-24
+### Fixed
+- Fixed an issue (#45) that would occure when uploading files through a front-end form for elements with a preparse field (thanks @aaronwaldon and @ademers). 
+
 ## 1.0.2 - 2018-08-01
 ### Fixed
 - Fixed a bug that would keep preparse fields on assets from parsing on first save/upload (#37). 
