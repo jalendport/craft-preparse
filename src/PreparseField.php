@@ -22,6 +22,7 @@ use craft\services\Fields;
 use craft\events\RegisterComponentTypesEvent;
 
 use craft\services\Structures;
+use craft\web\UploadedFile;
 use yii\base\Event;
 
 /**
@@ -66,14 +67,14 @@ class PreparseField extends Plugin
 
         // Register our fields
         Event::on(Fields::class, Fields::EVENT_REGISTER_FIELD_TYPES,
-            function(RegisterComponentTypesEvent $event) {
+            function (RegisterComponentTypesEvent $event) {
                 $event->types[] = PreparseFieldType::class;
             }
         );
 
         // Before save element event handler
         Event::on(Elements::class, Elements::EVENT_BEFORE_SAVE_ELEMENT,
-            function(ElementEvent $event) {
+            function (ElementEvent $event) {
                 /** @var Element $element */
                 $element = $event->element;
                 $key = $element->id . '__' . $element->siteId;
@@ -84,6 +85,7 @@ class PreparseField extends Plugin
                     $content = self::$plugin->preparseFieldService->getPreparseFieldsContent($element, 'onBeforeSave');
 
                     if (!empty($content)) {
+                        $this->resetUploads();
                         $element->setFieldValues($content);
                     }
                 }
@@ -92,28 +94,29 @@ class PreparseField extends Plugin
 
         // After save element event handler
         Event::on(Elements::class, Elements::EVENT_AFTER_SAVE_ELEMENT,
-            function(ElementEvent $event) {
+            function (ElementEvent $event) {
                 /** @var Element $element */
                 $element = $event->element;
                 $key = $element->id . '__' . $element->siteId;
-                
+
                 if (!\in_array($key, $this->preparsedElements['onSave'], true)) {
                     $this->preparsedElements['onSave'][] = $key;
 
                     $content = self::$plugin->preparseFieldService->getPreparseFieldsContent($element, 'onSave');
                     
-
                     if (!empty($content)) {
+                        $this->resetUploads();
+                        
                         if ($element instanceof Asset) {
                             $element->setScenario(Element::SCENARIO_DEFAULT);
                         }
-                        
+
                         $element->setFieldValues($content);
                         $success = Craft::$app->getElements()->saveElement($element, true, false);
 
                         // if no success, log error
                         if (!$success) {
-                            Craft::error('Couldn’t save element with id “'.$element->id.'”', __METHOD__);
+                            Craft::error('Couldn’t save element with id “' . $element->id . '”', __METHOD__);
                         }
                     }
                 }
@@ -122,26 +125,37 @@ class PreparseField extends Plugin
 
         // After move element event handler
         Event::on(Structures::class, Structures::EVENT_AFTER_MOVE_ELEMENT,
-            function(MoveElementEvent $event) {
+            function (MoveElementEvent $event) {
                 /** @var Element $element */
                 $element = $event->element;
                 $key = $element->id . '__' . $element->siteId;
-                
+
                 if (self::$plugin->preparseFieldService->shouldParseElementOnMove($element) && !\in_array($key, $this->preparsedElements['onMoveElement'], true)) {
                     $this->preparsedElements['onMoveElement'][] = $key;
 
                     if ($element instanceof Asset) {
                         $element->setScenario(Element::SCENARIO_DEFAULT);
                     }
-                    
+
                     $success = Craft::$app->getElements()->saveElement($element, true, false);
 
                     // if no success, log error
                     if (!$success) {
-                        Craft::error('Couldn’t move element with id “'.$element->id.'”', __METHOD__);
+                        Craft::error('Couldn’t move element with id “' . $element->id . '”', __METHOD__);
                     }
                 }
             }
         );
+    }
+
+    /**
+     * Fix file uploads being processed twice by craft, which causes an error.
+     *
+     * @see https://github.com/aelvan/Preparse-Field-Craft/issues/23#issuecomment-284682292
+     */
+    private function resetUploads()
+    {
+        unset($_FILES);
+        UploadedFile::reset();
     }
 }
