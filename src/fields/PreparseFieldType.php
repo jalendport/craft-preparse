@@ -11,6 +11,7 @@ namespace aelvan\preparsefield\fields;
 use Craft;
 use craft\base\ElementInterface;
 use craft\base\Field;
+use craft\base\PreviewableFieldInterface;
 use craft\db\mysql\Schema;
 use craft\helpers\Db;
 
@@ -21,7 +22,7 @@ use craft\helpers\Db;
  * @package   PreparseField
  * @since     1.0.0
  */
-class PreparseFieldType extends Field
+class PreparseFieldType extends Field implements PreviewableFieldInterface
 {
     // Public Properties
     // =========================================================================
