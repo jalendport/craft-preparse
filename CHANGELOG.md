@@ -1,5 +1,9 @@
 # Preparse Field Changelog
 
+## 1.0.4 - 2018-12-16
+### Addes
+- Adds support for showing preparse fields in element indexes (#33) (thanks @benface). 
+
 ## 1.0.3 - 2018-10-24
 ### Fixed
 - Fixed an issue (#45) that would occure when uploading files through a front-end form for elements with a preparse field (thanks @aaronwaldon and @ademers). 
