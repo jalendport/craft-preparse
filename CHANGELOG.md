@@ -1,5 +1,9 @@
 # Preparse Field Changelog
 
+## 1.0.5.1 - 2019-02-27
+### Added
+- Fixed an error that occurred when updating to preparse 1.0.5 on Craft 3.0.x
+
 ## 1.0.5 - 2019-02-27
 ### Added
 - Adds Craft 3 migrations. (thanks @carlcs). 
