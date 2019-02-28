@@ -2,7 +2,7 @@
     "name": "aelvan/preparse-field",
     "description": "A fieldtype that parses Twig when an element is saved, and saves the result as plain text.",
     "type": "craft-plugin",
-    "version": "v1.0.5",
+    "version": "v1.0.5.1",
     "keywords": [
         "craft",
         "cms",

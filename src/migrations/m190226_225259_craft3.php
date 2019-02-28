@@ -4,7 +4,6 @@ namespace aelvan\preparsefield\migrations;
 
 use aelvan\preparsefield\fields\PreparseFieldType;
 use craft\db\Migration;
-use craft\db\Table;
 
 /**
  * m190226_225259_craft3 migration.
@@ -16,7 +15,7 @@ class m190226_225259_craft3 extends Migration
      */
     public function safeUp()
     {
-        $this->update(Table::FIELDS, ['type' => PreparseFieldType::class], ['type' => 'PreparseField_Preparse']);
+        $this->update('{{%fields}}', ['type' => PreparseFieldType::class], ['type' => 'PreparseField_Preparse']);
     }
 
     /**
