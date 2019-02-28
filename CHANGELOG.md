@@ -1,7 +1,11 @@
 # Preparse Field Changelog
 
+## 1.0.5 - 2019-02-27
+### Added
+- Adds Craft 3 migrations. (thanks @carlcs). 
+
 ## 1.0.4 - 2018-12-16
-### Addes
+### Added
 - Adds support for showing preparse fields in element indexes (#33) (thanks @benface). 
 
 ## 1.0.3 - 2018-10-24
