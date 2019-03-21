@@ -1,7 +1,11 @@
 # Preparse Field Changelog
 
+## 1.0.6 - 2019-03-21
+### Fixed
+- Fixed a bug where warnings weren’t showing up when editing an existing preparse field’s column type.
+
 ## 1.0.5.1 - 2019-02-27
-### Added
+### Fixed
 - Fixed an error that occurred when updating to preparse 1.0.5 on Craft 3.0.x
 
 ## 1.0.5 - 2019-02-27
