@@ -57,7 +57,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface
 
     // Public Methods
     // =========================================================================
-    
+
     public function rules()
     {
         $rules = parent::rules();
@@ -92,7 +92,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface
         if ($this->columnType === Schema::TYPE_DECIMAL) {
             return Db::getNumericalColumnType(null, null, $this->decimals);
         }
-        
+
         return $this->columnType;
     }
 
@@ -110,7 +110,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface
             Schema::TYPE_DECIMAL => Craft::t('preparse-field', 'Number (decimal)'),
             Schema::TYPE_FLOAT => Craft::t('preparse-field', 'Number (float)'),
         ];
-        
+
         $displayTypes = [
             'hidden' => 'Hidden',
             'textinput' => 'Text input',
@@ -124,7 +124,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface
                 'field' => $this,
                 'columns' => $columns,
                 'displayTypes' => $displayTypes,
-                'existing' => !empty($this->model->id),
+                'existing' => $this->id !== null,
             ]
         );
     }
@@ -140,7 +140,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface
         // Get our id and namespace
         $id = Craft::$app->getView()->formatInputId($this->handle);
         $namespacedId = Craft::$app->getView()->namespaceInputId($id);
-        
+
         // Render the input template
         return Craft::$app->getView()->renderTemplate(
             'preparse-field/_components/fields/_input',
