@@ -79,8 +79,8 @@ class PreparseField extends Plugin
                 $element = $event->element;
                 $key = $element->id . '__' . $element->siteId;
 
-                if (!\in_array($key, $this->preparsedElements['onBeforeSave'], true)) {
-                    $this->preparsedElements['onBeforeSave'][] = $key;
+                if (!isset($this->preparsedElements['onBeforeSave'][$key])) {
+                    $this->preparsedElements['onBeforeSave'][$key] = true;
 
                     $content = self::$plugin->preparseFieldService->getPreparseFieldsContent($element, 'onBeforeSave');
 
@@ -88,6 +88,8 @@ class PreparseField extends Plugin
                         $this->resetUploads();
                         $element->setFieldValues($content);
                     }
+
+                    unset($this->preparsedElements['onBeforeSave'][$key]);
                 }
             }
         );
@@ -99,8 +101,8 @@ class PreparseField extends Plugin
                 $element = $event->element;
                 $key = $element->id . '__' . $element->siteId;
 
-                if (!\in_array($key, $this->preparsedElements['onSave'], true)) {
-                    $this->preparsedElements['onSave'][] = $key;
+                if (!isset($this->preparsedElements['onSave'][$key])) {
+                    $this->preparsedElements['onSave'][$key] = true;
 
                     $content = self::$plugin->preparseFieldService->getPreparseFieldsContent($element, 'onSave');
                     
@@ -119,6 +121,8 @@ class PreparseField extends Plugin
                             Craft::error('Couldn’t save element with id “' . $element->id . '”', __METHOD__);
                         }
                     }
+
+                    unset($this->preparsedElements['onSave'][$key]);
                 }
             }
         );
@@ -130,8 +134,8 @@ class PreparseField extends Plugin
                 $element = $event->element;
                 $key = $element->id . '__' . $element->siteId;
 
-                if (self::$plugin->preparseFieldService->shouldParseElementOnMove($element) && !\in_array($key, $this->preparsedElements['onMoveElement'], true)) {
-                    $this->preparsedElements['onMoveElement'][] = $key;
+                if (self::$plugin->preparseFieldService->shouldParseElementOnMove($element) && !isset($this->preparsedElements['onMoveElement'][$key])) {
+                    $this->preparsedElements['onMoveElement'][$key] = true;
 
                     if ($element instanceof Asset) {
                         $element->setScenario(Element::SCENARIO_DEFAULT);
@@ -143,6 +147,8 @@ class PreparseField extends Plugin
                     if (!$success) {
                         Craft::error('Couldn’t move element with id “' . $element->id . '”', __METHOD__);
                     }
+
+                    unset($this->preparsedElements['onMoveElement'][$key]);
                 }
             }
         );
