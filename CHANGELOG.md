@@ -1,5 +1,9 @@
 # Preparse Field Changelog
 
+## 1.0.7 - 2019-08-03
+### Changed
+- Replaced `unset()` on `$_FILES` with setting it to an empty array (fixes #52).
+
 ## 1.0.6 - 2019-03-21
 ### Fixed
 - Fixed a bug where warnings weren’t showing up when editing an existing preparse field’s column type.
