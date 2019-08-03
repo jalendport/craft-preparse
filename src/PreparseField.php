@@ -155,7 +155,7 @@ class PreparseField extends Plugin
      */
     private function resetUploads()
     {
-        unset($_FILES);
+        $_FILES = [];
         UploadedFile::reset();
     }
 }
