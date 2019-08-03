@@ -1,5 +1,15 @@
 # Preparse Field Changelog
 
+## 1.1.0 - 2019-08-03
+### Fixed
+- Fixes compability issues with Craft 3.2 (Thanks, @brandonkelly).
+
+### Added
+- Added `SortableFieldInterface` to field type.
+
+### Changed
+- Changed composer requirement for `craftcms/cms` to `^3.2.0`.
+
 ## 1.0.7 - 2019-08-03
 ### Changed
 - Replaced `unset()` on `$_FILES` with setting it to an empty array (fixes #52).
