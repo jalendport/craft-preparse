@@ -2,7 +2,7 @@
 	"name": "besteadfast/craft-preparse-field",
 	"description": "A fieldtype that parses Twig when an element is saved and saves the result as plain text.",
 	"type": "craft-plugin",
-	"version": "1.1.0",
+	"version": "1.2.0",
 	"keywords": [
 		"craft",
 		"cms",
