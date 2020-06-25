@@ -2,19 +2,20 @@
 /**
  * Preparse Field plugin for Craft CMS 3.x
  *
- * @link      https://www.vaersaagod.no
- * @copyright Copyright (c) 2017 André Elvan
+ * @link      https://www.steadfastdesignfirm.com/
+ * @copyright Copyright (c) Steadfast Design Firm
  */
 
-namespace aelvan\preparsefield\services;
+namespace besteadfast\preparsefield\services;
 
-use aelvan\preparsefield\fields\PreparseFieldType;
+use besteadfast\preparsefield\fields\PreparseFieldType;
 
 use Craft;
 use craft\base\Component;
 use craft\base\Element;
 use craft\web\View;
 use craft\db\mysql\Schema;
+use yii\base\Exception;
 
 /**
  * PreparseFieldService Service
@@ -25,28 +26,29 @@ use craft\db\mysql\Schema;
  *
  * https://craftcms.com/docs/plugins/services
  *
- * @author    André Elvan
+ * @author    Steadfast Design Firm
  * @package   PreparseField
  * @since     1.0.0
  */
 class PreparseFieldService extends Component
 {
-    /**
-     * Loops over fields in element to determine if they have preparse fields.
-     *
-     * @param Element $element
-     * @param string  $eventHandle
-     *
-     * @return array
-     */
-    public function getPreparseFieldsContent(Element $element, string $eventHandle)
-    {
+	/**
+	 * Loops over fields in element to determine if they have preparse fields.
+	 *
+	 * @param Element $element
+	 * @param string $eventHandle
+	 *
+	 * @return array
+	 * @throws Exception
+	 */
+    public function getPreparseFieldsContent(Element $element, string $eventHandle): array
+	{
         $content = [];
         $fieldLayout = $element->getFieldLayout();
 
         if ($fieldLayout) {
             foreach ($fieldLayout->getFields() as $field) {
-                if ($field && \get_class($field) === 'aelvan\preparsefield\fields\PreparseFieldType') {
+                if ($field && $field instanceof PreparseFieldType) {
                     /** @var PreparseFieldType $field */
 
                     // only get field content for the right event listener
@@ -66,15 +68,16 @@ class PreparseFieldService extends Component
 
         return $content;
     }
-
-    /**
-     * Parses field for a given element.
-     *
-     * @param PreparseFieldType $field
-     * @param Element           $element
-     *
-     * @return null|string
-     */
+	
+	/**
+	 * Parses field for a given element.
+	 *
+	 * @param PreparseFieldType $field
+	 * @param Element $element
+	 *
+	 * @return null|string
+	 * @throws Exception
+	 */
     public function parseField(PreparseFieldType $field, Element $element)
     {
         $fieldTwig = $field->fieldTwig;
@@ -127,7 +130,7 @@ class PreparseFieldService extends Component
     }
 
     /**
-     * Checks to see if an element has a prepase field that should be saved on move
+     * Checks to see if an element has a preparse field that should be saved on move
      *
      * @param $element
      *
@@ -139,7 +142,7 @@ class PreparseFieldService extends Component
 
         if ($fieldLayout) {
             foreach ($fieldLayout->getFields() as $field) {
-                if ($field && \get_class($field) === 'aelvan\preparsefield\fields\PreparseFieldType') {
+                if ($field && $field instanceof PreparseFieldType) {
                     /** @var PreparseFieldType $field */
                     $parseOnMove = $field->parseOnMove;
 

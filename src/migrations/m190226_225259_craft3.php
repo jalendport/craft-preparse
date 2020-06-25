@@ -1,8 +1,8 @@
 <?php
 
-namespace aelvan\preparsefield\migrations;
+namespace besteadfast\preparsefield\migrations;
 
-use aelvan\preparsefield\fields\PreparseFieldType;
+use besteadfast\preparsefield\fields\PreparseFieldType;
 use craft\db\Migration;
 
 /**

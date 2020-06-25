@@ -2,14 +2,14 @@
 /**
  * Preparse Field plugin for Craft CMS 3.x
  *
- * @link      https://www.vaersaagod.no
- * @copyright Copyright (c) 2017 André Elvan
+ * @link      https://www.steadfastdesignfirm.com/
+ * @copyright Copyright (c) Steadfast Design Firm
  */
 
-namespace aelvan\preparsefield;
+namespace besteadfast\preparsefield;
 
-use aelvan\preparsefield\fields\PreparseFieldType;
-use aelvan\preparsefield\services\PreparseFieldService as PreparseFieldServiceService;
+use besteadfast\preparsefield\fields\PreparseFieldType;
+use besteadfast\preparsefield\services\PreparseFieldService as PreparseFieldServiceService;
 
 use Craft;
 use craft\base\Element;
@@ -28,7 +28,7 @@ use yii\base\Event;
 /**
  * Preparse field plugin
  *
- * @author    André Elvan
+ * @author    Steadfast Design Firm
  * @package   PreparseField
  * @since     1.0.0
  *
@@ -67,7 +67,7 @@ class PreparseField extends Plugin
 
         // Register our fields
         Event::on(Fields::class, Fields::EVENT_REGISTER_FIELD_TYPES,
-            function (RegisterComponentTypesEvent $event) {
+            static function (RegisterComponentTypesEvent $event) {
                 $event->types[] = PreparseFieldType::class;
             }
         );
@@ -157,7 +157,7 @@ class PreparseField extends Plugin
     /**
      * Fix file uploads being processed twice by craft, which causes an error.
      *
-     * @see https://github.com/aelvan/Preparse-Field-Craft/issues/23#issuecomment-284682292
+     * @see https://github.com/besteadfast/craft-preparse-field/issues/23#issuecomment-284682292
      */
     private function resetUploads()
     {
