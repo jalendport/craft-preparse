@@ -1,51 +1,51 @@
 {
-    "name": "aelvan/preparse-field",
-    "description": "A fieldtype that parses Twig when an element is saved, and saves the result as plain text.",
-    "type": "craft-plugin",
-    "version": "v1.1.0",
-    "keywords": [
-        "craft",
-        "cms",
-        "craftcms",
-        "craft-plugin",
-        "fieldtype",
-        "preparse"
-    ],
-    "support": {
-        "docs": "https://github.com/aelvan/Preparse-Field-Craft",
-        "issues": "https://github.com/aelvan/Preparse-Field-Craft/issues"
-    },
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "André Elvan",
-            "homepage": "https://www.vaersaagod.no"
-        }
-    ],
-    "require": {
-        "craftcms/cms": "^3.2.0"
-    },
-    "repositories": [
-        {
-            "type": "composer",
-            "url": "https://asset-packagist.org"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-          "aelvan\\preparsefield\\": "src/"
-        }
-    },
-    "extra": {
-        "name": "Preparse Field",
-        "handle": "preparse-field",
-        "schemaVersion": "1.0.5",
-        "hasCpSettings": false,
-        "hasCpSection": false,
-        "changelogUrl": "https://github.com/aelvan/Preparse-Field-Craft/tree/craft3/CHANGELOG.md",
-        "components": {
-            "preparseFieldService": "aelvan\\preparsefield\\services\\PreparseFieldService"
-        },
-        "class": "aelvan\\preparsefield\\PreparseField"
-    }
+	"name": "besteadfast/craft-preparse-field",
+	"description": "A fieldtype that parses Twig when an element is saved and saves the result as plain text.",
+	"type": "craft-plugin",
+	"version": "1.2.0",
+	"keywords": [
+		"craft",
+		"cms",
+		"craftcms",
+		"craft-plugin",
+		"fieldtype",
+		"preparse",
+		"twig"
+	],
+	"support": {
+		"docs": "https://github.com/besteadfast/craft-preparse-field/blob/craft3/README.md",
+		"issues": "https://github.com/besteadfast/craft-preparse-field/issues"
+	},
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Steadfast Design Firm",
+			"homepage": "https://www.steadfastdesignfirm.com/"
+		},
+		{
+			"name": "André Elvan",
+			"homepage": "https://www.vaersaagod.no"
+		}
+	],
+	"require": {
+		"craftcms/cms": "^3.2.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"besteadfast\\preparsefield\\": "src/",
+			"aelvan\\preparsefield\\": "src_legacy/"
+		}
+	},
+	"extra": {
+		"name": "Preparse Field",
+		"handle": "preparse-field",
+		"schemaVersion": "1.0.5",
+		"hasCpSettings": false,
+		"hasCpSection": false,
+		"changelogUrl": "https://github.com/besteadfast/craft-preparse-field/blob/craft3/CHANGELOG.md",
+		"components": {
+			"preparseFieldService": "besteadfast\\preparsefield\\services\\PreparseFieldService"
+		},
+		"class": "besteadfast\\preparsefield\\PreparseField"
+	}
 }

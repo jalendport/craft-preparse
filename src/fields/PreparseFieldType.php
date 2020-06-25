@@ -2,11 +2,11 @@
 /**
  * Preparse Field plugin for Craft CMS 3.x
  *
- * @link      https://www.vaersaagod.no
- * @copyright Copyright (c) 2017 André Elvan
+ * @link      https://www.steadfastdesignfirm.com/
+ * @copyright Copyright (c) Steadfast Design Firm
  */
 
-namespace aelvan\preparsefield\fields;
+namespace besteadfast\preparsefield\fields;
 
 use Craft;
 use craft\base\ElementInterface;
@@ -15,13 +15,20 @@ use craft\base\PreviewableFieldInterface;
 use craft\base\SortableFieldInterface;
 use craft\db\mysql\Schema;
 use craft\helpers\Db;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
+use yii\base\Exception;
 
 /**
  *  Preparse field type
  *
- * @author    André Elvan
+ * @author    Steadfast Design Firm
  * @package   PreparseField
  * @since     1.0.0
+ *
+ * @property string $contentColumnType
+ * @property null|string $settingsHtml
  */
 class PreparseFieldType extends Field implements PreviewableFieldInterface, SortableFieldInterface
 {
@@ -86,7 +93,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
 
     /**
      * @return string
-     * @throws \yii\base\Exception
+     * @throws Exception
      */
     public function getContentColumnType(): string
     {
@@ -96,12 +103,13 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
 
         return $this->columnType;
     }
-
-    /**
-     * @return null|string
-     * @throws \Twig_Error_Loader
-     * @throws \yii\base\Exception
-     */
+	
+	/**
+	 * @return null|string
+	 * @throws LoaderError
+	 * @throws RuntimeError
+	 * @throws SyntaxError
+	 */
     public function getSettingsHtml()
     {
         $columns = [
@@ -129,13 +137,16 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
             ]
         );
     }
-
-    /**
-     * @param mixed                 $value
-     * @param ElementInterface|null $element
-     *
-     * @return string
-     */
+	
+	/**
+	 * @param mixed $value
+	 * @param ElementInterface|null $element
+	 *
+	 * @return string
+	 * @throws LoaderError
+	 * @throws RuntimeError
+	 * @throws SyntaxError
+	 */
     public function getInputHtml($value, ElementInterface $element = null): string
     {
         // Get our id and namespace
@@ -155,3 +166,5 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
         );
     }
 }
+
+class_alias(PreparseFieldType::class, \aelvan\preparsefield\fields\PreparseFieldType::class);
