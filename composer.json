@@ -13,7 +13,7 @@
 		"twig"
 	],
 	"support": {
-		"docs": "https://github.com/besteadfast/craft-preparse-field/blob/craft3/README.md",
+		"docs": "https://github.com/besteadfast/craft-preparse-field/blob/master/README.md",
 		"issues": "https://github.com/besteadfast/craft-preparse-field/issues"
 	},
 	"license": "MIT",
@@ -42,7 +42,7 @@
 		"schemaVersion": "1.0.5",
 		"hasCpSettings": false,
 		"hasCpSection": false,
-		"changelogUrl": "https://github.com/besteadfast/craft-preparse-field/blob/craft3/CHANGELOG.md",
+		"changelogUrl": "https://github.com/besteadfast/craft-preparse-field/blob/master/CHANGELOG.md",
 		"components": {
 			"preparseFieldService": "besteadfast\\preparsefield\\services\\PreparseFieldService"
 		},
