@@ -84,4 +84,4 @@ The plugin is released under the MIT license, meaning you can do whatever you wa
 
 ## Changelog
 
-See the [changelog file](https://github.com/besteadfast/craft-preparse-field/blob/craft3/CHANGELOG.md).
+See the [changelog file](https://github.com/besteadfast/craft-preparse-field/blob/master/CHANGELOG.md).
