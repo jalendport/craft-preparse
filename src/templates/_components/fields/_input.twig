@@ -14,30 +14,37 @@
 
 {% import "_includes/forms" as forms %}
 
-{% if field['displayType'] == 'hidden' %}
+{% set displayType = displayType ?? 'hidden' %}
+
+{% if displayType == 'hidden' %}
     <style>
         #{{ namespacedId }}-field {
             display: none;
         }
     </style>
-{% endif %}
-
-{# Setup our field #}
-{% if field['displayType'] == 'textarea' %}
-    {{ forms.textarea( {
-        id: name,
-        name: name,
-        value: value,
-        disabled: not field['allowSelect'],
-        readonly: field['allowSelect'],
-        rows: field['textareaRows']
-    }) }}
 {% else %}
-    {{ forms.text({
-        id: name,
-        name: name,
-        value: value,
-        disabled: not field['allowSelect'],
-        readonly: field['allowSelect']
-    }) }}
+    {# Setup our field #}
+    {% if displayType == 'date' %}
+        {{ forms.date({
+            value: value,
+            disabled: true
+        }) }}
+        {{ forms.time({
+            value: value,
+            disabled: true
+        }) }}
+    {% elseif displayType == 'textarea' %}
+        {{ forms.textarea( {
+            value: value,
+            disabled: not field['allowSelect'],
+            readonly: field['allowSelect'],
+            rows: field['textareaRows']
+        }) }}
+    {% else %}
+        {{ forms.text({
+            value: value,
+            disabled: not field['allowSelect'],
+            readonly: field['allowSelect']
+        }) }}
+    {% endif %}
 {% endif %}

@@ -14,7 +14,12 @@ use craft\base\Field;
 use craft\base\PreviewableFieldInterface;
 use craft\base\SortableFieldInterface;
 use craft\db\mysql\Schema;
+use craft\elements\db\ElementQuery;
+use craft\elements\db\ElementQueryInterface;
+use craft\gql\types\DateTime as DateTimeType;
+use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
+use craft\i18n\Locale;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -118,6 +123,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
             Schema::TYPE_INTEGER => Craft::t('preparse-field', 'Number (integer)'),
             Schema::TYPE_DECIMAL => Craft::t('preparse-field', 'Number (decimal)'),
             Schema::TYPE_FLOAT => Craft::t('preparse-field', 'Number (float)'),
+            Schema::TYPE_DATETIME => Craft::t('preparse-field', 'Date (datetime)'),
         ];
 
         $displayTypes = [
@@ -154,6 +160,10 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
         $namespacedId = Craft::$app->getView()->namespaceInputId($id);
 
         // Render the input template
+        $displayType = $this->displayType;
+        if ($displayType !== 'hidden' && $this->columnType === Schema::TYPE_DATETIME) {
+            $displayType = 'date';
+        }
         return Craft::$app->getView()->renderTemplate(
             'preparse-field/_components/fields/_input',
             [
@@ -162,8 +172,76 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
                 'field' => $this,
                 'id' => $id,
                 'namespacedId' => $namespacedId,
+                'displayType' => $displayType,
             ]
         );
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getSearchKeywords($value, ElementInterface $element): string
+    {
+        if ($this->columnType === Schema::TYPE_DATETIME) {
+            return '';
+        }
+        return parent::getSearchKeywords($value, $element);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getTableAttributeHtml($value, ElementInterface $element): string
+    {
+        if (!$value) {
+            return '';
+        }
+
+        if ($this->columnType === Schema::TYPE_DATETIME) {
+            return Craft::$app->getFormatter()->asDatetime($value, Locale::LENGTH_SHORT);
+        }
+
+        return parent::getTableAttributeHtml($value, $element);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function normalizeValue($value, ElementInterface $element = null)
+    {
+        if ($this->columnType === Schema::TYPE_DATETIME) {
+            if ($value && ($date = DateTimeHelper::toDateTime($value)) !== false) {
+                return $date;
+            }
+            return null;
+        }
+        return parent::normalizeValue($value, $element);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function modifyElementsQuery(ElementQueryInterface $query, $value)
+    {
+        if ($this->columnType === Schema::TYPE_DATETIME) {
+            if ($value !== null) {
+                /** @var ElementQuery $query */
+                $query->subQuery->andWhere(Db::parseDateParam('content.' . Craft::$app->getContent()->fieldColumnPrefix . $this->handle, $value));
+            }
+            return null;
+        }
+        return parent::modifyElementsQuery($query, $value);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getContentGqlType()
+    {
+        if ($this->columnType === Schema::TYPE_DATETIME) {
+            return DateTimeType::getType();
+        }
+        return parent::getContentGqlType();
     }
 }
 
