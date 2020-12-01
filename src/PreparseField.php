@@ -97,6 +97,10 @@ class PreparseField extends Plugin
         // After save element event handler
         Event::on(Elements::class, Elements::EVENT_AFTER_SAVE_ELEMENT,
             function (ElementEvent $event) {
+                if ($event->element->getIsRevision()) {
+                    return;
+                }
+
                 /** @var Element $element */
                 $element = $event->element;
                 $key = $element->id . '__' . $element->siteId;
