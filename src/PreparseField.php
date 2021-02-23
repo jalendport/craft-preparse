@@ -66,15 +66,23 @@ class PreparseField extends Plugin
         ];
 
         // Register our fields
-        Event::on(Fields::class, Fields::EVENT_REGISTER_FIELD_TYPES,
+        Event::on(
+            Fields::class,
+            Fields::EVENT_REGISTER_FIELD_TYPES,
             static function (RegisterComponentTypesEvent $event) {
                 $event->types[] = PreparseFieldType::class;
             }
         );
 
         // Before save element event handler
-        Event::on(Elements::class, Elements::EVENT_BEFORE_SAVE_ELEMENT,
+        Event::on(
+            Elements::class,
+            Elements::EVENT_BEFORE_SAVE_ELEMENT,
             function (ElementEvent $event) {
+                if ($event->element->getIsRevision()) {
+                    return;
+                }
+
                 /** @var Element $element */
                 $element = $event->element;
                 $key = $element->id . '__' . $element->siteId;
@@ -95,44 +103,52 @@ class PreparseField extends Plugin
         );
 
         // After save element event handler
-        Event::on(Elements::class, Elements::EVENT_AFTER_SAVE_ELEMENT,
+        Event::on(
+            Elements::class,
+            Elements::EVENT_AFTER_SAVE_ELEMENT,
             function (ElementEvent $event) {
                 if ($event->element->getIsRevision()) {
                     return;
                 }
-
-                /** @var Element $element */
-                $element = $event->element;
-                $key = $element->id . '__' . $element->siteId;
-
-                if (!isset($this->preparsedElements['onSave'][$key])) {
-                    $this->preparsedElements['onSave'][$key] = true;
-
-                    $content = self::$plugin->preparseFieldService->getPreparseFieldsContent($element, 'onSave');
+                
+                if ($event->element->getId()) {
+                    // Since it's already been saved, we need to fetch the element again.
+                    /** @var Element $element */
+                    $element = Craft::$app->elements->getElementById($event->element->getId());
+                    $key = $element->id . '__' . $element->siteId;
                     
-                    if (!empty($content)) {
-                        $this->resetUploads();
+                    if (!isset($this->preparsedElements['onSave'][$key])) {
+                        $this->preparsedElements['onSave'][$key] = true;
                         
-                        if ($element instanceof Asset) {
-                            $element->setScenario(Element::SCENARIO_DEFAULT);
+                        // Still pass the event element here to generate the preparse fields content, not the $element fetched above.
+                        $content = self::$plugin->preparseFieldService->getPreparseFieldsContent($event->element, 'onSave');
+                    
+                        if (!empty($content)) {
+                            $this->resetUploads();
+                        
+                            if ($element instanceof Asset) {
+                                $element->setScenario(Element::SCENARIO_DEFAULT);
+                            }
+                        
+                            $element->setFieldValues($content);
+                            $success = Craft::$app->elements->saveElement($element, true, false);
+
+                            // if no success, log error
+                            if (!$success) {
+                                Craft::error('Couldn’t save element with id “' . $element->id . '”', __METHOD__);
+                            }
                         }
 
-                        $element->setFieldValues($content);
-                        $success = Craft::$app->getElements()->saveElement($element, true, false);
-
-                        // if no success, log error
-                        if (!$success) {
-                            Craft::error('Couldn’t save element with id “' . $element->id . '”', __METHOD__);
-                        }
+                        unset($this->preparsedElements['onSave'][$key]);
                     }
-
-                    unset($this->preparsedElements['onSave'][$key]);
                 }
             }
         );
 
         // After move element event handler
-        Event::on(Structures::class, Structures::EVENT_AFTER_MOVE_ELEMENT,
+        Event::on(
+            Structures::class,
+            Structures::EVENT_AFTER_MOVE_ELEMENT,
             function (MoveElementEvent $event) {
                 /** @var Element $element */
                 $element = $event->element;
