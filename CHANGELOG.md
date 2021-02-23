@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## 1.2.2 - 2020-11-30
 ### Fixed
-- Bug causing missing Matrix blocks on revisions ([#65](https://github.com/besteadfast/craft-preparse-field/pull/65)thanks @brandonkelly)
+- Bug causing missing Matrix blocks on revisions ([#65](https://github.com/besteadfast/craft-preparse-field/pull/65) - thanks @brandonkelly)
 
 ## 1.2.1 - 2020-06-25
 ### Fixed
