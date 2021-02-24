@@ -110,11 +110,11 @@ class PreparseField extends Plugin
                 if ($event->element->getIsRevision()) {
                     return;
                 }
-                
+
                 if ($event->element->getId()) {
                     // Since it's already been saved, we need to fetch the element again.
                     /** @var Element $element */
-                    $element = Craft::$app->elements->getElementById($event->element->getId());
+                    $element = Craft::$app->elements->getElementById($event->element->getId(), null, $event->element->siteId);
                     $key = $element->id . '__' . $element->siteId;
                     
                     if (!isset($this->preparsedElements['onSave'][$key])) {
