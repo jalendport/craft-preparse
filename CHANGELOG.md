@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.2.4 - 2021-02-24
+### Fixed
+- Bug preventing elements from saving successfully in certain multisite setups ([#70](https://github.com/besteadfast/craft-preparse-field/pull/70))
+
 ## 1.2.3 - 2021-02-23
 ### Fixed
 - Bug causing missing Matrix blocks on new elements ([#66](https://github.com/besteadfast/craft-preparse-field/pull/66) - thanks @monachilada)
