@@ -17,6 +17,7 @@ use craft\base\Plugin;
 use craft\elements\Asset;
 use craft\events\ElementEvent;
 use craft\events\MoveElementEvent;
+use craft\helpers\FileHelper;
 use craft\services\Elements;
 use craft\services\Fields;
 use craft\events\RegisterComponentTypesEvent;
@@ -172,6 +173,35 @@ class PreparseField extends Plugin
                 }
             }
         );
+    }
+
+    /**
+     * @param $msg
+     * @param string $level
+     * @param string $file
+     */
+    public static function log($msg, $level = 'notice', $file = 'Preparse')
+    {
+        try
+        {
+            $file = Craft::getAlias('@storage/logs/' . $file . '.log');
+            $log = "\n" . date('Y-m-d H:i:s') . " [{$level}]" . "\n" . print_r($msg, true);
+            FileHelper::writeToFile($file, $log, ['append' => true]);
+        }
+        catch(\Exception $e)
+        {
+            Craft::error($e->getMessage());
+        }
+    }
+
+    /**
+     * @param $msg
+     * @param string $level
+     * @param string $file
+     */
+    public static function error($msg, $level = 'error', $file = 'RecurringOrders')
+    {
+        static::log($msg, $level, $file);
     }
 
     /**
