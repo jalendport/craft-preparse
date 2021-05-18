@@ -119,7 +119,6 @@ class PreparseField extends Plugin
                 if (!isset($this->preparsedElements['onSave'][$key])) {
                     $this->preparsedElements['onSave'][$key] = true;
 
-                    // Still pass the event element here to generate the preparse fields content, not the $element fetched above.
                     $content = self::$plugin->preparseFieldService->getPreparseFieldsContent($event->element, 'onSave');
 
                     if (!empty($content)) {
