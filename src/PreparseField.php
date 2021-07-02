@@ -16,6 +16,7 @@ use craft\base\Element;
 use craft\base\Plugin;
 use craft\elements\Asset;
 use craft\events\ElementEvent;
+use craft\events\ModelEvent;
 use craft\events\MoveElementEvent;
 use craft\helpers\FileHelper;
 use craft\services\Elements;
@@ -62,7 +63,7 @@ class PreparseField extends Plugin
 
         $this->preparsedElements = [
             'onBeforeSave' => [],
-            'onSave' => [],
+            'onPropagate' => [],
             'onMoveElement' => [],
         ];
 
@@ -103,23 +104,24 @@ class PreparseField extends Plugin
             }
         );
 
-        // After save element event handler
+        // After propagate element event handler
         Event::on(
-            Elements::class,
-            Elements::EVENT_AFTER_SAVE_ELEMENT,
-            function (ElementEvent $event) {
-                if ($event->element->getIsRevision()) {
+            Element::class,
+            Element::EVENT_AFTER_PROPAGATE,
+            function (ModelEvent $event) {
+                /** @var Element $element */
+                $element = $event->sender;
+
+                if ($element->getIsRevision()) {
                     return;
                 }
 
-                /** @var Element $element */
-                $element = $event->element;
                 $key = $element->id . '__' . $element->siteId;
                     
-                if (!isset($this->preparsedElements['onSave'][$key])) {
-                    $this->preparsedElements['onSave'][$key] = true;
+                if (!isset($this->preparsedElements['onPropagate'][$key])) {
+                    $this->preparsedElements['onPropagate'][$key] = true;
 
-                    $content = self::$plugin->preparseFieldService->getPreparseFieldsContent($element, 'onSave');
+                    $content = self::$plugin->preparseFieldService->getPreparseFieldsContent($element, 'onPropagate');
 
                     if (!empty($content)) {
                         $this->resetUploads();
@@ -137,7 +139,7 @@ class PreparseField extends Plugin
                         }
                     }
 
-                    unset($this->preparsedElements['onSave'][$key]);
+                    unset($this->preparsedElements['onPropagate'][$key]);
                 }
             }
         );
