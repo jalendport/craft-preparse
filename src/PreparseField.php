@@ -112,36 +112,32 @@ class PreparseField extends Plugin
                     return;
                 }
 
-                if ($event->element->getId()) {
-                    // Since it's already been saved, we need to fetch the element again.
-                    /** @var Element $element */
-                    $element = Craft::$app->elements->getElementById($event->element->getId(), null, $event->element->siteId);
-                    $key = $element->id . '__' . $element->siteId;
+                /** @var Element $element */
+                $element = $event->element;
+                $key = $element->id . '__' . $element->siteId;
                     
-                    if (!isset($this->preparsedElements['onSave'][$key])) {
-                        $this->preparsedElements['onSave'][$key] = true;
-                        
-                        // Still pass the event element here to generate the preparse fields content, not the $element fetched above.
-                        $content = self::$plugin->preparseFieldService->getPreparseFieldsContent($event->element, 'onSave');
-                    
-                        if (!empty($content)) {
-                            $this->resetUploads();
-                        
-                            if ($element instanceof Asset) {
-                                $element->setScenario(Element::SCENARIO_DEFAULT);
-                            }
-                        
-                            $element->setFieldValues($content);
-                            $success = Craft::$app->elements->saveElement($element, true, false);
+                if (!isset($this->preparsedElements['onSave'][$key])) {
+                    $this->preparsedElements['onSave'][$key] = true;
 
-                            // if no success, log error
-                            if (!$success) {
-                                Craft::error('Couldn’t save element with id “' . $element->id . '”', __METHOD__);
-                            }
+                    $content = self::$plugin->preparseFieldService->getPreparseFieldsContent($element, 'onSave');
+
+                    if (!empty($content)) {
+                        $this->resetUploads();
+
+                        if ($element instanceof Asset) {
+                            $element->setScenario(Element::SCENARIO_DEFAULT);
                         }
 
-                        unset($this->preparsedElements['onSave'][$key]);
+                        $element->setFieldValues($content);
+                        $success = Craft::$app->elements->saveElement($element, true, false);
+
+                        // if no success, log error
+                        if (!$success) {
+                            Craft::error('Couldn’t save element with id “' . $element->id . '”', __METHOD__);
+                        }
                     }
+
+                    unset($this->preparsedElements['onSave'][$key]);
                 }
             }
         );
