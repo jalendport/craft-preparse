@@ -4,21 +4,26 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.2.5 - 2021-07-02
+### Fixed
+- Reverted [#66](https://github.com/besteadfast/craft-preparse-field/pull/66) due to bug where sometimes the element couldn't be re-fetched from the database ([#70](https://github.com/besteadfast/craft-preparse-field/issues/70), [#71](https://github.com/besteadfast/craft-preparse-field/issues/71), [#72](https://github.com/besteadfast/craft-preparse-field/issues/72), [#73](https://github.com/besteadfast/craft-preparse-field/issues/73))
+- Fixed a bug causing missing Matrix blocks on elements in certain cases ([#69](https://github.com/besteadfast/craft-preparse-field/issues/69))
+
 ## 1.2.4 - 2021-02-24
 ### Fixed
-- Bug preventing elements from saving successfully in certain multisite setups ([#70](https://github.com/besteadfast/craft-preparse-field/pull/70))
+- Fixed a bug preventing elements from saving successfully in certain multisite setups ([#70](https://github.com/besteadfast/craft-preparse-field/pull/70))
 
 ## 1.2.3 - 2021-02-23
 ### Fixed
-- Bug causing missing Matrix blocks on new elements ([#66](https://github.com/besteadfast/craft-preparse-field/pull/66) - thanks @monachilada)
+- Fixed a bug causing missing Matrix blocks on new elements ([#66](https://github.com/besteadfast/craft-preparse-field/pull/66) - thanks @monachilada)
 
 ## 1.2.2 - 2020-11-30
 ### Fixed
-- Bug causing missing Matrix blocks on revisions ([#65](https://github.com/besteadfast/craft-preparse-field/pull/65) - thanks @brandonkelly)
+- Fixed a bug causing missing Matrix blocks on revisions ([#65](https://github.com/besteadfast/craft-preparse-field/pull/65) - thanks @brandonkelly)
 
 ## 1.2.1 - 2020-06-25
 ### Fixed
-- Incorrect branch names in README and composer.json
+- Fixed incorrect branch names in README and composer.json
 
 ## 1.2.0 - 2020-06-25
 Transfer of ownership...
