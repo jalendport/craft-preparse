@@ -16,7 +16,9 @@ use craft\base\Element;
 use craft\base\Plugin;
 use craft\elements\Asset;
 use craft\events\ElementEvent;
+use craft\events\ModelEvent;
 use craft\events\MoveElementEvent;
+use craft\helpers\FileHelper;
 use craft\services\Elements;
 use craft\services\Fields;
 use craft\events\RegisterComponentTypesEvent;
@@ -61,7 +63,7 @@ class PreparseField extends Plugin
 
         $this->preparsedElements = [
             'onBeforeSave' => [],
-            'onSave' => [],
+            'onPropagate' => [],
             'onMoveElement' => [],
         ];
 
@@ -102,45 +104,42 @@ class PreparseField extends Plugin
             }
         );
 
-        // After save element event handler
+        // After propagate element event handler
         Event::on(
-            Elements::class,
-            Elements::EVENT_AFTER_SAVE_ELEMENT,
-            function (ElementEvent $event) {
-                if ($event->element->getIsRevision()) {
+            Element::class,
+            Element::EVENT_AFTER_PROPAGATE,
+            function (ModelEvent $event) {
+                /** @var Element $element */
+                $element = $event->sender;
+
+                if ($element->getIsRevision()) {
                     return;
                 }
 
-                if ($event->element->getId()) {
-                    // Since it's already been saved, we need to fetch the element again.
-                    /** @var Element $element */
-                    $element = Craft::$app->elements->getElementById($event->element->getId(), null, $event->element->siteId);
-                    $key = $element->id . '__' . $element->siteId;
+                $key = $element->id . '__' . $element->siteId;
                     
-                    if (!isset($this->preparsedElements['onSave'][$key])) {
-                        $this->preparsedElements['onSave'][$key] = true;
-                        
-                        // Still pass the event element here to generate the preparse fields content, not the $element fetched above.
-                        $content = self::$plugin->preparseFieldService->getPreparseFieldsContent($event->element, 'onSave');
-                    
-                        if (!empty($content)) {
-                            $this->resetUploads();
-                        
-                            if ($element instanceof Asset) {
-                                $element->setScenario(Element::SCENARIO_DEFAULT);
-                            }
-                        
-                            $element->setFieldValues($content);
-                            $success = Craft::$app->elements->saveElement($element, true, false);
+                if (!isset($this->preparsedElements['onPropagate'][$key])) {
+                    $this->preparsedElements['onPropagate'][$key] = true;
 
-                            // if no success, log error
-                            if (!$success) {
-                                Craft::error('Couldn’t save element with id “' . $element->id . '”', __METHOD__);
-                            }
+                    $content = self::$plugin->preparseFieldService->getPreparseFieldsContent($element, 'onPropagate');
+
+                    if (!empty($content)) {
+                        $this->resetUploads();
+
+                        if ($element instanceof Asset) {
+                            $element->setScenario(Element::SCENARIO_DEFAULT);
                         }
 
-                        unset($this->preparsedElements['onSave'][$key]);
+                        $element->setFieldValues($content);
+                        $success = Craft::$app->elements->saveElement($element, true, false);
+
+                        // if no success, log error
+                        if (!$success) {
+                            Craft::error('Couldn’t save element with id “' . $element->id . '”', __METHOD__);
+                        }
                     }
+
+                    unset($this->preparsedElements['onPropagate'][$key]);
                 }
             }
         );
@@ -172,6 +171,35 @@ class PreparseField extends Plugin
                 }
             }
         );
+    }
+
+    /**
+     * @param $msg
+     * @param string $level
+     * @param string $file
+     */
+    public static function log($msg, $level = 'notice', $file = 'Preparse')
+    {
+        try
+        {
+            $file = Craft::getAlias('@storage/logs/' . $file . '.log');
+            $log = "\n" . date('Y-m-d H:i:s') . " [{$level}]" . "\n" . print_r($msg, true);
+            FileHelper::writeToFile($file, $log, ['append' => true]);
+        }
+        catch(\Exception $e)
+        {
+            Craft::error($e->getMessage());
+        }
+    }
+
+    /**
+     * @param $msg
+     * @param string $level
+     * @param string $file
+     */
+    public static function error($msg, $level = 'error', $file = 'RecurringOrders')
+    {
+        static::log($msg, $level, $file);
     }
 
     /**
