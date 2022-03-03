@@ -118,6 +118,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
             Schema::TYPE_INTEGER => Craft::t('preparse-field', 'Number (integer)'),
             Schema::TYPE_DECIMAL => Craft::t('preparse-field', 'Number (decimal)'),
             Schema::TYPE_FLOAT => Craft::t('preparse-field', 'Number (float)'),
+            Schema::TYPE_JSON => Craft::t('preparse-field', 'JSON'),
         ];
 
         $displayTypes = [
