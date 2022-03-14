@@ -16,6 +16,7 @@ use craft\base\Element;
 use craft\web\View;
 use craft\db\mysql\Schema;
 use yii\base\Exception;
+use yii\db\Expression;
 
 /**
  * PreparseFieldService Service
@@ -124,6 +125,13 @@ class PreparseFieldService extends Component
             }
 
             return number_format(trim($fieldValue), 0, '.', '');
+        }
+
+        if ($columnType === Schema::TYPE_JSON) {
+            // If this is a JSON field, return it as an expression so it is not escaped
+            return new Expression(':json', [
+                ':json' => $fieldValue,
+            ]);
         }
 
         return $fieldValue;
