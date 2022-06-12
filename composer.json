@@ -28,7 +28,8 @@
 		}
 	],
 	"require": {
-		"craftcms/cms": "^3.2.0"
+		"craftcms/cms": "^3.2.0",
+		"nystudio107/craft-twigfield": "dev-develop"
 	},
 	"autoload": {
 		"psr-4": {

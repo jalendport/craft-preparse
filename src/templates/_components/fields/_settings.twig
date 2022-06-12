@@ -13,8 +13,9 @@
 #}
 
 {% import "_includes/forms" as forms %}
+{% import "twigfield/twigfield" as twigfield %}
 
-{{ forms.textareaField( {
+{{ twigfield.textareaField( {
     label: "Twig code to parse"|t,
     instructions: "Enter the twig code that you want to parse after the entry has been saved."|t,
     id: 'fieldTwig',
@@ -22,7 +23,7 @@
     value: field['fieldTwig'],
     class: 'code',
     rows: 10
-}) }}
+}, "Twigfield", "monaco-editor-background-frame") }}
 
 {% set columnType %}
     {{ forms.select({
