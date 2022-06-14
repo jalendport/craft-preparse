@@ -20,9 +20,10 @@
     instructions: "Enter the twig code that you want to parse after the entry has been saved."|t,
     id: 'fieldTwig',
     name: 'fieldTwig',
-    value: field['fieldTwig'],
+    value: field.fieldTwig,
     class: 'code',
-    rows: 10
+    rows: 10,
+    errors: field.getErrors('fieldTwig'),
 }, "Twigfield", "monaco-editor-background-frame") }}
 
 {% set columnType %}

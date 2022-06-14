@@ -15,6 +15,7 @@ use craft\base\PreviewableFieldInterface;
 use craft\base\SortableFieldInterface;
 use craft\db\mysql\Schema;
 use craft\helpers\Db;
+use nystudio107\twigfield\validators\TwigTemplateValidator;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -70,8 +71,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
     {
         $rules = parent::rules();
         $rules = array_merge($rules, [
-            ['fieldTwig', 'string'],
-            ['fieldTwig', 'default', 'value' => ''],
+            ['fieldTwig', TwigTemplateValidator::class],
             ['columnType', 'string'],
             ['columnType', 'default', 'value' => ''],
             ['decimals', 'number'],
@@ -103,7 +103,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
 
         return $this->columnType;
     }
-	
+
 	/**
 	 * @return null|string
 	 * @throws LoaderError
@@ -137,7 +137,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
             ]
         );
     }
-	
+
 	/**
 	 * @param mixed $value
 	 * @param ElementInterface|null $element
