@@ -2,7 +2,7 @@
 	"name": "besteadfast/craft-preparse-field",
 	"description": "A fieldtype that parses Twig when an element is saved and saves the result as plain text.",
 	"type": "craft-plugin",
-	"version": "1.2.5",
+	"version": "2.0.0",
 	"keywords": [
 		"craft",
 		"cms",
@@ -28,7 +28,8 @@
 		}
 	],
 	"require": {
-		"craftcms/cms": "^3.2.0"
+		"craftcms/cms": "^4.0.0-alpha.1",
+		"php": "^8.0.2"
 	},
 	"autoload": {
 		"psr-4": {
@@ -47,5 +48,16 @@
 			"preparseFieldService": "besteadfast\\preparsefield\\services\\PreparseFieldService"
 		},
 		"class": "besteadfast\\preparsefield\\PreparseField"
+	},
+	"minimum-stability": "dev",
+	"prefer-stable": true,
+	"config": {
+		"allow-plugins": {
+			"yiisoft/yii2-composer": true,
+			"craftcms/plugin-installer": true
+		}
+	},
+	"require-dev": {
+		"craftcms/rector": "dev-main"
 	}
 }

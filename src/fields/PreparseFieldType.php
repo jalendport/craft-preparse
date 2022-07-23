@@ -66,7 +66,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
     // Public Methods
     // =========================================================================
 
-    public function rules()
+    public function rules(): array
     {
         $rules = parent::rules();
         $rules = array_merge($rules, [
@@ -95,7 +95,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
      * @return string
      * @throws Exception
      */
-    public function getContentColumnType(): string
+    public function getContentColumnType(): array|string
     {
         if ($this->columnType === Schema::TYPE_DECIMAL) {
             return Db::getNumericalColumnType(null, null, $this->decimals);
@@ -110,7 +110,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
 	 * @throws RuntimeError
 	 * @throws SyntaxError
 	 */
-    public function getSettingsHtml()
+    public function getSettingsHtml(): ?string
     {
         $columns = [
             Schema::TYPE_TEXT => Craft::t('preparse-field', 'Text (stores about 64K)'),
@@ -147,7 +147,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
 	 * @throws RuntimeError
 	 * @throws SyntaxError
 	 */
-    public function getInputHtml($value, ElementInterface $element = null): string
+    public function getInputHtml(mixed $value, ?\craft\base\ElementInterface $element = null): string
     {
         // Get our id and namespace
         $id = Craft::$app->getView()->formatInputId($this->handle);
