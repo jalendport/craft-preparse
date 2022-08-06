@@ -16,7 +16,7 @@
 
 {{ forms.textareaField( {
     label: "Twig code to parse"|t,
-    instructions: "Enter the twig code that you want to parse after the entry has been saved."|t,
+    instructions: "Enter the twig code that you want to parse after the entry has been saved.\nIf the column type is set to Date (datetime), the parsed Twig should output a date formatted as `Y-m-d H:i:s`."|t,
     id: 'fieldTwig',
     name: 'fieldTwig',
     value: field['fieldTwig'],
@@ -81,7 +81,7 @@
 
 {{ forms.field({
     label: "Display Type"|t,
-    instructions: "Select how this field is to be shown in the edit page."|t,
+    instructions: "Select how this field is to be shown in the edit page.\nIf the column type is set to Date (datetime), any other option than \"Hidden\" will render the field value in a disabled datepicker."|t,
     id: 'displayType',
 }, displayType) }}
 
