@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 1.3.0 - 2022-08-06
+### Added
+- Added datetime column type option ([#63](https://github.com/besteadfast/craft-preparse-field/pull/63) - thanks @mmikkel)
+
 ## 1.2.5 - 2021-07-02
 ### Fixed
 - Reverted [#66](https://github.com/besteadfast/craft-preparse-field/pull/66) due to bug where sometimes the element couldn't be re-fetched from the database ([#70](https://github.com/besteadfast/craft-preparse-field/issues/70), [#71](https://github.com/besteadfast/craft-preparse-field/issues/71), [#72](https://github.com/besteadfast/craft-preparse-field/issues/72), [#73](https://github.com/besteadfast/craft-preparse-field/issues/73))

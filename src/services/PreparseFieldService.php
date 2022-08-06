@@ -13,6 +13,7 @@ use besteadfast\preparsefield\fields\PreparseFieldType;
 use Craft;
 use craft\base\Component;
 use craft\base\Element;
+use craft\helpers\DateTimeHelper;
 use craft\web\View;
 use craft\db\mysql\Schema;
 use yii\base\Exception;
@@ -124,6 +125,13 @@ class PreparseFieldService extends Component
             }
 
             return number_format(trim($fieldValue), 0, '.', '');
+        } else if ($columnType === Schema::TYPE_DATETIME) {
+            $fieldValue = \trim($fieldValue);
+            if (!$fieldValue || !$date = DateTimeHelper::toDateTime($fieldValue, true)) {
+                // Return an empty string rather than null to clear out existing DateTime value (null would mean "no change")
+                return '';
+            }
+            return $date;
         }
 
         return $fieldValue;
