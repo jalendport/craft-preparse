@@ -25,16 +25,17 @@
 {% else %}
     {# Setup our field #}
     {% if displayType == 'date' %}
-        {{ forms.date({
+        {{ forms.dateTimeField({
             value: value,
-            disabled: true
+            disabled: true,
         }) }}
-        {{ forms.time({
-            value: value,
-            disabled: true
-        }) }}
+        <style>
+            #{{ namespacedId }}-field .clear-btn {
+                display: none;
+            }
+        </style>
     {% elseif displayType == 'textarea' %}
-        {{ forms.textarea( {
+        {{ forms.textarea({
             value: value,
             disabled: not field['allowSelect'],
             readonly: field['allowSelect'],
