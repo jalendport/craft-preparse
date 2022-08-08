@@ -16,6 +16,7 @@ use craft\base\Element;
 use craft\helpers\DateTimeHelper;
 use craft\web\View;
 use craft\db\mysql\Schema;
+use DateTime;
 use yii\base\Exception;
 
 /**
@@ -49,7 +50,7 @@ class PreparseFieldService extends Component
 
         if ($fieldLayout) {
             foreach ($fieldLayout->getFields() as $field) {
-                if ($field && $field instanceof PreparseFieldType) {
+                if ($field instanceof PreparseFieldType) {
                     /** @var PreparseFieldType $field */
 
                     // only get field content for the right event listener
@@ -76,7 +77,7 @@ class PreparseFieldService extends Component
 	 * @param PreparseFieldType $field
 	 * @param Element $element
 	 *
-	 * @return null|string
+	 * @return null|string|DateTime
 	 * @throws Exception
 	 */
     public function parseField(PreparseFieldType $field, Element $element)
@@ -150,7 +151,7 @@ class PreparseFieldService extends Component
 
         if ($fieldLayout) {
             foreach ($fieldLayout->getFields() as $field) {
-                if ($field && $field instanceof PreparseFieldType) {
+                if ($field instanceof PreparseFieldType) {
                     /** @var PreparseFieldType $field */
                     $parseOnMove = $field->parseOnMove;
 
