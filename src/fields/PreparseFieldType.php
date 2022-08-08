@@ -20,10 +20,12 @@ use craft\gql\types\DateTime as DateTimeType;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
 use craft\i18n\Locale;
+use GraphQL\Type\Definition\Type;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 use yii\base\Exception;
+use yii\base\InvalidConfigException;
 
 /**
  *  Preparse field type
@@ -45,15 +47,15 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
      *
      * @var string
      */
-    public $fieldTwig = '';
-    public $displayType = 'hidden';
-    public $showField = false;
-    public $columnType = Schema::TYPE_TEXT;
-    public $decimals = 0;
-    public $textareaRows = 5;
-    public $parseBeforeSave = false;
-    public $parseOnMove = false;
-    public $allowSelect = false;
+    public string $fieldTwig = '';
+    public string $displayType = 'hidden';
+    public bool $showField = false;
+    public string $columnType = Schema::TYPE_TEXT;
+    public int $decimals = 0;
+    public int $textareaRows = 5;
+    public bool $parseBeforeSave = false;
+    public bool $parseOnMove = false;
+    public bool $allowSelect = false;
 
     // Static Methods
     // =========================================================================
@@ -94,10 +96,10 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
 		]);
     }
 
-    /**
-     * @return string
-     * @throws Exception
-     */
+	/**
+	 * @return array|string
+	 * @throws Exception
+	 */
     public function getContentColumnType(): array|string
     {
         if ($this->columnType === Schema::TYPE_DECIMAL) {
@@ -111,7 +113,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
 	 * @return null|string
 	 * @throws LoaderError
 	 * @throws RuntimeError
-	 * @throws SyntaxError
+	 * @throws SyntaxError|Exception
 	 */
     public function getSettingsHtml(): ?string
     {
@@ -149,9 +151,9 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
 	 * @return string
 	 * @throws LoaderError
 	 * @throws RuntimeError
-	 * @throws SyntaxError
+	 * @throws SyntaxError|Exception
 	 */
-    public function getInputHtml(mixed $value, ?\craft\base\ElementInterface $element = null): string
+    public function getInputHtml(mixed $value, ?ElementInterface $element = null): string
     {
         // Get our id and namespace
         $id = Craft::$app->getView()->formatInputId($this->handle);
@@ -188,7 +190,8 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
 
     /**
      * @inheritdoc
-     */
+	 * @throws InvalidConfigException
+	 */
     public function getTableAttributeHtml(mixed $value, ElementInterface $element): string
     {
         if (!$value) {
@@ -202,10 +205,11 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
         return parent::getTableAttributeHtml($value, $element);
     }
 
-    /**
-     * @inheritdoc
-     */
-    public function normalizeValue(mixed $value, ?\craft\base\ElementInterface $element = null): mixed
+	/**
+	 * @inheritdoc
+	 * @throws \Exception
+	 */
+    public function normalizeValue(mixed $value, ?ElementInterface $element = null): mixed
     {
         if ($this->columnType === Schema::TYPE_DATETIME) {
             if ($value && ($date = DateTimeHelper::toDateTime($value)) !== false) {
@@ -226,15 +230,14 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
                 /** @var ElementQuery $query */
                 $query->subQuery->andWhere(Db::parseDateParam('content.' . Craft::$app->getContent()->fieldColumnPrefix . $this->handle, $value));
             }
-            return null;
         }
-        return parent::modifyElementsQuery($query, $value);
+        parent::modifyElementsQuery($query, $value);
     }
 
     /**
      * @inheritdoc
      */
-    public function getContentGqlType(): \GraphQL\Type\Definition\Type|array
+    public function getContentGqlType(): Type|array
     {
         if ($this->columnType === Schema::TYPE_DATETIME) {
             return DateTimeType::getType();

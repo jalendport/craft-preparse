@@ -9,7 +9,6 @@
 namespace besteadfast\preparsefield\services;
 
 use besteadfast\preparsefield\fields\PreparseFieldType;
-
 use Craft;
 use craft\base\Component;
 use craft\base\Element;
@@ -80,8 +79,8 @@ class PreparseFieldService extends Component
 	 * @return null|string|DateTime
 	 * @throws Exception
 	 */
-    public function parseField(PreparseFieldType $field, Element $element)
-    {
+    public function parseField(PreparseFieldType $field, Element $element): DateTime|string|null
+	{
         $fieldTwig = $field->fieldTwig;
         $columnType = $field->columnType;
         $decimals = $field->decimals;
@@ -138,13 +137,13 @@ class PreparseFieldService extends Component
         return $fieldValue;
     }
 
-    /**
-     * Checks to see if an element has a preparse field that should be saved on move
-     *
-     * @param $element
-     *
-     * @return bool
-     */
+	/**
+	 * Checks to see if an element has a preparse field that should be saved on move
+	 *
+	 * @param Element $element
+	 *
+	 * @return bool
+	 */
     public function shouldParseElementOnMove(Element $element): bool
     {
         $fieldLayout = $element->getFieldLayout();
@@ -152,8 +151,7 @@ class PreparseFieldService extends Component
         if ($fieldLayout) {
             foreach ($fieldLayout->getCustomFields() as $field) {
                 if ($field instanceof PreparseFieldType) {
-                    /** @var PreparseFieldType $field */
-                    $parseOnMove = $field->parseOnMove;
+					$parseOnMove = $field->parseOnMove;
 
                     if ($parseOnMove) {
                         return true;
