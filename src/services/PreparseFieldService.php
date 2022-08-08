@@ -49,7 +49,7 @@ class PreparseFieldService extends Component
         $fieldLayout = $element->getFieldLayout();
 
         if ($fieldLayout) {
-            foreach ($fieldLayout->getFields() as $field) {
+            foreach ($fieldLayout->getCustomFields() as $field) {
                 if ($field instanceof PreparseFieldType) {
                     /** @var PreparseFieldType $field */
 
@@ -150,7 +150,7 @@ class PreparseFieldService extends Component
         $fieldLayout = $element->getFieldLayout();
 
         if ($fieldLayout) {
-            foreach ($fieldLayout->getFields() as $field) {
+            foreach ($fieldLayout->getCustomFields() as $field) {
                 if ($field instanceof PreparseFieldType) {
                     /** @var PreparseFieldType $field */
                     $parseOnMove = $field->parseOnMove;

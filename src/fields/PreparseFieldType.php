@@ -71,7 +71,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
     // Public Methods
     // =========================================================================
 
-    public function rules()
+    public function rules(): array
     {
         $rules = parent::rules();
 		return array_merge($rules, [
@@ -98,7 +98,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
      * @return string
      * @throws Exception
      */
-    public function getContentColumnType(): string
+    public function getContentColumnType(): array|string
     {
         if ($this->columnType === Schema::TYPE_DECIMAL) {
             return Db::getNumericalColumnType(null, null, $this->decimals);
@@ -113,7 +113,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
 	 * @throws RuntimeError
 	 * @throws SyntaxError
 	 */
-    public function getSettingsHtml()
+    public function getSettingsHtml(): ?string
     {
         $columns = [
             Schema::TYPE_TEXT => Craft::t('preparse-field', 'Text (stores about 64K)'),
@@ -151,7 +151,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
 	 * @throws RuntimeError
 	 * @throws SyntaxError
 	 */
-    public function getInputHtml($value, ElementInterface $element = null): string
+    public function getInputHtml(mixed $value, ?\craft\base\ElementInterface $element = null): string
     {
         // Get our id and namespace
         $id = Craft::$app->getView()->formatInputId($this->handle);
@@ -178,7 +178,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
     /**
      * @inheritdoc
      */
-    public function getSearchKeywords($value, ElementInterface $element): string
+    public function getSearchKeywords(mixed $value, ElementInterface $element): string
     {
         if ($this->columnType === Schema::TYPE_DATETIME) {
             return '';
@@ -189,7 +189,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
     /**
      * @inheritdoc
      */
-    public function getTableAttributeHtml($value, ElementInterface $element): string
+    public function getTableAttributeHtml(mixed $value, ElementInterface $element): string
     {
         if (!$value) {
             return '';
@@ -205,7 +205,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
     /**
      * @inheritdoc
      */
-    public function normalizeValue($value, ElementInterface $element = null)
+    public function normalizeValue(mixed $value, ?\craft\base\ElementInterface $element = null): mixed
     {
         if ($this->columnType === Schema::TYPE_DATETIME) {
             if ($value && ($date = DateTimeHelper::toDateTime($value)) !== false) {
@@ -219,7 +219,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
     /**
      * @inheritdoc
      */
-    public function modifyElementsQuery(ElementQueryInterface $query, $value)
+    public function modifyElementsQuery(ElementQueryInterface $query, mixed $value): void
     {
         if ($this->columnType === Schema::TYPE_DATETIME) {
             if ($value !== null) {
@@ -234,7 +234,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
     /**
      * @inheritdoc
      */
-    public function getContentGqlType()
+    public function getContentGqlType(): \GraphQL\Type\Definition\Type|array
     {
         if ($this->columnType === Schema::TYPE_DATETIME) {
             return DateTimeType::getType();
