@@ -15,7 +15,6 @@ use craft\base\PreviewableFieldInterface;
 use craft\base\SortableFieldInterface;
 use craft\db\mysql\Schema;
 use craft\helpers\Db;
-use nystudio107\twigfield\validators\TwigTemplateValidator;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -70,25 +69,24 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
     public function rules()
     {
         $rules = parent::rules();
-        $rules = array_merge($rules, [
-            ['fieldTwig', TwigTemplateValidator::class],
-            ['columnType', 'string'],
-            ['columnType', 'default', 'value' => ''],
-            ['decimals', 'number'],
-            ['decimals', 'default', 'value' => 0],
-            ['textareaRows', 'number'],
-            ['textareaRows', 'default', 'value' => 5],
-            ['parseBeforeSave', 'boolean'],
-            ['parseBeforeSave', 'default', 'value' => false],
-            ['parseOnMove', 'boolean'],
-            ['parseOnMove', 'default', 'value' => false],
-            ['displayType', 'string'],
-            ['displayType', 'default', 'value' => 'hidden'],
-            ['allowSelect', 'boolean'],
-            ['allowSelect', 'default', 'value' => false],
-        ]);
-
-        return $rules;
+		return array_merge($rules, [
+			['fieldTwig', 'string'],
+			['fieldTwig', 'default', 'value' => ''],
+			['columnType', 'string'],
+			['columnType', 'default', 'value' => ''],
+			['decimals', 'number'],
+			['decimals', 'default', 'value' => 0],
+			['textareaRows', 'number'],
+			['textareaRows', 'default', 'value' => 5],
+			['parseBeforeSave', 'boolean'],
+			['parseBeforeSave', 'default', 'value' => false],
+			['parseOnMove', 'boolean'],
+			['parseOnMove', 'default', 'value' => false],
+			['displayType', 'string'],
+			['displayType', 'default', 'value' => 'hidden'],
+			['allowSelect', 'boolean'],
+			['allowSelect', 'default', 'value' => false],
+		]);
     }
 
     /**
