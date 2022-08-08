@@ -33,8 +33,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"besteadfast\\preparsefield\\": "src/",
-			"aelvan\\preparsefield\\": "src_legacy/"
+			"besteadfast\\preparsefield\\": "src/"
 		}
 	},
 	"extra": {

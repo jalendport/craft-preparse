@@ -242,5 +242,3 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
         return parent::getContentGqlType();
     }
 }
-
-class_alias(PreparseFieldType::class, \aelvan\preparsefield\fields\PreparseFieldType::class);
