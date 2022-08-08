@@ -1,6 +1,6 @@
 <?php
 /**
- * Preparse Field plugin for Craft CMS 3.x
+ * Preparse Field plugin for Craft CMS 4.x
  *
  * @link      https://www.steadfastdesignfirm.com/
  * @copyright Copyright (c) Steadfast Design Firm
