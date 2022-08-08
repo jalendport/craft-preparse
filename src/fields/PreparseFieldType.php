@@ -74,26 +74,24 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
     public function rules()
     {
         $rules = parent::rules();
-        $rules = array_merge($rules, [
-            ['fieldTwig', 'string'],
-            ['fieldTwig', 'default', 'value' => ''],
-            ['columnType', 'string'],
-            ['columnType', 'default', 'value' => ''],
-            ['decimals', 'number'],
-            ['decimals', 'default', 'value' => 0],
-            ['textareaRows', 'number'],
-            ['textareaRows', 'default', 'value' => 5],
-            ['parseBeforeSave', 'boolean'],
-            ['parseBeforeSave', 'default', 'value' => false],
-            ['parseOnMove', 'boolean'],
-            ['parseOnMove', 'default', 'value' => false],
-            ['displayType', 'string'],
-            ['displayType', 'default', 'value' => 'hidden'],
-            ['allowSelect', 'boolean'],
-            ['allowSelect', 'default', 'value' => false],
-        ]);
-
-        return $rules;
+		return array_merge($rules, [
+			['fieldTwig', 'string'],
+			['fieldTwig', 'default', 'value' => ''],
+			['columnType', 'string'],
+			['columnType', 'default', 'value' => ''],
+			['decimals', 'number'],
+			['decimals', 'default', 'value' => 0],
+			['textareaRows', 'number'],
+			['textareaRows', 'default', 'value' => 5],
+			['parseBeforeSave', 'boolean'],
+			['parseBeforeSave', 'default', 'value' => false],
+			['parseOnMove', 'boolean'],
+			['parseOnMove', 'default', 'value' => false],
+			['displayType', 'string'],
+			['displayType', 'default', 'value' => 'hidden'],
+			['allowSelect', 'boolean'],
+			['allowSelect', 'default', 'value' => false],
+		]);
     }
 
     /**
@@ -108,7 +106,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
 
         return $this->columnType;
     }
-	
+
 	/**
 	 * @return null|string
 	 * @throws LoaderError
@@ -143,7 +141,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
             ]
         );
     }
-	
+
 	/**
 	 * @param mixed $value
 	 * @param ElementInterface|null $element
