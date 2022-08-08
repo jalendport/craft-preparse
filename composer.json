@@ -28,7 +28,7 @@
 		}
 	],
 	"require": {
-		"craftcms/cms": "^3.2.0",
+		"craftcms/cms": "^4.0.0",
 		"nystudio107/craft-twigfield": "^1.0.0"
 	},
 	"autoload": {
