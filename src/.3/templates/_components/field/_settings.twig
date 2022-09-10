@@ -1,0 +1,62 @@
+{% import "_includes/forms" as forms %}
+{% import "twigfield/twigfield" as twigfield %}
+
+{{ twigfield.textareaField( {
+    label: "Twig code to parse"|t,
+    instructions: "Enter the twig code that you want to parse after the entry has been saved.\nIf the column type is set to Date (datetime), the parsed Twig should output a date formatted as `Y-m-d H:i:s`."|t,
+    id: 'fieldTwig',
+    name: 'fieldTwig',
+    value: field['fieldTwig'],
+    class: 'code',
+    rows: 10,
+}, "Twigfield", "monaco-editor-background-frame") }}
+
+{% set columnType %}
+    {{ forms.select({
+        id: 'columnType',
+        name: 'columnType',
+        options: columns,
+        value: field['columnType'],
+    }) }}
+{% endset %}
+
+{# TODO: Translate. #}
+{{ forms.field({
+    label: "Column Type",
+    instructions: "The underlying database column type to use when saving content.",
+    id: 'columnType',
+    warning: (existing ? "Changing this may result in data loss." | t),
+}, columnType) }}
+
+{# TODO: Translate. #}
+{{ forms.textField({
+    label: 'Decimals',
+    instructions: "Only relevant if the column type is Number (float).",
+    id: 'decimals',
+    name: 'decimals',
+    size: 2,
+    maxlength: 2,
+    value: field['decimals']
+}) }}
+
+{# TODO: Translate. #}
+{{ forms.lightswitchField({
+    label: "Hide field",
+    instructions: "Whether to visually hide the field in the edit layout.",
+    id: 'hideField',
+    name: 'hideField',
+    on: field['hideField'],
+    onLabel: "Hide" | t,
+    offLabel: "Show" | t
+}) }}
+
+{# TODO: Translate. #}
+{{ forms.lightswitchField({
+    label: "Parse on Structure Move",
+    instructions: "Whether to refresh the value when the element is moved in a structure. (Useful if you use `.parent()` or structure-related code in your template.",
+    id: 'parseOnMove',
+    name: 'parseOnMove',
+    on: field['parseOnMove'],
+    onLabel: "Yes"|t,
+    offLabel: "no"|t
+}) }}

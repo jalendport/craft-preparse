@@ -1,214 +1,204 @@
 <?php
-/**
- * Preparse Field plugin for Craft CMS 4.x
- *
- * @link      https://www.steadfastdesignfirm.com/
- * @copyright Copyright (c) Steadfast Design Firm
- */
+namespace jalendport\Preparse;
 
-namespace besteadfast\preparsefield;
-
-use besteadfast\preparsefield\fields\PreparseFieldType;
-use besteadfast\preparsefield\services\PreparseFieldService as PreparseFieldServiceService;
 use Craft;
-use craft\base\Element;
-use craft\base\Plugin;
-use craft\elements\Asset;
-use craft\events\ElementEvent;
-use craft\events\ModelEvent;
-use craft\events\MoveElementEvent;
-use craft\helpers\FileHelper;
-use craft\services\Elements;
-use craft\services\Fields;
-use craft\events\RegisterComponentTypesEvent;
-use craft\services\Structures;
-use craft\web\UploadedFile;
-use Exception;
-use yii\base\Event;
+use craft\base\ElementInterface;
+use craft\base\Field;
+use craft\base\PreviewableFieldInterface;
+use craft\base\SortableFieldInterface;
+use craft\db\mysql\Schema;
+use craft\elements\db\ElementQuery;
+use craft\elements\db\ElementQueryInterface;
+use craft\helpers\DateTimeHelper;
+use craft\gql\types\DateTime as GqlDateTimeType;
+use craft\helpers\Db;
+use GraphQL\Type\Definition\Type;
 
-/**
- * Preparse field plugin
- *
- * @author    Steadfast Design Firm
- * @package   PreparseField
- * @since     1.0.0
- *
- * @property  PreparseFieldServiceService $preparseFieldService
- */
-class PreparseField extends Plugin
+class PreparseField extends Field implements PreviewableFieldInterface, SortableFieldInterface
 {
-    /**
-     * Static property that is an instance of this plugin class so that it can be accessed via
-     * PreparseField::$plugin
-     *
-     * @var PreparseField
-     */
-    public static PreparseField $plugin;
 
-    /**
-     * Stores the IDs of elements we already preparsed the fields for.
-     *
-     * @var array
-     */
-    public array $preparsedElements;
+	public string $columnType = Schema::TYPE_TEXT;
+	public int $decimals = 0;
+	public string $fieldTwig = '';
+	public bool $hideField = false;
+	public bool $parseOnMove = false;
 
-    /**
-     *  Plugin init method
-     */
-    public function init()
-    {
-        parent::init();
-        self::$plugin = $this;
+	/**
+	 * @deprecated
+	 */
+	public bool $allowSelect = false;
 
-        $this->preparsedElements = [
-            'onBeforeSave' => [],
-            'onPropagate' => [],
-            'onMoveElement' => [],
-        ];
+	/**
+	 * @deprecated
+	 */
+	public string $displayType = 'hidden';
 
-        // Register our fields
-        Event::on(
-            Fields::class,
-            Fields::EVENT_REGISTER_FIELD_TYPES,
-            static function (RegisterComponentTypesEvent $event) {
-                $event->types[] = PreparseFieldType::class;
-            }
-        );
+	/**
+	 * @deprecated
+	 */
+	public bool $parseBeforeSave = false;
 
-        // Before save element event handler
-        Event::on(
-            Elements::class,
-            Elements::EVENT_BEFORE_SAVE_ELEMENT,
-            function (ElementEvent $event) {
-                if ($event->element->getIsRevision()) {
-                    return;
-                }
+	/**
+	 * @deprecated
+	 */
+	public bool $showField = false;
 
-                /** @var Element $element */
-                $element = $event->element;
-                $key = $element->id . '__' . $element->siteId;
+	/**
+	 * @deprecated
+	 */
+	public int $textareaRows = 5;
 
-                if (!isset($this->preparsedElements['onBeforeSave'][$key])) {
-                    $this->preparsedElements['onBeforeSave'][$key] = true;
 
-                    $content = self::$plugin->preparseFieldService->getPreparseFieldsContent($element, 'onBeforeSave');
+	// TODO
+	public function getContentColumnType(): array|string
+	{
+		if ($this->columnType === Schema::TYPE_DECIMAL) {
+			return Db::getNumericalColumnType(null, null, $this->decimals);
+		}
 
-                    if (!empty($content)) {
-                        $this->resetUploads();
-                        $element->setFieldValues($content);
-                    }
+		return $this->columnType;
+	}
 
-                    unset($this->preparsedElements['onBeforeSave'][$key]);
-                }
-            }
-        );
+	// TODO
+	public function getContentGqlType(): Type|array
+	{
+		return match ($this->columnType) {
+			Schema::TYPE_DATETIME => GqlDateTimeType::getType(),
+			default => parent::getContentGqlType(),
+		};
+	}
 
-        // After propagate element event handler
-        Event::on(
-            Element::class,
-            Element::EVENT_AFTER_PROPAGATE,
-            function (ModelEvent $event) {
-                /** @var Element $element */
-                $element = $event->sender;
+	// TODO
+	public function getInputHtml(mixed $value, ?ElementInterface $element = null): string
+	{
+		// Get our id and namespace
+		$id = Craft::$app->getView()->formatInputId($this->handle);
+		$namespacedId = Craft::$app->getView()->namespaceInputId($id);
 
-                if ($element->getIsRevision()) {
-                    return;
-                }
+		// Render the input template
+		$displayType = $this->displayType;
+		if ($displayType !== 'hidden' && $this->columnType === Schema::TYPE_DATETIME) {
+			$displayType = 'date';
+		}
+		return Craft::$app->getView()->renderTemplate(
+			'preparse-field/_components/field/_input',
+			[
+				'name' => $this->handle,
+				'value' => $value,
+				'field' => $this,
+				'id' => $id,
+				'namespacedId' => $namespacedId,
+				'displayType' => $displayType,
+			]
+		);
+	}
 
-                $key = $element->id . '__' . $element->siteId;
-                    
-                if (!isset($this->preparsedElements['onPropagate'][$key])) {
-                    $this->preparsedElements['onPropagate'][$key] = true;
+	// TODO
+	public function getSearchKeywords(mixed $value, ElementInterface $element): string
+	{
+		if ($this->columnType === Schema::TYPE_DATETIME) {
+			return '';
+		}
+		return parent::getSearchKeywords($value, $element);
+	}
 
-                    $content = self::$plugin->preparseFieldService->getPreparseFieldsContent($element, 'onPropagate');
+	// TODO
+	public function getSettingsHtml(): string
+	{
+		$columns = [
+			Schema::TYPE_TEXT => "text (~64KB)",
+			Schema::TYPE_MEDIUMTEXT => "mediumtext (~16MB)",
+			Schema::TYPE_STRING => "string (255B)",
+			Schema::TYPE_INTEGER => "integer",
+			Schema::TYPE_DECIMAL => "decimal",
+			Schema::TYPE_FLOAT => "float",
+			Schema::TYPE_DATETIME => "datetime",
+		];
 
-                    if (!empty($content)) {
-                        $this->resetUploads();
+		// TODO
+		$displayTypes = [
+			'hidden' => 'Hidden',
+			'textinput' => 'Text input',
+			'textarea' => 'Textarea',
+		];
 
-                        if ($element instanceof Asset) {
-                            $element->setScenario(Element::SCENARIO_DEFAULT);
-                        }
+		// TODO
+		return Craft::$app->getView()->renderTemplate(
+			'preparse-field/_components/field/_settings',
+			[
+				'field' => $this,
+				'columns' => $columns,
+				'displayTypes' => $displayTypes,
+				'existing' => $this->id !== null,
+			]
+		);
+	}
 
-                        $element->setFieldValues($content);
-                        $success = Craft::$app->elements->saveElement($element, true, false);
+	// TODO
+	public function getTableAttributeHtml(mixed $value, ElementInterface $element): string
+	{
+		if (!$value) {
+			return '';
+		}
 
-                        // if no success, log error
-                        if (!$success) {
-                            Craft::error('Couldn’t save element with id “' . $element->id . '”', __METHOD__);
-                        }
-                    }
+		if ($this->columnType === Schema::TYPE_DATETIME) {
+			return Craft::$app->getFormatter()->asDatetime($value, Locale::LENGTH_SHORT);
+		}
 
-                    unset($this->preparsedElements['onPropagate'][$key]);
-                }
-            }
-        );
+		return parent::getTableAttributeHtml($value, $element);
+	}
 
-        // After move element event handler
-        Event::on(
-            Structures::class,
-            Structures::EVENT_AFTER_MOVE_ELEMENT,
-            function (MoveElementEvent $event) {
-                /** @var Element $element */
-                $element = $event->element;
-                $key = $element->id . '__' . $element->siteId;
+	// TODO
+	public function modifyElementsQuery(ElementQueryInterface $query, mixed $value): void
+	{
+		if ($this->columnType === Schema::TYPE_DATETIME) {
+			if ($value !== null) {
+				/** @var ElementQuery $query */
+				$query->subQuery->andWhere(Db::parseDateParam('content.' . Craft::$app->getContent()->fieldColumnPrefix . $this->handle, $value));
+			}
+		}
+		parent::modifyElementsQuery($query, $value);
+	}
 
-                if (self::$plugin->preparseFieldService->shouldParseElementOnMove($element) && !isset($this->preparsedElements['onMoveElement'][$key])) {
-                    $this->preparsedElements['onMoveElement'][$key] = true;
+	// TODO
+	public function normalizeValue(mixed $value, ?ElementInterface $element = null): mixed
+	{
+		if ($this->columnType === Schema::TYPE_DATETIME) {
+			if ($value && ($date = DateTimeHelper::toDateTime($value)) !== false) {
+				return $date;
+			}
+			return null;
+		}
+		return parent::normalizeValue($value, $element);
+	}
 
-                    if ($element instanceof Asset) {
-                        $element->setScenario(Element::SCENARIO_DEFAULT);
-                    }
+	// TODO
+	public function rules(): array
+	{
 
-                    $success = Craft::$app->getElements()->saveElement($element, true, false);
+		$rules = parent::rules();
 
-                    // if no success, log error
-                    if (!$success) {
-                        Craft::error('Couldn’t move element with id “' . $element->id . '”', __METHOD__);
-                    }
+		return $rules + [
+				['fieldTwig', 'string'],
+				['columnType', 'string'],
+				['decimals', 'number'],
+				['parseOnMove', 'boolean'],
+			];
 
-                    unset($this->preparsedElements['onMoveElement'][$key]);
-                }
-            }
-        );
-    }
+	}
 
-    /**
-     * @param $msg
-     * @param string $level
-     * @param string $file
-     */
-    public static function log($msg, string $level = 'notice', string $file = 'Preparse')
-    {
-        try
-        {
-            $file = Craft::getAlias('@storage/logs/' . $file . '.log');
-            $log = "\n" . date('Y-m-d H:i:s') . " [{$level}]" . "\n" . print_r($msg, true);
-            FileHelper::writeToFile($file, $log, ['append' => true]);
-        }
-        catch(Exception $e)
-        {
-            Craft::error($e->getMessage());
-        }
-    }
+	/*
+	 * Statics
+	 */
 
-    /**
-     * @param $msg
-     * @param string $level
-     * @param string $file
-     */
-    public static function error($msg, string $level = 'error', string $file = 'Preparse')
-    {
-        static::log($msg, $level, $file);
-    }
+	public static function displayName(): string
+	{
+		return "Preparse";
+	}
 
-    /**
-     * Fix file uploads being processed twice by craft, which causes an error.
-     *
-     * @see https://github.com/besteadfast/craft-preparse-field/issues/23#issuecomment-284682292
-     */
-    private function resetUploads()
-    {
-        $_FILES = [];
-        UploadedFile::reset();
-    }
+	public static function hasContentColumn(): bool
+	{
+		return false;
+	}
+
 }

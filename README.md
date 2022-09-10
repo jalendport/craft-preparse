@@ -1,24 +1,37 @@
-# Preparse Field for Craft
+# Preparse
 
-A fieldtype that parses Twig when an element is saved and saves the result as plain text.
+_a plugin for Craft CMS_
+
+Created by [André Elvan](https://www.vaersaagod.no).
+Updated and maintained by [Jalen Davenport](https://jalendport.com) & [Michael Rog](https://michaelrog.com).
+
+* * *
+
+## tl:dr
+
+The Preparse field renders a Twig template on element save and stashes the result in your field content.
+
+This way, you can precompute complex derivative values, making them available when querying, filtering, sorting, or rendering your elements.
+
 
 ## Requirements
 
-This plugin requires Craft CMS 4.0.0 or later and PHP 8.0.2 or later.
+Preparse 4.x requires Craft CMS 4.0+ and PHP 8.0+.
 
 ## Installation
 
-To install the plugin, follow these instructions.
+1. From your project directory, use Composer to require the plugin package:
 
-1. Open your terminal and go to your Craft project:
+   ```
+   composer require jalendport/craft-preparse-field
+   ```
 
-        cd /path/to/project
+2. In the Control Panel, go to Settings → Plugins and click the “Install” button for Preparse.
 
-2. Then tell Composer to load the plugin:
+3. There is no Step 3.
 
-        composer require besteadfast/craft-preparse-field
+_Preparse is also available for installation via the Craft CMS Plugin Store._
 
-3. In the Control Panel, go to Settings → Plugins and click the “Install” button for Preparse Field.
 
 ## Usage
 

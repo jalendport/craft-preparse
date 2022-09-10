@@ -1,0 +1,39 @@
+{# TODO #}
+
+{% import "_includes/forms" as forms %}
+
+{% set displayType = displayType ?? 'hidden' %}
+
+{% if displayType == 'hidden' %}
+    <style>
+        #{{ namespacedId }}-field {
+            display: none;
+        }
+    </style>
+{% else %}
+    {# Setup our field #}
+    {% if displayType == 'date' %}
+        {{ forms.dateTimeField({
+            value: value,
+            disabled: true,
+        }) }}
+        <style>
+            #{{ namespacedId }}-field .clear-btn {
+                display: none;
+            }
+        </style>
+    {% elseif displayType == 'textarea' %}
+        {{ forms.textarea({
+            value: value,
+            disabled: not field['allowSelect'],
+            readonly: field['allowSelect'],
+            rows: field['textareaRows']
+        }) }}
+    {% else %}
+        {{ forms.text({
+            value: value,
+            disabled: not field['allowSelect'],
+            readonly: field['allowSelect']
+        }) }}
+    {% endif %}
+{% endif %}

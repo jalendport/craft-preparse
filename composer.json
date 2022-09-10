@@ -1,8 +1,8 @@
 {
-	"name": "besteadfast/craft-preparse-field",
-	"description": "A fieldtype that parses Twig when an element is saved and saves the result as plain text.",
+	"name": "jalendport/craft-preparse-field",
+	"description": "A fieldtype to render and stash a preparsed value (from a Twig expression) after element save.",
 	"type": "craft-plugin",
-	"version": "2.0.0",
+	"version": "4.0.0",
 	"keywords": [
 		"craft",
 		"cms",
@@ -16,11 +16,15 @@
 		"docs": "https://github.com/besteadfast/craft-preparse-field/blob/master/README.md",
 		"issues": "https://github.com/besteadfast/craft-preparse-field/issues"
 	},
-	"license": "MIT",
+	"license": "proprietary",
 	"authors": [
 		{
-			"name": "Steadfast Design Firm",
-			"homepage": "https://www.steadfastdesignfirm.com/"
+			"name": "Jalen Davenport",
+			"homepage": "https://jalendport.com"
+		},
+		{
+			"name": "Michael Rog",
+			"homepage": "https://michaelrog.com"
 		},
 		{
 			"name": "André Elvan",
@@ -28,25 +32,18 @@
 		}
 	],
 	"require": {
-		"craftcms/cms": "^4.0.0",
-		"nystudio107/craft-twigfield": "^1.0.0",
+		"craftcms/cms": "^4.0",
+		"nystudio107/craft-twigfield": "^1.0",
 		"php": "^8.0.2"
 	},
 	"autoload": {
 		"psr-4": {
-			"besteadfast\\preparsefield\\": "src/"
+			"jalendport\\Preparse\\": "src/"
 		}
 	},
 	"extra": {
-		"name": "Preparse Field",
+		"name": "Preparse",
 		"handle": "preparse-field",
-		"schemaVersion": "1.0.5",
-		"hasCpSettings": false,
-		"hasCpSection": false,
-		"changelogUrl": "https://github.com/besteadfast/craft-preparse-field/blob/master/CHANGELOG.md",
-		"components": {
-			"preparseFieldService": "besteadfast\\preparsefield\\services\\PreparseFieldService"
-		},
-		"class": "besteadfast\\preparsefield\\PreparseField"
+		"class": "jalendport\\Preparse\\Preparse"
 	}
 }

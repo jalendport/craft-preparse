@@ -4,18 +4,19 @@ namespace besteadfast\preparsefield\migrations;
 
 use besteadfast\preparsefield\fields\PreparseFieldType;
 use craft\db\Migration;
+use craft\records\Field;
 
 /**
- * m190226_225259_craft3 migration.
+ * Updates field instances to use the new field type class.
  */
-class m190226_225259_craft3 extends Migration
+class m220909_000000_craft4 extends Migration
 {
     /**
      * @inheritdoc
      */
     public function safeUp()
     {
-        $this->update('{{%fields}}', ['type' => PreparseFieldType::class], ['type' => 'PreparseField_Preparse']);
+        $this->update(Field::tableName(), ['type' => PreparseFieldType::class], ['type' => 'PreparseField_Preparse']);
     }
 
     /**
