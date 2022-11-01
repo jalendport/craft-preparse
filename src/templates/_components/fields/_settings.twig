@@ -13,9 +13,14 @@
 #}
 
 {% import "_includes/forms" as forms %}
-{% import "twigfield/twigfield" as twigfield %}
+{% import "codeeditor/codeEditor" as codeEditor %}
 
-{{ twigfield.textareaField( {
+{% set monacoOptions = {
+} %}
+{% set codeEditorOptions = {
+    wrapperClass:"monaco-editor-background-frame"
+} %}
+{{ codeEditor.textareaField( {
     label: "Twig code to parse"|t,
     instructions: "Enter the twig code that you want to parse after the entry has been saved.\nIf the column type is set to Date (datetime), the parsed Twig should output a date formatted as `Y-m-d H:i:s`."|t,
     id: 'fieldTwig',
@@ -23,7 +28,7 @@
     value: field['fieldTwig'],
     class: 'code',
     rows: 10,
-}, "Twigfield", "monaco-editor-background-frame") }}
+}, "CodeField", monacoOptions, codeEditorOptions) }}
 
 {% set columnType %}
     {{ forms.select({
