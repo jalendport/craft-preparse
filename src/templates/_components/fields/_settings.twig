@@ -20,7 +20,7 @@
 {% set codeEditorOptions = {
     wrapperClass:"monaco-editor-background-frame"
 } %}
-{{ twigfield.textareaField( {
+{{ codeEditor.textareaField( {
     label: "Twig code to parse"|t,
     instructions: "Enter the twig code that you want to parse after the entry has been saved.\nIf the column type is set to Date (datetime), the parsed Twig should output a date formatted as `Y-m-d H:i:s`."|t,
     id: 'fieldTwig',
