@@ -225,12 +225,12 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
      */
     public function modifyElementsQuery(ElementQueryInterface $query, mixed $value): void
     {
-        if ($this->columnType === Schema::TYPE_DATETIME) {
-            if ($value !== null) {
-                /** @var ElementQuery $query */
-                $query->subQuery->andWhere(Db::parseDateParam('content.' . Craft::$app->getContent()->fieldColumnPrefix . $this->handle, $value));
-            }
-        }
+        // if ($this->columnType === Schema::TYPE_DATETIME) {
+        //     if ($value !== null) {
+        //         /** @var ElementQuery $query */
+        //         $query->subQuery->andWhere(Db::parseDateParam('content.' . Craft::$app->getContent()->fieldColumnPrefix . $this->handle, $value));
+        //     }
+        // }
         parent::modifyElementsQuery($query, $value);
     }
 
