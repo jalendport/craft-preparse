@@ -1,6 +1,6 @@
 <?php
 /**
- * Preparse Field plugin for Craft CMS 3.x
+ * Preparse Field plugin for Craft CMS 4.x
  *
  * @link      https://www.steadfastdesignfirm.com/
  * @copyright Copyright (c) Steadfast Design Firm
@@ -14,11 +14,18 @@ use craft\base\Field;
 use craft\base\PreviewableFieldInterface;
 use craft\base\SortableFieldInterface;
 use craft\db\mysql\Schema;
+use craft\elements\db\ElementQuery;
+use craft\elements\db\ElementQueryInterface;
+use craft\gql\types\DateTime as DateTimeType;
+use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
+use craft\i18n\Locale;
+use GraphQL\Type\Definition\Type;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
 use yii\base\Exception;
+use yii\base\InvalidConfigException;
 
 /**
  *  Preparse field type
@@ -40,15 +47,15 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
      *
      * @var string
      */
-    public $fieldTwig = '';
-    public $displayType = 'hidden';
-    public $showField = false;
-    public $columnType = Schema::TYPE_TEXT;
-    public $decimals = 0;
-    public $textareaRows = 5;
-    public $parseBeforeSave = false;
-    public $parseOnMove = false;
-    public $allowSelect = false;
+    public string $fieldTwig = '';
+    public string $displayType = 'hidden';
+    public bool $showField = false;
+    public string $columnType = Schema::TYPE_TEXT;
+    public int $decimals = 0;
+    public int $textareaRows = 5;
+    public bool $parseBeforeSave = false;
+    public bool $parseOnMove = false;
+    public bool $allowSelect = false;
 
     // Static Methods
     // =========================================================================
@@ -66,36 +73,34 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
     // Public Methods
     // =========================================================================
 
-    public function rules()
+    public function rules(): array
     {
         $rules = parent::rules();
-        $rules = array_merge($rules, [
-            ['fieldTwig', 'string'],
-            ['fieldTwig', 'default', 'value' => ''],
-            ['columnType', 'string'],
-            ['columnType', 'default', 'value' => ''],
-            ['decimals', 'number'],
-            ['decimals', 'default', 'value' => 0],
-            ['textareaRows', 'number'],
-            ['textareaRows', 'default', 'value' => 5],
-            ['parseBeforeSave', 'boolean'],
-            ['parseBeforeSave', 'default', 'value' => false],
-            ['parseOnMove', 'boolean'],
-            ['parseOnMove', 'default', 'value' => false],
-            ['displayType', 'string'],
-            ['displayType', 'default', 'value' => 'hidden'],
-            ['allowSelect', 'boolean'],
-            ['allowSelect', 'default', 'value' => false],
-        ]);
-
-        return $rules;
+		return array_merge($rules, [
+			['fieldTwig', 'string'],
+			['fieldTwig', 'default', 'value' => ''],
+			['columnType', 'string'],
+			['columnType', 'default', 'value' => ''],
+			['decimals', 'number'],
+			['decimals', 'default', 'value' => 0],
+			['textareaRows', 'number'],
+			['textareaRows', 'default', 'value' => 5],
+			['parseBeforeSave', 'boolean'],
+			['parseBeforeSave', 'default', 'value' => false],
+			['parseOnMove', 'boolean'],
+			['parseOnMove', 'default', 'value' => false],
+			['displayType', 'string'],
+			['displayType', 'default', 'value' => 'hidden'],
+			['allowSelect', 'boolean'],
+			['allowSelect', 'default', 'value' => false],
+		]);
     }
 
-    /**
-     * @return string
-     * @throws Exception
-     */
-    public function getContentColumnType(): string
+	/**
+	 * @return array|string
+	 * @throws Exception
+	 */
+    public function getContentColumnType(): array|string
     {
         if ($this->columnType === Schema::TYPE_DECIMAL) {
             return Db::getNumericalColumnType(null, null, $this->decimals);
@@ -103,14 +108,14 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
 
         return $this->columnType;
     }
-	
+
 	/**
 	 * @return null|string
 	 * @throws LoaderError
 	 * @throws RuntimeError
-	 * @throws SyntaxError
+	 * @throws SyntaxError|Exception
 	 */
-    public function getSettingsHtml()
+    public function getSettingsHtml(): ?string
     {
         $columns = [
             Schema::TYPE_TEXT => Craft::t('preparse-field', 'Text (stores about 64K)'),
@@ -118,6 +123,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
             Schema::TYPE_INTEGER => Craft::t('preparse-field', 'Number (integer)'),
             Schema::TYPE_DECIMAL => Craft::t('preparse-field', 'Number (decimal)'),
             Schema::TYPE_FLOAT => Craft::t('preparse-field', 'Number (float)'),
+            Schema::TYPE_DATETIME => Craft::t('preparse-field', 'Date (datetime)'),
             Schema::TYPE_JSON => Craft::t('preparse-field', 'JSON'),
         ];
 
@@ -138,7 +144,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
             ]
         );
     }
-	
+
 	/**
 	 * @param mixed $value
 	 * @param ElementInterface|null $element
@@ -146,15 +152,19 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
 	 * @return string
 	 * @throws LoaderError
 	 * @throws RuntimeError
-	 * @throws SyntaxError
+	 * @throws SyntaxError|Exception
 	 */
-    public function getInputHtml($value, ElementInterface $element = null): string
+    public function getInputHtml(mixed $value, ?ElementInterface $element = null): string
     {
         // Get our id and namespace
         $id = Craft::$app->getView()->formatInputId($this->handle);
         $namespacedId = Craft::$app->getView()->namespaceInputId($id);
 
         // Render the input template
+        $displayType = $this->displayType;
+        if ($displayType !== 'hidden' && $this->columnType === Schema::TYPE_DATETIME) {
+            $displayType = 'date';
+        }
         return Craft::$app->getView()->renderTemplate(
             'preparse-field/_components/fields/_input',
             [
@@ -163,9 +173,76 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
                 'field' => $this,
                 'id' => $id,
                 'namespacedId' => $namespacedId,
+                'displayType' => $displayType,
             ]
         );
     }
-}
 
-class_alias(PreparseFieldType::class, \aelvan\preparsefield\fields\PreparseFieldType::class);
+    /**
+     * @inheritdoc
+     */
+    public function getSearchKeywords(mixed $value, ElementInterface $element): string
+    {
+        if ($this->columnType === Schema::TYPE_DATETIME) {
+            return '';
+        }
+        return parent::getSearchKeywords($value, $element);
+    }
+
+    /**
+     * @inheritdoc
+	 * @throws InvalidConfigException
+	 */
+    public function getTableAttributeHtml(mixed $value, ElementInterface $element): string
+    {
+        if (!$value) {
+            return '';
+        }
+
+        if ($this->columnType === Schema::TYPE_DATETIME) {
+            return Craft::$app->getFormatter()->asDatetime($value, Locale::LENGTH_SHORT);
+        }
+
+        return parent::getTableAttributeHtml($value, $element);
+    }
+
+	/**
+	 * @inheritdoc
+	 * @throws \Exception
+	 */
+    public function normalizeValue(mixed $value, ?ElementInterface $element = null): mixed
+    {
+        if ($this->columnType === Schema::TYPE_DATETIME) {
+            if ($value && ($date = DateTimeHelper::toDateTime($value)) !== false) {
+                return $date;
+            }
+            return null;
+        }
+        return parent::normalizeValue($value, $element);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function modifyElementsQuery(ElementQueryInterface $query, mixed $value): void
+    {
+        if ($this->columnType === Schema::TYPE_DATETIME) {
+            if ($value !== null) {
+                /** @var ElementQuery $query */
+                $query->subQuery->andWhere(Db::parseDateParam('content.' . Craft::$app->getContent()->fieldColumnPrefix . $this->handle, $value));
+            }
+        }
+        parent::modifyElementsQuery($query, $value);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getContentGqlType(): Type|array
+    {
+        if ($this->columnType === Schema::TYPE_DATETIME) {
+            return DateTimeType::getType();
+        }
+        return parent::getContentGqlType();
+    }
+}

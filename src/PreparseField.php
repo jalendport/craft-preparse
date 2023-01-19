@@ -1,6 +1,6 @@
 <?php
 /**
- * Preparse Field plugin for Craft CMS 3.x
+ * Preparse Field plugin for Craft CMS 4.x
  *
  * @link      https://www.steadfastdesignfirm.com/
  * @copyright Copyright (c) Steadfast Design Firm
@@ -10,7 +10,6 @@ namespace besteadfast\preparsefield;
 
 use besteadfast\preparsefield\fields\PreparseFieldType;
 use besteadfast\preparsefield\services\PreparseFieldService as PreparseFieldServiceService;
-
 use Craft;
 use craft\base\Element;
 use craft\base\Plugin;
@@ -22,9 +21,9 @@ use craft\helpers\FileHelper;
 use craft\services\Elements;
 use craft\services\Fields;
 use craft\events\RegisterComponentTypesEvent;
-
 use craft\services\Structures;
 use craft\web\UploadedFile;
+use Exception;
 use yii\base\Event;
 
 /**
@@ -44,14 +43,14 @@ class PreparseField extends Plugin
      *
      * @var PreparseField
      */
-    public static $plugin;
+    public static PreparseField $plugin;
 
     /**
      * Stores the IDs of elements we already preparsed the fields for.
      *
      * @var array
      */
-    public $preparsedElements;
+    public array $preparsedElements;
 
     /**
      *  Plugin init method
@@ -178,7 +177,7 @@ class PreparseField extends Plugin
      * @param string $level
      * @param string $file
      */
-    public static function log($msg, $level = 'notice', $file = 'Preparse')
+    public static function log($msg, string $level = 'notice', string $file = 'Preparse')
     {
         try
         {
@@ -186,7 +185,7 @@ class PreparseField extends Plugin
             $log = "\n" . date('Y-m-d H:i:s') . " [{$level}]" . "\n" . print_r($msg, true);
             FileHelper::writeToFile($file, $log, ['append' => true]);
         }
-        catch(\Exception $e)
+        catch(Exception $e)
         {
             Craft::error($e->getMessage());
         }
@@ -197,7 +196,7 @@ class PreparseField extends Plugin
      * @param string $level
      * @param string $file
      */
-    public static function error($msg, $level = 'error', $file = 'RecurringOrders')
+    public static function error($msg, string $level = 'error', string $file = 'Preparse')
     {
         static::log($msg, $level, $file);
     }

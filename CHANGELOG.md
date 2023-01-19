@@ -4,6 +4,30 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.0.2 - 2022-12-05
+### Fixed
+- Updated reference to Twigfield
+
+## 2.0.1 - 2022-12-02
+### Changed
+- Updated to use craft-code-editor instead of craft-twigfield ([#87](https://github.com/besteadfast/craft-preparse-field/pull/87) - thanks @khalwat)
+
+## 2.0.0 - 2022-08-08
+### Added
+- Initial Craft 4 release
+
+## 1.4.1 - 2022-12-02
+### Changed
+- Updated to use craft-code-editor instead of craft-twigfield ([#86](https://github.com/besteadfast/craft-preparse-field/pull/86) - thanks @khalwat)
+
+## 1.4.0 - 2022-08-08
+### Added
+- Added support for craft-twigfield ([#81](https://github.com/besteadfast/craft-preparse-field/pull/81) - thanks @khalwat)
+
+## 1.3.0 - 2022-08-06
+### Added
+- Added datetime column type option ([#63](https://github.com/besteadfast/craft-preparse-field/pull/63) - thanks @mmikkel)
+
 ## 1.2.5 - 2021-07-02
 ### Fixed
 - Reverted [#66](https://github.com/besteadfast/craft-preparse-field/pull/66) due to bug where sometimes the element couldn't be re-fetched from the database ([#70](https://github.com/besteadfast/craft-preparse-field/issues/70), [#71](https://github.com/besteadfast/craft-preparse-field/issues/71), [#72](https://github.com/besteadfast/craft-preparse-field/issues/72), [#73](https://github.com/besteadfast/craft-preparse-field/issues/73))

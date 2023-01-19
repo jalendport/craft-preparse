@@ -1,6 +1,6 @@
 <?php
 /**
- * Preparse Field plugin for Craft CMS 3.x
+ * Preparse Field plugin for Craft CMS 4.x
  *
  * @link      https://www.steadfastdesignfirm.com/
  * @copyright Copyright (c) Steadfast Design Firm
@@ -9,12 +9,13 @@
 namespace besteadfast\preparsefield\services;
 
 use besteadfast\preparsefield\fields\PreparseFieldType;
-
 use Craft;
 use craft\base\Component;
 use craft\base\Element;
+use craft\helpers\DateTimeHelper;
 use craft\web\View;
 use craft\db\mysql\Schema;
+use DateTime;
 use yii\base\Exception;
 use yii\db\Expression;
 
@@ -48,8 +49,8 @@ class PreparseFieldService extends Component
         $fieldLayout = $element->getFieldLayout();
 
         if ($fieldLayout) {
-            foreach ($fieldLayout->getFields() as $field) {
-                if ($field && $field instanceof PreparseFieldType) {
+            foreach ($fieldLayout->getCustomFields() as $field) {
+                if ($field instanceof PreparseFieldType) {
                     /** @var PreparseFieldType $field */
 
                     // only get field content for the right event listener
@@ -76,11 +77,11 @@ class PreparseFieldService extends Component
 	 * @param PreparseFieldType $field
 	 * @param Element $element
 	 *
-	 * @return null|string
+	 * @return null|string|DateTime
 	 * @throws Exception
 	 */
-    public function parseField(PreparseFieldType $field, Element $element)
-    {
+    public function parseField(PreparseFieldType $field, Element $element): DateTime|string|null
+	{
         $fieldTwig = $field->fieldTwig;
         $columnType = $field->columnType;
         $decimals = $field->decimals;
@@ -125,6 +126,13 @@ class PreparseFieldService extends Component
             }
 
             return number_format(trim($fieldValue), 0, '.', '');
+        } else if ($columnType === Schema::TYPE_DATETIME) {
+            $fieldValue = \trim($fieldValue);
+            if (!$fieldValue || !$date = DateTimeHelper::toDateTime($fieldValue, true)) {
+                // Return an empty string rather than null to clear out existing DateTime value (null would mean "no change")
+                return '';
+            }
+            return $date;
         }
 
         if ($columnType === Schema::TYPE_JSON) {
@@ -137,22 +145,21 @@ class PreparseFieldService extends Component
         return $fieldValue;
     }
 
-    /**
-     * Checks to see if an element has a preparse field that should be saved on move
-     *
-     * @param $element
-     *
-     * @return bool
-     */
+	/**
+	 * Checks to see if an element has a preparse field that should be saved on move
+	 *
+	 * @param Element $element
+	 *
+	 * @return bool
+	 */
     public function shouldParseElementOnMove(Element $element): bool
     {
         $fieldLayout = $element->getFieldLayout();
 
         if ($fieldLayout) {
-            foreach ($fieldLayout->getFields() as $field) {
-                if ($field && $field instanceof PreparseFieldType) {
-                    /** @var PreparseFieldType $field */
-                    $parseOnMove = $field->parseOnMove;
+            foreach ($fieldLayout->getCustomFields() as $field) {
+                if ($field instanceof PreparseFieldType) {
+					$parseOnMove = $field->parseOnMove;
 
                     if ($parseOnMove) {
                         return true;
