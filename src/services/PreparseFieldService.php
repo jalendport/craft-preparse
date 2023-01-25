@@ -80,7 +80,7 @@ class PreparseFieldService extends Component
 	 * @return null|string|DateTime
 	 * @throws Exception
 	 */
-    public function parseField(PreparseFieldType $field, Element $element): DateTime|string|null
+    public function parseField(PreparseFieldType $field, Element $element): DateTime|Expression|string|null
 	{
         $fieldTwig = $field->fieldTwig;
         $columnType = $field->columnType;
