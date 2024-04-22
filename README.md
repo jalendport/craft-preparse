@@ -4,21 +4,21 @@ A fieldtype that parses Twig when an element is saved and saves the result as pl
 
 ## Requirements
 
-This plugin requires Craft CMS 4.0.0 or later and PHP 8.0.2 or later.
+This plugin requires Craft CMS 5.0.0 or later and PHP 8.2 or later.
 
 ## Installation
 
 To install the plugin, follow these instructions.
 
-1. Open your terminal and go to your Craft project:
+1.  Open your terminal and go to your Craft project:
 
         cd /path/to/project
 
-2. Then tell Composer to load the plugin:
+2.  Then tell Composer to load the plugin:
 
         composer require besteadfast/craft-preparse-field
 
-3. In the Control Panel, go to Settings → Plugins and click the “Install” button for Preparse Field.
+3.  In the Control Panel, go to Settings → Plugins and click the “Install” button for Preparse Field.
 
 ## Usage
 
