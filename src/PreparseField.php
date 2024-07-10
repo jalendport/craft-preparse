@@ -30,6 +30,9 @@ use yii\base\Event;
  */
 class PreparseField extends Plugin
 {
+
+	public string $schemaVersion = '1.0.5';
+
     /**
      * Static property that is an instance of this plugin class so that it can be accessed via
      * PreparseField::$plugin

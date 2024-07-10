@@ -39,7 +39,7 @@
 	},
 	"extra": {
 		"name": "Preparse",
-		"handle": "preparse",
+		"handle": "preparse-field",
 		"class": "jalendport\\preparse\\PreparseField"
 	}
 }
