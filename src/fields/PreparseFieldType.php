@@ -237,3 +237,4 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
 }
 
 class_alias(PreparseFieldType::class, \aelvan\preparsefield\fields\PreparseFieldType::class);
+class_alias(PreparseFieldType::class, \besteadfast\preparsefield\fields\PreparseFieldType::class);

@@ -34,7 +34,8 @@
 	"autoload": {
 		"psr-4": {
 			"jalendport\\preparse\\": "src/",
-			"aelvan\\preparsefield\\": "src_legacy/"
+			"aelvan\\preparsefield\\": "src/",
+			"besteadfast\\preparsefield\\": "src/"
 		}
 	},
 	"extra": {
