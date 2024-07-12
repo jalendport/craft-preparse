@@ -2,7 +2,7 @@
 	"name": "jalendport/craft-preparse",
 	"description": "A fieldtype that parses Twig when an element is saved and saves the result as plain text.",
 	"type": "craft-plugin",
-	"version": "2.1.1",
+	"version": "2.1.2",
 	"keywords": [
 		"craft",
 		"cms",
@@ -34,7 +34,9 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"jalendport\\preparse\\": "src/"
+			"jalendport\\preparse\\": "src/",
+			"aelvan\\preparsefield\\": "src/",
+			"besteadfast\\preparsefield\\": "src/"
 		}
 	},
 	"extra": {

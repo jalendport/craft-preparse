@@ -206,3 +206,6 @@ class PreparseField extends Plugin
         UploadedFile::reset();
     }
 }
+
+class_alias(PreparseField::class, \aelvan\preparsefield\PreparseField::class);
+class_alias(PreparseField::class, \besteadfast\preparsefield\PreparseField::class);
