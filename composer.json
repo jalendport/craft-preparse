@@ -40,6 +40,13 @@
 	"extra": {
 		"name": "Preparse",
 		"handle": "preparse-field",
+		"schemaVersion": "1.1.0",
+		"hasCpSettings": false,
+		"hasCpSection": false,
+		"changelogUrl": "https://github.com/jalendport/craft-preparse/blob/master/CHANGELOG.md",
+		"components": {
+			"preparseFieldService": "jalendport\\preparse\\services\\PreparseFieldService"
+		},
 		"class": "jalendport\\preparse\\PreparseField"
 	}
 }
