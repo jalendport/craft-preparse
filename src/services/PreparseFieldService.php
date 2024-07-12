@@ -62,7 +62,7 @@ class PreparseFieldService extends Component
 
         return $content;
     }
-	
+
 	/**
 	 * Parses field for a given element.
 	 *
@@ -156,3 +156,6 @@ class PreparseFieldService extends Component
         return false;
     }
 }
+
+class_alias(PreparseFieldService::class, \aelvan\preparsefield\services\PreparseFieldService::class);
+class_alias(PreparseFieldService::class, \besteadfast\preparsefield\services\PreparseFieldService::class);
