@@ -1,3 +1,3 @@
 <?php
 
-class_exists(\besteadfast\preparsefield\fields\PreparseFieldType::class);
+class_exists(\jalendport\preparse\fields\PreparseFieldType::class);

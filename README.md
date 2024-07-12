@@ -6,7 +6,7 @@ A fieldtype that parses Twig when an element is saved and saves the result as pl
 
 This plugin requires Craft CMS 3.2.0 or later.
 
-_The Craft 2 version can be found in the [craft2](https://github.com/besteadfast/craft-preparse-field/tree/craft2) branch_
+_The Craft 2 version can be found in the [craft2](https://github.com/jalendport/craft-preparse/tree/craft2) branch_
 
 ## Installation
 
@@ -18,7 +18,7 @@ To install the plugin, follow these instructions.
 
 2.  Then tell Composer to load the plugin:
 
-        composer require besteadfast/craft-preparse-field
+        composer require jalendport/craft-preparse
 
 3.  In the Control Panel, go to Settings → Plugins and click the “Install” button for Preparse Field.
 
@@ -84,4 +84,4 @@ The plugin is released under the MIT license, meaning you can do whatever you wa
 
 ## Changelog
 
-See the [changelog file](https://github.com/besteadfast/craft-preparse-field/blob/master/CHANGELOG.md).
+See the [changelog file](https://github.com/jalendport/craft-preparse/blob/master/CHANGELOG.md).

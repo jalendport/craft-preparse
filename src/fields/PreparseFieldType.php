@@ -1,12 +1,9 @@
 <?php
 /**
  * Preparse Field plugin for Craft CMS 3.x
- *
- * @link      https://www.steadfastdesignfirm.com/
- * @copyright Copyright (c) Steadfast Design Firm
  */
 
-namespace besteadfast\preparsefield\fields;
+namespace jalendport\preparse\fields;
 
 use Craft;
 use craft\base\ElementInterface;
@@ -27,10 +24,6 @@ use yii\base\Exception;
 
 /**
  *  Preparse field type
- *
- * @author    Steadfast Design Firm
- * @package   PreparseField
- * @since     1.0.0
  *
  * @property string $contentColumnType
  * @property null|string $settingsHtml
