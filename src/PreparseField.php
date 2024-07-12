@@ -31,7 +31,7 @@ use yii\base\Event;
 class PreparseField extends Plugin
 {
 
-	public string $schemaVersion = '1.0.5';
+	public string $schemaVersion = '1.1.0';
 
     /**
      * Static property that is an instance of this plugin class so that it can be accessed via
@@ -112,7 +112,7 @@ class PreparseField extends Plugin
                 }
 
                 $key = $element->id . '__' . $element->siteId;
-                    
+
                 if (!isset($this->preparsedElements['onPropagate'][$key])) {
                     $this->preparsedElements['onPropagate'][$key] = true;
 
