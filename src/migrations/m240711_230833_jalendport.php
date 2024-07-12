@@ -18,7 +18,7 @@ class m240711_230833_jalendport extends Migration
      */
     public function safeUp(): bool
     {
-        $this->update('{{%fields}}', ['type'=> PreparseFieldType::class], ['type' => 'besteadfast\preparse-field\fields\PreparseFieldType']);
+        $this->update('{{%fields}}', ['type'=> PreparseFieldType::class], ['type' => 'besteadfast\preparsefield\fields\PreparseFieldType']);
 
 		// Don’t make the same config changes twice
 		$projectConfig = Craft::$app->getProjectConfig();
@@ -33,7 +33,7 @@ class m240711_230833_jalendport extends Migration
 
 		foreach ($fields as $fieldUid => $field)
 		{
-			if ($field['type'] === 'besteadfast\\preparse-field\\fields\\PreparseFieldType')
+			if ($field['type'] === 'besteadfast\preparsefield\fields\PreparseFieldType')
 			{
 				$field['type'] = PreparseFieldType::class;
 				try {
