@@ -195,7 +195,7 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
             return Craft::$app->getFormatter()->asDatetime($value, Locale::LENGTH_SHORT);
         }
 
-        return parent::getTableAttributeHtml($value, $element);
+        return parent::getPreviewHtml($value, $element);
     }
 
 	/**

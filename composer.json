@@ -2,7 +2,7 @@
 	"name": "jalendport/craft-preparse",
 	"description": "A fieldtype that parses Twig when an element is saved and saves the result as plain text.",
 	"type": "craft-plugin",
-	"version": "3.0.0-alpha.1",
+	"version": "3.0.0-alpha.2",
 	"keywords": [
 		"craft",
 		"cms",
