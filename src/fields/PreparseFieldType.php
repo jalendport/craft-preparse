@@ -13,6 +13,9 @@ use craft\base\SortableFieldInterface;
 use craft\db\mysql\Schema;
 use craft\elements\db\ElementQuery;
 use craft\elements\db\ElementQueryInterface;
+use craft\fields\conditions\DateFieldConditionRule;
+use craft\fields\conditions\NumberFieldConditionRule;
+use craft\fields\conditions\TextFieldConditionRule;
 use craft\gql\types\DateTime as DateTimeType;
 use craft\helpers\DateTimeHelper;
 use craft\helpers\Db;
@@ -236,6 +239,26 @@ class PreparseFieldType extends Field implements PreviewableFieldInterface, Sort
             return DateTimeType::getType();
         }
         return parent::getContentGqlType();
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getElementConditionRuleType(): array|string|null
+    {
+        switch ($this->columnType) {
+            case Schema::TYPE_DATETIME:
+                return DateFieldConditionRule::class;
+            case Schema::TYPE_DECIMAL;
+            case Schema::TYPE_FLOAT:
+            case Schema::TYPE_INTEGER:
+                return NumberFieldConditionRule::class;
+            case Schema::TYPE_MEDIUMTEXT:
+            case Schema::TYPE_TEXT:
+                return TextFieldConditionRule::class;
+            default:
+            return TextFieldConditionRule::class;
+        }
     }
 }
 
