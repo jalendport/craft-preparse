@@ -1,0 +1,11 @@
+name: Support request
+description: You need a hand with plugin setup or usage.
+labels: [question]
+body:
+  - type: textarea
+    id: description
+    attributes:
+      label: How can I help?
+      description: Describe what you're trying to do and where you're stuck.
+    validations:
+      required: true

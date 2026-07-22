@@ -1,0 +1,55 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - develop
+      - master
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  ecs:
+    name: ecs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jalendport/spark-github-actions/composer-install-dev@master
+        with:
+          php: "8.2"
+      - uses: jalendport/spark-github-actions/composer-run@master
+        with:
+          php: "8.2"
+          script: check-cs
+
+  phpstan:
+    name: phpstan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jalendport/spark-github-actions/composer-install-dev@master
+        with:
+          php: "8.2"
+      - uses: jalendport/spark-github-actions/composer-run@master
+        with:
+          php: "8.2"
+          script: phpstan
+
+  pest:
+    name: pest (PHP ${{ matrix.php }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ["8.2", "8.3", "8.4"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: jalendport/spark-github-actions/composer-install-dev@master
+        with:
+          php: ${{ matrix.php }}
+      - uses: jalendport/spark-github-actions/composer-run@master
+        with:
+          php: ${{ matrix.php }}
+          script: test

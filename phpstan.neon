@@ -1,0 +1,10 @@
+includes:
+  - vendor/craftcms/phpstan/phpstan.neon
+
+parameters:
+  level: 5
+  treatPhpDocTypesAsCertain: false
+  phpVersion: 80200
+  tmpDir: tmp/phpstan
+  paths:
+    - src
