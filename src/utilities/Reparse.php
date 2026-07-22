@@ -16,7 +16,6 @@ use craft\console\Application as ConsoleApplication;
 use craft\web\Application as WebApplication;
 use jalendport\preparse\fields\PreparseField;
 use jalendport\preparse\Preparse;
-use jalendport\preparse\services\Values;
 use Throwable;
 
 /**
@@ -44,7 +43,7 @@ class Reparse extends Utility
     public static function badgeCount(): int
     {
         try {
-            return count(Preparse::$plugin->values->recentErrors(Values::MAX_ERROR_ROWS));
+            return Preparse::$plugin->values->errorCount();
         } catch (Throwable) {
             // A badge is not worth breaking the control panel nav over.
             return 0;

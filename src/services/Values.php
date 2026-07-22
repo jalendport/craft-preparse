@@ -51,6 +51,18 @@ class Values extends Component
     // =========================================================================
 
     /**
+     * @var int how long the control panel badge count is cached, in seconds
+     * @since 4.0.0
+     */
+    private const ERROR_COUNT_CACHE_DURATION = 300;
+
+    /**
+     * @var string the control panel badge count cache key
+     * @since 4.0.0
+     */
+    private const ERROR_COUNT_CACHE_KEY = 'preparse-field.error-count';
+
+    /**
      * @var int The most `elements_sites` rows {@see recentErrors()} will pull back in one go.
      *
      * Parse errors are meant to be rare. If an install has more than this many,
@@ -132,6 +144,26 @@ class Values extends Component
         $this->_elementTypes = $keys;
 
         return $this->_elementTypes;
+    }
+
+    /**
+     * Returns the cached number of stored parse errors.
+     *
+     * @return int the stored parse error count
+     *
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    public function errorCount(): int
+    {
+        /** @var WebApplication|ConsoleApplication $app */
+        $app = Craft::$app;
+
+        return (int)$app->getCache()->getOrSet(
+            self::ERROR_COUNT_CACHE_KEY,
+            fn(): int => count($this->recentErrors(self::MAX_ERROR_ROWS)),
+            self::ERROR_COUNT_CACHE_DURATION,
+        );
     }
 
     /**
@@ -428,6 +460,8 @@ class Values extends Component
         $record->content = $content ?: null;
         $record->save(false, ['content']);
 
+        $this->_invalidateErrorCountCache();
+
         $this->_refreshElement($element, $fields, $results);
 
         if ($invalidateCaches) {
@@ -532,6 +566,12 @@ class Values extends Component
     public function rememberResult(ElementInterface $element, PreparseField $field, ParseResult $result): void
     {
         $results = $this->_results[$element] ?? [];
+        $previous = $results[$field->handle] ?? null;
+
+        if ($previous instanceof ParseResult && $previous->error !== $result->error) {
+            $this->_invalidateErrorCountCache();
+        }
+
         $results[$field->handle] = $result;
         $this->_results[$element] = $results;
     }
@@ -652,6 +692,19 @@ class Values extends Component
         }
 
         return false;
+    }
+
+    /**
+     * Clears the cached control panel badge count.
+     *
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    private function _invalidateErrorCountCache(): void
+    {
+        /** @var WebApplication|ConsoleApplication $app */
+        $app = Craft::$app;
+        $app->getCache()->delete(self::ERROR_COUNT_CACHE_KEY);
     }
 
     /**
