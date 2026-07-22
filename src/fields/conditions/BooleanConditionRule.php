@@ -31,6 +31,7 @@ class BooleanConditionRule extends BaseLightswitchConditionRule implements Field
 
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -46,6 +47,7 @@ class BooleanConditionRule extends BaseLightswitchConditionRule implements Field
     /**
      * @inheritdoc
      * @throws InvalidConfigException if the rule's field no longer stores booleans
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -60,6 +62,7 @@ class BooleanConditionRule extends BaseLightswitchConditionRule implements Field
 
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -81,6 +84,7 @@ class BooleanConditionRule extends BaseLightswitchConditionRule implements Field
      * Returns whether the rule's field is still configured for this value type.
      *
      * @return bool whether the rule applies
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */

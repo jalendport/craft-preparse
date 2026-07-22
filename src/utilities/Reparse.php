@@ -37,6 +37,7 @@ class Reparse extends Utility
      * Returns the number of stored parse errors, shown as a badge on the utility.
      *
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -52,6 +53,7 @@ class Reparse extends Utility
 
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -74,6 +76,7 @@ class Reparse extends Utility
 
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -84,6 +87,7 @@ class Reparse extends Utility
 
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -94,6 +98,7 @@ class Reparse extends Utility
 
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */

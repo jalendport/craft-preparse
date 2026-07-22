@@ -94,6 +94,7 @@ class ParseResult extends Model
      * @param string $valueType one of the `PreparseField::VALUE_TYPE_*` constants
      * @param int $decimals the number of decimal places, for the number type
      * @return mixed the coerced value
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -112,6 +113,7 @@ class ParseResult extends Model
      *
      * @param mixed $stored the stored value: a 4.0 envelope, a 3.x bare scalar, or `null`
      * @return self the result
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -149,6 +151,7 @@ class ParseResult extends Model
      * Returns whether the last render attempt failed.
      *
      * @return bool whether an error is stored
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -164,6 +167,7 @@ class ParseResult extends Model
      * error counts as empty.
      *
      * @return bool whether the envelope is empty
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -176,6 +180,7 @@ class ParseResult extends Model
      * Returns the envelope to store in `elements_sites.content`.
      *
      * @return array<string, mixed>|null the envelope, or `null` if there's nothing to store
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -210,6 +215,7 @@ class ParseResult extends Model
      *
      * @param mixed $rendered the raw render output
      * @return bool|null the boolean value
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -248,6 +254,7 @@ class ParseResult extends Model
      *
      * @param mixed $rendered the raw render output
      * @return DateTime|null the date value
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -275,6 +282,7 @@ class ParseResult extends Model
      * @param mixed $rendered the raw render output
      * @param int $decimals the number of decimal places; `0` means integer semantics
      * @return int|float|null the numeric value
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -302,6 +310,7 @@ class ParseResult extends Model
      *
      * @param mixed $rendered the raw render output
      * @return string|null the text value
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -333,6 +342,7 @@ class ParseResult extends Model
      *
      * @param array<mixed> $stored the stored array
      * @return bool whether it's an envelope
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */

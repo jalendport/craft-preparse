@@ -99,6 +99,7 @@ class ReparseElements extends BaseBatchedElementJob
 
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -111,6 +112,7 @@ class ReparseElements extends BaseBatchedElementJob
 
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -134,6 +136,7 @@ class ReparseElements extends BaseBatchedElementJob
 
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -171,6 +174,7 @@ class ReparseElements extends BaseBatchedElementJob
      * Returns the field filter for this job.
      *
      * @return callable(PreparseField): bool|null the filter
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -190,6 +194,7 @@ class ReparseElements extends BaseBatchedElementJob
      *
      * @param ElementInterface $element the element to resave
      * @throws Throwable if the save fails
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */

@@ -108,6 +108,7 @@ class Preparse extends Plugin
 
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -134,6 +135,7 @@ class Preparse extends Plugin
      * template misbehaved would be a worse outcome than a stale value.
      *
      * @param ElementInterface $element the element that moved
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -148,6 +150,53 @@ class Preparse extends Plugin
         } catch (Throwable $e) {
             self::error("Couldn’t reparse moved element {$element->id}: {$e->getMessage()}");
         }
+    }
+
+    /**
+     * Returns the handles of every field set to reparse on structure moves.
+     *
+     * @return string[] the field handles
+     *
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    private function _parseOnMoveHandles(): array
+    {
+        /** @var WebApplication|ConsoleApplication $app */
+        $app = Craft::$app;
+
+        /** @var PreparseField[] $fields */
+        $fields = $app->getFields()->getFieldsByType(PreparseField::class);
+
+        return array_values(array_map(
+            static fn(PreparseField $field) => $field->handle,
+            array_filter($fields, static fn(PreparseField $field) => $field->parseOnMove),
+        ));
+    }
+
+    /**
+     * Registers the reparse bulk action on element indexes.
+     *
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    private function _registerElementActions(): void
+    {
+        Event::on(
+            Element::class,
+            Element::EVENT_REGISTER_ACTIONS,
+            static function(RegisterElementActionsEvent $event): void {
+                /** @var class-string<ElementInterface> $elementType */
+                $elementType = $event->sender ?? Element::class;
+
+                // Only offer the action where it would actually do something.
+                if (!in_array($elementType, self::$plugin->values->elementTypesWithFields(), true)) {
+                    return;
+                }
+
+                $event->actions[] = Reparse::class;
+            },
+        );
     }
 
     /**
@@ -221,69 +270,6 @@ class Preparse extends Plugin
     }
 
     /**
-     * Registers the reparse bulk action on element indexes.
-     *
-     * @author Jalen Davenport <hello@jalendport.com>
-     * @since 4.0.0
-     */
-    private function _registerElementActions(): void
-    {
-        Event::on(
-            Element::class,
-            Element::EVENT_REGISTER_ACTIONS,
-            static function(RegisterElementActionsEvent $event): void {
-                /** @var class-string<ElementInterface> $elementType */
-                $elementType = $event->sender ?? Element::class;
-
-                // Only offer the action where it would actually do something.
-                if (!in_array($elementType, self::$plugin->values->elementTypesWithFields(), true)) {
-                    return;
-                }
-
-                $event->actions[] = Reparse::class;
-            },
-        );
-    }
-
-    /**
-     * Registers the control panel utility.
-     *
-     * @author Jalen Davenport <hello@jalendport.com>
-     * @since 4.0.0
-     */
-    private function _registerUtilities(): void
-    {
-        Event::on(
-            Utilities::class,
-            Utilities::EVENT_REGISTER_UTILITIES,
-            static function(RegisterComponentTypesEvent $event): void {
-                $event->types[] = ReparseUtility::class;
-            },
-        );
-    }
-
-    /**
-     * Returns the handles of every field set to reparse on structure moves.
-     *
-     * @return string[] the field handles
-     * @author Jalen Davenport <hello@jalendport.com>
-     * @since 4.0.0
-     */
-    private function _parseOnMoveHandles(): array
-    {
-        /** @var WebApplication|ConsoleApplication $app */
-        $app = Craft::$app;
-
-        /** @var PreparseField[] $fields */
-        $fields = $app->getFields()->getFieldsByType(PreparseField::class);
-
-        return array_values(array_map(
-            static fn(PreparseField $field) => $field->handle,
-            array_filter($fields, static fn(PreparseField $field) => $field->parseOnMove),
-        ));
-    }
-
-    /**
      * Wires up structure moves, for fields whose templates depend on where the
      * element sits in the hierarchy.
      *
@@ -334,6 +320,21 @@ class Preparse extends Plugin
                 foreach ($event->query->all() as $element) {
                     $this->_parseMovedElement($element);
                 }
+            },
+        );
+    }    /**
+     * Registers the control panel utility.
+     *
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    private function _registerUtilities(): void
+    {
+        Event::on(
+            Utilities::class,
+            Utilities::EVENT_REGISTER_UTILITIES,
+            static function(RegisterComponentTypesEvent $event): void {
+                $event->types[] = ReparseUtility::class;
             },
         );
     }

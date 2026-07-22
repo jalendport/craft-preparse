@@ -43,39 +43,15 @@ class m260722_000000_upgrade_preparse4 extends Migration
         'jalendport\\preparse\\fields\\PreparseFieldType',
     ];
 
-    // Public Methods
+    // Static Methods
     // =========================================================================
-
-    /**
-     * @inheritdoc
-     * @author Jalen Davenport <hello@jalendport.com>
-     * @since 4.0.0
-     */
-    public function safeDown(): bool
-    {
-        echo "m260722_000000_upgrade_preparse4 cannot be reverted.\n";
-
-        return false;
-    }
-
-    /**
-     * @inheritdoc
-     * @author Jalen Davenport <hello@jalendport.com>
-     * @since 4.0.0
-     */
-    public function safeUp(): bool
-    {
-        $this->_updateProjectConfig();
-        $this->_updateDatabase();
-
-        return true;
-    }
 
     /**
      * Maps Preparse 3.x field settings to their 4.0 equivalents.
      *
      * @param array<string, mixed> $settings the Preparse 3.x settings
      * @return array<string, mixed> the Preparse 4.0 settings
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -108,6 +84,36 @@ class m260722_000000_upgrade_preparse4 extends Migration
         }
 
         return $mappedSettings;
+    }
+
+    // Public Methods
+    // =========================================================================
+
+    /**
+     * @inheritdoc
+     *
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    public function safeDown(): bool
+    {
+        echo "m260722_000000_upgrade_preparse4 cannot be reverted.\n";
+
+        return false;
+    }
+
+    /**
+     * @inheritdoc
+     *
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    public function safeUp(): bool
+    {
+        $this->_updateProjectConfig();
+        $this->_updateDatabase();
+
+        return true;
     }
 
     // Private Methods

@@ -37,6 +37,7 @@ class Reparse extends ElementAction
 
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -47,6 +48,7 @@ class Reparse extends ElementAction
 
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */

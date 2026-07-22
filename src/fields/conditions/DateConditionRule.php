@@ -32,6 +32,7 @@ class DateConditionRule extends BaseDateRangeConditionRule implements FieldCondi
 
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -47,6 +48,7 @@ class DateConditionRule extends BaseDateRangeConditionRule implements FieldCondi
     /**
      * @inheritdoc
      * @throws InvalidConfigException if the rule's field no longer stores dates
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -61,6 +63,7 @@ class DateConditionRule extends BaseDateRangeConditionRule implements FieldCondi
 
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -81,6 +84,7 @@ class DateConditionRule extends BaseDateRangeConditionRule implements FieldCondi
      * Returns whether the rule's field is still configured for this value type.
      *
      * @return bool whether the rule applies
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */

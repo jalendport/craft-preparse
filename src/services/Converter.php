@@ -43,6 +43,27 @@ class Converter extends Component
      */
     private const QUEUE_ID_CHUNK_SIZE = 5000;
 
+    // Static Methods
+    // =========================================================================
+
+    /**
+     * Maps a generated-field config to matching Preparse field settings.
+     *
+     * @param array<string, mixed> $generatedField the generated-field config
+     * @return array{valueType: string, templateMode: string, template: string} the Preparse settings
+     *
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    public static function settingsFor(array $generatedField): array
+    {
+        return [
+            'valueType' => PreparseField::VALUE_TYPE_TEXT,
+            'templateMode' => PreparseField::TEMPLATE_MODE_INLINE,
+            'template' => (string)($generatedField['template'] ?? ''),
+        ];
+    }
+
     // Public Methods
     // =========================================================================
 
@@ -53,6 +74,7 @@ class Converter extends Component
      * @return array{field: PreparseField, layoutCount: int, queued: bool} the conversion result
      * @throws InvalidArgumentException if the generated field can't be converted unambiguously
      * @throws Throwable if the field or layouts couldn't be saved
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -100,6 +122,7 @@ class Converter extends Component
      * @param string $handle the generated field handle
      * @return array{generatedField: array<string, mixed>, usages: array<int, array{layout: FieldLayout, generatedField: array<string, mixed>}>} the conversion plan
      * @throws InvalidArgumentException if the generated field can't be converted unambiguously
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -139,23 +162,6 @@ class Converter extends Component
         ];
     }
 
-    /**
-     * Maps a generated-field config to matching Preparse field settings.
-     *
-     * @param array<string, mixed> $generatedField the generated-field config
-     * @return array{valueType: string, templateMode: string, template: string} the Preparse settings
-     * @author Jalen Davenport <hello@jalendport.com>
-     * @since 4.0.0
-     */
-    public static function settingsFor(array $generatedField): array
-    {
-        return [
-            'valueType' => PreparseField::VALUE_TYPE_TEXT,
-            'templateMode' => PreparseField::TEMPLATE_MODE_INLINE,
-            'template' => (string)($generatedField['template'] ?? ''),
-        ];
-    }
-
     // Private Methods
     // =========================================================================
 
@@ -164,6 +170,7 @@ class Converter extends Component
      *
      * @param string $handle the generated field handle
      * @return array<int, array{layout: FieldLayout, generatedField: array<string, mixed>}> the usages
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -196,6 +203,7 @@ class Converter extends Component
      * @param PreparseField $field the new Preparse field
      * @return bool whether a reparse job was queued
      * @throws Throwable if a reparse job couldn't be queued
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -250,6 +258,7 @@ class Converter extends Component
      * @param array<int, array{layout: FieldLayout, generatedField: array<string, mixed>}> $usages the generated-field usages
      * @param PreparseField $field the new Preparse field
      * @throws Throwable if a layout or project-config occurrence couldn't be saved
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */

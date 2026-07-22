@@ -34,6 +34,7 @@ class NumberConditionRule extends BaseNumberConditionRule implements FieldCondit
 
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -48,6 +49,7 @@ class NumberConditionRule extends BaseNumberConditionRule implements FieldCondit
 
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -71,6 +73,7 @@ class NumberConditionRule extends BaseNumberConditionRule implements FieldCondit
      * which point the stored rule no longer describes anything meaningful.
      *
      * @return bool whether the rule applies
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */

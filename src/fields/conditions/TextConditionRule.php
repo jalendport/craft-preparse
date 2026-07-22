@@ -30,6 +30,7 @@ class TextConditionRule extends BaseTextConditionRule implements FieldConditionR
     /**
      * @inheritdoc
      * @return array<string, mixed>|null
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -49,6 +50,7 @@ class TextConditionRule extends BaseTextConditionRule implements FieldConditionR
 
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */

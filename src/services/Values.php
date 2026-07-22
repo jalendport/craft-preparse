@@ -92,6 +92,7 @@ class Values extends Component
 
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -107,12 +108,51 @@ class Values extends Component
     }
 
     /**
+     * Returns the element types whose field layouts include a given field.
+     *
+     * @param PreparseField $field the field
+     * @return array<int, class-string<ElementInterface>> the element types
+     *
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    public function elementTypesForField(PreparseField $field): array
+    {
+        if (!isset($field->id)) {
+            return [];
+        }
+
+        /** @var WebApplication|ConsoleApplication $app */
+        $app = Craft::$app;
+        $types = [];
+
+        foreach ($app->getFields()->getAllLayouts() as $layout) {
+            if ($layout->type === null || isset($types[$layout->type])) {
+                continue;
+            }
+
+            foreach ($layout->getCustomFields() as $instance) {
+                if ($instance instanceof PreparseField && $instance->id === $field->id) {
+                    $types[$layout->type] = true;
+                    break;
+                }
+            }
+        }
+
+        /** @var array<int, class-string<ElementInterface>> $keys */
+        $keys = array_keys($types);
+
+        return $keys;
+    }
+
+    /**
      * Returns the element types that have a preparse field somewhere in a field layout.
      *
      * Used to decide which element indexes get the reparse bulk action, and
      * which element types a bare `reparse` command should sweep.
      *
      * @return array<int, class-string<ElementInterface>> the element types
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -172,6 +212,7 @@ class Values extends Component
      * @param ElementInterface $element the element
      * @param callable(PreparseField): bool|null $filter an optional filter
      * @return array<string, PreparseField> the fields, indexed by handle
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -195,40 +236,18 @@ class Values extends Component
     }
 
     /**
-     * Returns the element types whose field layouts include a given field.
+     * Returns the envelope last seen for an element's field, if any.
      *
+     * @param ElementInterface $element the element
      * @param PreparseField $field the field
-     * @return array<int, class-string<ElementInterface>> the element types
+     * @return ParseResult|null the envelope
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
-    public function elementTypesForField(PreparseField $field): array
+    public function getResult(ElementInterface $element, PreparseField $field): ?ParseResult
     {
-        if (!isset($field->id)) {
-            return [];
-        }
-
-        /** @var WebApplication|ConsoleApplication $app */
-        $app = Craft::$app;
-        $types = [];
-
-        foreach ($app->getFields()->getAllLayouts() as $layout) {
-            if ($layout->type === null || isset($types[$layout->type])) {
-                continue;
-            }
-
-            foreach ($layout->getCustomFields() as $instance) {
-                if ($instance instanceof PreparseField && $instance->id === $field->id) {
-                    $types[$layout->type] = true;
-                    break;
-                }
-            }
-        }
-
-        /** @var array<int, class-string<ElementInterface>> $keys */
-        $keys = array_keys($types);
-
-        return $keys;
+        return ($this->_results[$element] ?? [])[$field->handle] ?? null;
     }
 
     /**
@@ -240,6 +259,7 @@ class Values extends Component
      *
      * @param PreparseField $field the field
      * @return bool whether any element has a value for it
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -287,20 +307,6 @@ class Values extends Component
     }
 
     /**
-     * Returns the envelope last seen for an element's field, if any.
-     *
-     * @param ElementInterface $element the element
-     * @param PreparseField $field the field
-     * @return ParseResult|null the envelope
-     * @author Jalen Davenport <hello@jalendport.com>
-     * @since 4.0.0
-     */
-    public function getResult(ElementInterface $element, PreparseField $field): ?ParseResult
-    {
-        return ($this->_results[$element] ?? [])[$field->handle] ?? null;
-    }
-
-    /**
      * Renders a field and applies its “On error” policy.
      *
      * @param PreparseField $field the field to parse
@@ -308,6 +314,7 @@ class Values extends Component
      * @param ParseResult $previous the envelope currently stored
      * @return ParseResult the envelope to store
      * @throws ParseException if the render failed and the field blocks saves on error
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -343,6 +350,7 @@ class Values extends Component
      * @param int[]|null $siteIds only write values for these sites, or `null` for all of them
      * @throws ParseException if a render failed and the field blocks saves on error
      * @throws Throwable if the content couldn't be written
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -409,6 +417,7 @@ class Values extends Component
      * @param bool $invalidateCaches whether to invalidate the element's caches afterwards
      * @return bool whether anything was written
      * @throws Throwable if the record couldn't be saved
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -483,6 +492,7 @@ class Values extends Component
      *
      * @param int $limit the maximum number of errors to return
      * @return array<int, array{elementId: int, siteId: int, handle: string, name: string, error: string, parsedAt: DateTime|null}>
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -560,6 +570,7 @@ class Values extends Component
      * @param ElementInterface $element the element
      * @param PreparseField $field the field
      * @param ParseResult $result the envelope
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -582,6 +593,7 @@ class Values extends Component
      * @param PreparseField $field the field
      * @param ParseResult $previous the envelope currently stored
      * @return bool whether to parse
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -598,6 +610,26 @@ class Values extends Component
     // =========================================================================
 
     /**
+     * Returns a site settings record's content as an array.
+     *
+     * @param Element_SiteSettingsRecord $record the record
+     * @return array<string, mixed> the content
+     *
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    private function _content(Element_SiteSettingsRecord $record): array
+    {
+        $content = $record->content ?? [];
+
+        if (is_string($content)) {
+            return $content !== '' ? Json::decode($content) : [];
+        }
+
+        return $content;
+    }
+
+    /**
      * Returns every preparse field placement across all field layouts.
      *
      * Keyed by layout element UID, because that's the key a value is stored
@@ -605,6 +637,7 @@ class Values extends Component
      * two entries, and two different values.
      *
      * @return array<string, array{handle: string, name: string}> the placements
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -637,25 +670,6 @@ class Values extends Component
     }
 
     /**
-     * Returns a site settings record's content as an array.
-     *
-     * @param Element_SiteSettingsRecord $record the record
-     * @return array<string, mixed> the content
-     * @author Jalen Davenport <hello@jalendport.com>
-     * @since 4.0.0
-     */
-    private function _content(Element_SiteSettingsRecord $record): array
-    {
-        $content = $record->content ?? [];
-
-        if (is_string($content)) {
-            return $content !== '' ? Json::decode($content) : [];
-        }
-
-        return $content;
-    }
-
-    /**
      * Returns whether a new envelope differs from what's already stored.
      *
      * Only the value and the error take part in the comparison. `parsedAt`
@@ -670,6 +684,7 @@ class Values extends Component
      * @param mixed $existing the stored value
      * @param array<string, mixed>|null $stored the new envelope
      * @return bool whether it changed
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -716,6 +731,7 @@ class Values extends Component
      *
      * @param ElementInterface $element the element
      * @return ElementQueryInterface the query
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -746,6 +762,7 @@ class Values extends Component
      * @param ElementInterface $element the element
      * @param PreparseField $field the field
      * @return ParseResult the stored envelope
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -772,6 +789,7 @@ class Values extends Component
      * @param ElementInterface $element the element
      * @param array<string, PreparseField> $fields the element's preparse fields, indexed by handle
      * @param array<string, ParseResult> $results the envelopes that were written
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -807,6 +825,7 @@ class Values extends Component
      *
      * @param ElementInterface $element the element
      * @return array<int, ElementInterface> the site elements
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -857,6 +876,7 @@ class Values extends Component
      * @param PreparseField $field the field
      * @param array<int, ElementInterface> $siteElements the site elements
      * @return array<string, array<int, ElementInterface>> the groups
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */

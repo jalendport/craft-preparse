@@ -27,6 +27,7 @@ class ParseException extends Exception
 {
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */

@@ -98,6 +98,7 @@ class ReparseController extends Controller
      * Re-renders preparse fields.
      *
      * @return int the exit code
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -133,6 +134,7 @@ class ReparseController extends Controller
     /**
      * @inheritdoc
      * @return array<int, string>
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -159,6 +161,7 @@ class ReparseController extends Controller
      *
      * @param class-string<ElementInterface> $elementType the element type
      * @return array<string, mixed> the criteria
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -177,6 +180,7 @@ class ReparseController extends Controller
      * Returns the element types to sweep.
      *
      * @return array<int, class-string<ElementInterface>> the element types
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -196,6 +200,7 @@ class ReparseController extends Controller
      * Resolves the `--fields` option to preparse field handles.
      *
      * @return string[]|false the handles, or `false` if one of them isn't a preparse field
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -228,6 +233,7 @@ class ReparseController extends Controller
      * @param class-string<ElementInterface> $elementType the element type
      * @param string[] $handles the field handles to reparse
      * @param int[]|null $siteIds the sites to write values for
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -301,6 +307,7 @@ class ReparseController extends Controller
      *
      * @param string[] $handles the field handles
      * @return callable(PreparseField): bool|null the filter
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -319,6 +326,7 @@ class ReparseController extends Controller
      * @param class-string<ElementInterface> $elementType the element type
      * @param array<string, mixed> $criteria the criteria
      * @return ElementQueryInterface the query
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -344,6 +352,7 @@ class ReparseController extends Controller
      * Resolves the `--site` option to site IDs.
      *
      * @return int[]|false|null the site IDs, `null` for every site, or `false` if a handle is unknown
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -377,6 +386,7 @@ class ReparseController extends Controller
      *
      * @param string $value the option value
      * @return string[] the parts
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */

@@ -51,6 +51,7 @@ class ReparseController extends Controller
      *
      * @return Response the response
      * @throws ForbiddenHttpException if the user can't use the utility
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -105,6 +106,7 @@ class ReparseController extends Controller
      * @param class-string<ElementInterface> $elementType the element type
      * @param string[] $sections the selected section handles
      * @return array<string, mixed> the criteria
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */

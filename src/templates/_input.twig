@@ -4,37 +4,37 @@
 {% set showValue = field.display == 'value' or hasError %}
 
 {% if not showValue %}
-    {# Nothing to show, but the field still has to exist in the layout so its
-       value keeps a home in the content JSON. #}
-    {% css %}
-        #{{ namespacedId }}-field { display: none; }
-    {% endcss %}
+	{# Nothing to show, but the field still has to exist in the layout so its
+	   value keeps a home in the content JSON. #}
+	{% css %}
+		#{{ namespacedId }}-field { display: none; }
+	{% endcss %}
 {% endif %}
 
 {% if hasError %}
-    <p class="error">
-        <span data-icon="alert" aria-hidden="true"></span>
-        {{ 'This field couldn’t be parsed:'|t('preparse-field') }}
-        {{ result.error }}
-    </p>
+	<p class="error">
+		<span data-icon="alert" aria-hidden="true"></span>
+		{{ 'This field couldn’t be parsed:'|t('preparse-field') }}
+		{{ result.error }}
+	</p>
 {% endif %}
 
 {% if showValue %}
-    <div class="readable">
-        {% if value is null %}
-            <span class="light">{{ 'No value'|t('preparse-field') }}</span>
-        {% elseif field.valueType == 'boolean' %}
-            {{ value ? 'Yes'|t('preparse-field') : 'No'|t('preparse-field') }}
-        {% elseif field.valueType == 'date' %}
-            {{ value|datetime('short') }}
-        {% else %}
-            {{ value }}
-        {% endif %}
-    </div>
+	<div class="readable">
+		{% if value is null %}
+			<span class="light">{{ 'No value'|t('preparse-field') }}</span>
+		{% elseif field.valueType == 'boolean' %}
+			{{ value ? 'Yes'|t('preparse-field') : 'No'|t('preparse-field') }}
+		{% elseif field.valueType == 'date' %}
+			{{ value|datetime('short') }}
+		{% else %}
+			{{ value }}
+		{% endif %}
+	</div>
 
-    {% if result is not empty and result.parsedAt %}
-        <p class="light smalltext">
-            {{ 'Last parsed {date}'|t('preparse-field', { date: result.parsedAt|datetime('short') }) }}
-        </p>
-    {% endif %}
+	{% if result is not empty and result.parsedAt %}
+		<p class="light smalltext">
+			{{ 'Last parsed {date}'|t('preparse-field', { date: result.parsedAt|datetime('short') }) }}
+		</p>
+	{% endif %}
 {% endif %}

@@ -65,6 +65,7 @@ class Parser extends Component
      * @param PreparseField $field the field to render
      * @param ElementInterface $element the element to render it for, in the site it should be rendered for
      * @return ParseResult the render result
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -110,6 +111,7 @@ class Parser extends Component
      * @param string $template the snippet or template path
      * @param string $templateMode one of the `PreparseField::TEMPLATE_MODE_*` constants
      * @return string|null the error message, or `null` if the template is valid
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -167,6 +169,7 @@ class Parser extends Component
      * @param View $view the view
      * @param string $path the template path
      * @return Source|string the source, or an error message
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -199,6 +202,7 @@ class Parser extends Component
      * @param ElementInterface $element the element to render it for
      * @return string the rendered output
      * @throws Throwable if the template can't be rendered
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -234,6 +238,25 @@ class Parser extends Component
     }
 
     /**
+     * Returns the locale for an element's site.
+     *
+     * @param ElementInterface $element the element
+     * @return Locale|null the locale, or `null` if the site's language has no locale data
+     *
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    private function _siteLocale(ElementInterface $element): ?Locale
+    {
+        /** @var WebApplication|ConsoleApplication $app */
+        $app = Craft::$app;
+
+        try {
+            return $app->getI18n()->getLocaleById($element->getSite()->language);
+        } catch (Throwable) {
+            return null;
+        }
+    }    /**
      * Runs a callback with the app switched to the element's site.
      *
      * Preparse 3.x rendered in whatever language the *request* was in, so a
@@ -252,6 +275,7 @@ class Parser extends Component
      * @param callable(): T $callback the callback to run
      * @return T the callback's return value
      * @throws Throwable if the callback throws
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -283,26 +307,6 @@ class Parser extends Component
             $app->set('locale', $locale);
             $app->set('formattingLocale', $formattingLocale);
             $generalConfig->generateTransformsBeforePageLoad = $generateTransforms;
-        }
-    }
-
-    /**
-     * Returns the locale for an element's site.
-     *
-     * @param ElementInterface $element the element
-     * @return Locale|null the locale, or `null` if the site's language has no locale data
-     * @author Jalen Davenport <hello@jalendport.com>
-     * @since 4.0.0
-     */
-    private function _siteLocale(ElementInterface $element): ?Locale
-    {
-        /** @var WebApplication|ConsoleApplication $app */
-        $app = Craft::$app;
-
-        try {
-            return $app->getI18n()->getLocaleById($element->getSite()->language);
-        } catch (Throwable) {
-            return null;
         }
     }
 }

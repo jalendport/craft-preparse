@@ -44,6 +44,7 @@ class ConvertController extends Controller
 
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -57,6 +58,7 @@ class ConvertController extends Controller
      *
      * @param string $generatedFieldHandle the generated field handle
      * @return int the exit code
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -136,6 +138,7 @@ class ConvertController extends Controller
      *
      * @return Converter the converter service
      * @throws InvalidConfigException if the service has not been registered
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */

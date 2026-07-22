@@ -45,6 +45,7 @@ class PreviewController extends Controller
      * @return Response the response
      * @throws BadRequestHttpException if the request isn't a valid POST
      * @throws ForbiddenHttpException if the user isn't an admin
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -100,6 +101,7 @@ class PreviewController extends Controller
      *
      * @param mixed $value the parsed value
      * @return string the display string
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -118,6 +120,7 @@ class PreviewController extends Controller
      *
      * @param mixed $elementId the posted element ID, if any
      * @return ElementInterface|null the element
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */

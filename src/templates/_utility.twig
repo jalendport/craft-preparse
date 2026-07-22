@@ -3,111 +3,111 @@
 {% import '_includes/forms.twig' as forms %}
 
 {% if errors is not empty %}
-    <h2>{{ 'Parse errors'|t('preparse-field') }}</h2>
+	<h2>{{ 'Parse errors'|t('preparse-field') }}</h2>
 
-    <p>
-        {{ '{count} stored {count, plural, one{value} other{values}} failed to render. The previous value is still in place unless the field was set to use a fallback.'|t('preparse-field', { count: errors|length }) }}
-    </p>
+	<p>
+		{{ '{count} stored {count, plural, one{value} other{values}} failed to render. The previous value is still in place unless the field was set to use a fallback.'|t('preparse-field', { count: errors|length }) }}
+	</p>
 
-    <table class="data fullwidth">
-        <thead>
-            <tr>
-                <th scope="col">{{ 'Field'|t('preparse-field') }}</th>
-                <th scope="col">{{ 'Element'|t('preparse-field') }}</th>
-                <th scope="col">{{ 'Error'|t('preparse-field') }}</th>
-                <th scope="col">{{ 'Last parsed'|t('preparse-field') }}</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for error in errors %}
-                {% set element = craft.app.elements.getElementById(error.elementId, null, error.siteId) %}
-                <tr>
-                    <td>
-                        {{ error.name }}
-                        <span class="light code">{{ error.handle }}</span>
-                    </td>
-                    <td>
-                        {% if element %}
-                            <a href="{{ element.getCpEditUrl() }}">{{ element.title ?? element.id }}</a>
-                        {% else %}
-                            <span class="light">#{{ error.elementId }}</span>
-                        {% endif %}
-                    </td>
-                    <td><code>{{ error.error }}</code></td>
-                    <td>
-                        {%- if error.parsedAt -%}
-                            {{ error.parsedAt|datetime('short') }}
-                        {%- else -%}
-                            <span class="light">—</span>
-                        {%- endif -%}
-                    </td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+	<table class="data fullwidth">
+		<thead>
+			<tr>
+				<th scope="col">{{ 'Field'|t('preparse-field') }}</th>
+				<th scope="col">{{ 'Element'|t('preparse-field') }}</th>
+				<th scope="col">{{ 'Error'|t('preparse-field') }}</th>
+				<th scope="col">{{ 'Last parsed'|t('preparse-field') }}</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for error in errors %}
+				{% set element = craft.app.elements.getElementById(error.elementId, null, error.siteId) %}
+				<tr>
+					<td>
+						{{ error.name }}
+						<span class="light code">{{ error.handle }}</span>
+					</td>
+					<td>
+						{% if element %}
+							<a href="{{ element.getCpEditUrl() }}">{{ element.title ?? element.id }}</a>
+						{% else %}
+							<span class="light">#{{ error.elementId }}</span>
+						{% endif %}
+					</td>
+					<td><code>{{ error.error }}</code></td>
+					<td>
+						{%- if error.parsedAt -%}
+							{{ error.parsedAt|datetime('short') }}
+						{%- else -%}
+							<span class="light">—</span>
+						{%- endif -%}
+					</td>
+				</tr>
+			{% endfor %}
+		</tbody>
+	</table>
 
-    <hr>
+	<hr>
 {% endif %}
 
 <h2>{{ 'Reparse'|t('preparse-field') }}</h2>
 
 {% if fields is empty %}
-    <p>{{ 'No preparse fields exist yet.'|t('preparse-field') }}</p>
+	<p>{{ 'No preparse fields exist yet.'|t('preparse-field') }}</p>
 {% else %}
-    <p>
-        {{ 'Re-renders preparse fields and writes the results straight to the elements’ content. Leave a scope empty to include everything.'|t('preparse-field') }}
-    </p>
+	<p>
+		{{ 'Re-renders preparse fields and writes the results straight to the elements’ content. Leave a scope empty to include everything.'|t('preparse-field') }}
+	</p>
 
-    <form method="post" accept-charset="UTF-8">
-        {{ csrfInput() }}
-        {{ actionInput('preparse-field/reparse') }}
-        {{ redirectInput('utilities/preparse') }}
+	<form method="post" accept-charset="UTF-8">
+		{{ csrfInput() }}
+		{{ actionInput('preparse-field/reparse') }}
+		{{ redirectInput('utilities/preparse') }}
 
-        {{ forms.checkboxSelectField({
-            label: 'Fields'|t('preparse-field'),
-            name: 'fields',
-            options: fields|map(field => { label: field.name, value: field.handle }),
-            values: [],
-            showAllOption: true,
-        }) }}
+		{{ forms.checkboxSelectField({
+			label: 'Fields'|t('preparse-field'),
+			name: 'fields',
+			options: fields|map(field => { label: field.name, value: field.handle }),
+			values: [],
+			showAllOption: true,
+		}) }}
 
-        {% if sections is not empty %}
-            {{ forms.checkboxSelectField({
-                label: 'Sections'|t('preparse-field'),
-                instructions: 'Entries only. Other element types are always reparsed in full.'|t('preparse-field'),
-                name: 'sections',
-                options: sections|map(section => { label: section.name, value: section.handle }),
-                values: [],
-                showAllOption: true,
-            }) }}
-        {% endif %}
+		{% if sections is not empty %}
+			{{ forms.checkboxSelectField({
+				label: 'Sections'|t('preparse-field'),
+				instructions: 'Entries only. Other element types are always reparsed in full.'|t('preparse-field'),
+				name: 'sections',
+				options: sections|map(section => { label: section.name, value: section.handle }),
+				values: [],
+				showAllOption: true,
+			}) }}
+		{% endif %}
 
-        {% if sites|length > 1 %}
-            {{ forms.checkboxSelectField({
-                label: 'Sites'|t('preparse-field'),
-                name: 'siteIds',
-                options: sites|map(site => { label: site.name, value: site.id }),
-                values: [],
-                showAllOption: true,
-            }) }}
-        {% endif %}
+		{% if sites|length > 1 %}
+			{{ forms.checkboxSelectField({
+				label: 'Sites'|t('preparse-field'),
+				name: 'siteIds',
+				options: sites|map(site => { label: site.name, value: site.id }),
+				values: [],
+				showAllOption: true,
+			}) }}
+		{% endif %}
 
-        {{ forms.lightswitchField({
-            label: 'Parse fields set to only parse when empty'|t('preparse-field'),
-            instructions: 'Those fields are normally left alone once they have a value.'|t('preparse-field'),
-            name: 'force',
-            on: false,
-        }) }}
+		{{ forms.lightswitchField({
+			label: 'Parse fields set to only parse when empty'|t('preparse-field'),
+			instructions: 'Those fields are normally left alone once they have a value.'|t('preparse-field'),
+			name: 'force',
+			on: false,
+		}) }}
 
-        {{ forms.lightswitchField({
-            label: 'Run full saves'|t('preparse-field'),
-            instructions: 'Much slower, but fires the whole save lifecycle so other plugins react to the new values. Leave this off unless you need it.'|t('preparse-field'),
-            name: 'fullSave',
-            on: false,
-        }) }}
+		{{ forms.lightswitchField({
+			label: 'Run full saves'|t('preparse-field'),
+			instructions: 'Much slower, but fires the whole save lifecycle so other plugins react to the new values. Leave this off unless you need it.'|t('preparse-field'),
+			name: 'fullSave',
+			on: false,
+		}) }}
 
-        <div class="buttons">
-            <button type="submit" class="btn submit">{{ 'Queue reparse'|t('preparse-field') }}</button>
-        </div>
-    </form>
+		<div class="buttons">
+			<button type="submit" class="btn submit">{{ 'Queue reparse'|t('preparse-field') }}</button>
+		</div>
+	</form>
 {% endif %}

@@ -2,273 +2,273 @@
 
 {% import '_includes/forms.twig' as forms %}
 {% if hasCodeEditor %}
-    {% import 'codeeditor/codeEditor' as codeEditor %}
+	{% import 'codeeditor/codeEditor' as codeEditor %}
 {% endif %}
 
 {% set readOnly = readOnly ?? false %}
 {% set hasStoredValues = hasStoredValues ?? false %}
 
 {% if hasStoredValues %}
-    <blockquote class="note warning">
-        <p>
-            {{ 'This field already has stored values. Changing the value type or the template does not re-render them — existing elements keep whatever was last parsed until they’re saved again or reparsed.'|t('preparse-field') }}
-        </p>
-        <p>
-            {{ 'Changing the value type also changes how the field sorts, filters, and resolves in GraphQL, so saved condition rules and queries built against the old type may stop matching.'|t('preparse-field') }}
-        </p>
-        <p>
-            <a href="{{ utilityUrl }}">{{ 'Reparse existing values →'|t('preparse-field') }}</a>
-        </p>
-    </blockquote>
+	<blockquote class="note warning">
+		<p>
+			{{ 'This field already has stored values. Changing the value type or the template does not re-render them — existing elements keep whatever was last parsed until they’re saved again or reparsed.'|t('preparse-field') }}
+		</p>
+		<p>
+			{{ 'Changing the value type also changes how the field sorts, filters, and resolves in GraphQL, so saved condition rules and queries built against the old type may stop matching.'|t('preparse-field') }}
+		</p>
+		<p>
+			<a href="{{ utilityUrl }}">{{ 'Reparse existing values →'|t('preparse-field') }}</a>
+		</p>
+	</blockquote>
 {% endif %}
 
 {{ forms.selectField({
-    label: 'Value type'|t('preparse-field'),
-    instructions: 'The type the rendered result is stored as. Number, boolean, and date values sort and filter as their real type, unlike Craft’s generated fields.'|t('preparse-field'),
-    warning: hasStoredValues ? 'Existing values are not re-rendered when this changes.'|t('preparse-field'),
-    id: 'valueType',
-    name: 'valueType',
-    options: [
-        { label: 'Text'|t('preparse-field'), value: 'text' },
-        { label: 'Number'|t('preparse-field'), value: 'number' },
-        { label: 'Boolean'|t('preparse-field'), value: 'boolean' },
-        { label: 'Date'|t('preparse-field'), value: 'date' },
-    ],
-    value: field.valueType,
-    errors: field.getErrors('valueType'),
-    disabled: readOnly,
-    toggle: true,
-    targetPrefix: 'value-type-',
+	label: 'Value type'|t('preparse-field'),
+	instructions: 'The type the rendered result is stored as. Number, boolean, and date values sort and filter as their real type, unlike Craft’s generated fields.'|t('preparse-field'),
+	warning: hasStoredValues ? 'Existing values are not re-rendered when this changes.'|t('preparse-field'),
+	id: 'valueType',
+	name: 'valueType',
+	options: [
+		{ label: 'Text'|t('preparse-field'), value: 'text' },
+		{ label: 'Number'|t('preparse-field'), value: 'number' },
+		{ label: 'Boolean'|t('preparse-field'), value: 'boolean' },
+		{ label: 'Date'|t('preparse-field'), value: 'date' },
+	],
+	value: field.valueType,
+	errors: field.getErrors('valueType'),
+	disabled: readOnly,
+	toggle: true,
+	targetPrefix: 'value-type-',
 }) }}
 
 <div id="value-type-number" {{ field.valueType != 'number' ? 'class="hidden"' }}>
-    {{ forms.textField({
-        label: 'Decimals'|t('preparse-field'),
-        instructions: 'How many decimal places to keep. Leave at 0 for whole numbers.'|t('preparse-field'),
-        id: 'decimals',
-        name: 'decimals',
-        type: 'number',
-        size: 2,
-        value: field.decimals,
-        errors: field.getErrors('decimals'),
-        disabled: readOnly,
-    }) }}
+	{{ forms.textField({
+		label: 'Decimals'|t('preparse-field'),
+		instructions: 'How many decimal places to keep. Leave at 0 for whole numbers.'|t('preparse-field'),
+		id: 'decimals',
+		name: 'decimals',
+		type: 'number',
+		size: 2,
+		value: field.decimals,
+		errors: field.getErrors('decimals'),
+		disabled: readOnly,
+	}) }}
 </div>
 
 {{ forms.selectField({
-    label: 'Template mode'|t('preparse-field'),
-    instructions: 'Whether the Twig lives in this field’s settings or in a template file.'|t('preparse-field'),
-    id: 'templateMode',
-    name: 'templateMode',
-    options: [
-        { label: 'Inline snippet'|t('preparse-field'), value: 'inline' },
-        { label: 'Template file'|t('preparse-field'), value: 'file' },
-    ],
-    value: field.templateMode,
-    errors: field.getErrors('templateMode'),
-    disabled: readOnly,
-    toggle: true,
-    targetPrefix: 'template-mode-',
+	label: 'Template mode'|t('preparse-field'),
+	instructions: 'Whether the Twig lives in this field’s settings or in a template file.'|t('preparse-field'),
+	id: 'templateMode',
+	name: 'templateMode',
+	options: [
+		{ label: 'Inline snippet'|t('preparse-field'), value: 'inline' },
+		{ label: 'Template file'|t('preparse-field'), value: 'file' },
+	],
+	value: field.templateMode,
+	errors: field.getErrors('templateMode'),
+	disabled: readOnly,
+	toggle: true,
+	targetPrefix: 'template-mode-',
 }) }}
 
 {% set snippetConfig = {
-    label: 'Twig snippet'|t('preparse-field'),
-    instructions: 'The Twig to render. The element is available as `object` and as `element`, and `{shorthand}` syntax works the same way it does in a generated field.'|t('preparse-field'),
-    warning: hasStoredValues ? 'Existing values are not re-rendered when this changes.'|t('preparse-field'),
-    id: 'template-inline',
-    name: 'template',
-    class: 'code',
-    rows: 12,
-    value: field.templateMode == 'inline' ? field.template : '',
-    errors: field.getErrors('template'),
-    disabled: readOnly,
+	label: 'Twig snippet'|t('preparse-field'),
+	instructions: 'The Twig to render. The element is available as `object` and as `element`, and `{shorthand}` syntax works the same way it does in a generated field.'|t('preparse-field'),
+	warning: hasStoredValues ? 'Existing values are not re-rendered when this changes.'|t('preparse-field'),
+	id: 'template-inline',
+	name: 'template',
+	class: 'code',
+	rows: 12,
+	value: field.templateMode == 'inline' ? field.template : '',
+	errors: field.getErrors('template'),
+	disabled: readOnly,
 } %}
 
 <div id="template-mode-inline" {{ field.templateMode != 'inline' ? 'class="hidden"' }}>
-    {% if hasCodeEditor %}
-        {# Line numbers are on because template validation reports line numbers. #}
-        {{ codeEditor.textareaField(snippetConfig, 'CodeEditor', {
-            language: 'twig',
-            lineNumbers: 'on',
-            folding: true,
-            minimap: { enabled: false },
-        }, {
-            wrapperClass: 'monaco-editor-background-frame',
-        }) }}
-    {% else %}
-        {{ forms.textareaField(snippetConfig) }}
-    {% endif %}
+	{% if hasCodeEditor %}
+		{# Line numbers are on because template validation reports line numbers. #}
+		{{ codeEditor.textareaField(snippetConfig, 'CodeEditor', {
+			language: 'twig',
+			lineNumbers: 'on',
+			folding: true,
+			minimap: { enabled: false },
+		}, {
+			wrapperClass: 'monaco-editor-background-frame',
+		}) }}
+	{% else %}
+		{{ forms.textareaField(snippetConfig) }}
+	{% endif %}
 </div>
 
 <div id="template-mode-file" {{ field.templateMode != 'file' ? 'class="hidden"' }}>
-    {{ forms.autosuggestField({
-        label: 'Template path'|t('preparse-field'),
-        instructions: 'The path to a template in your site’s template folder. The element is available as `object` and as `element`.'|t('preparse-field'),
-        warning: hasStoredValues ? 'Existing values are not re-rendered when this changes.'|t('preparse-field'),
-        id: 'template-file',
-        name: 'template',
-        suggestEnvVars: false,
-        value: field.templateMode == 'file' ? field.template : '',
-        errors: field.getErrors('template'),
-        disabled: readOnly,
-    }) }}
+	{{ forms.autosuggestField({
+		label: 'Template path'|t('preparse-field'),
+		instructions: 'The path to a template in your site’s template folder. The element is available as `object` and as `element`.'|t('preparse-field'),
+		warning: hasStoredValues ? 'Existing values are not re-rendered when this changes.'|t('preparse-field'),
+		id: 'template-file',
+		name: 'template',
+		suggestEnvVars: false,
+		value: field.templateMode == 'file' ? field.template : '',
+		errors: field.getErrors('template'),
+		disabled: readOnly,
+	}) }}
 </div>
 
 {% if not readOnly %}
-    {% set testId = "preparse-test-#{random()}" %}
+	{% set testId = "preparse-test-#{random()}" %}
 
-    <div id="{{ testId }}" class="preparse-test">
-        {{ forms.elementSelectField({
-            label: 'Test against'|t('preparse-field'),
-            instructions: 'Optional. Leave empty to test against the most recent entry.'|t('preparse-field'),
-            id: "#{testId}-element",
-            name: 'preparseTestElement',
-            elementType: testElementType,
-            limit: 1,
-            elements: [],
-        }) }}
+	<div id="{{ testId }}" class="preparse-test">
+		{{ forms.elementSelectField({
+			label: 'Test against'|t('preparse-field'),
+			instructions: 'Optional. Leave empty to test against the most recent entry.'|t('preparse-field'),
+			id: "#{testId}-element",
+			name: 'preparseTestElement',
+			elementType: testElementType,
+			limit: 1,
+			elements: [],
+		}) }}
 
-        <div class="buttons">
-            <button type="button" class="btn" data-preparse-test>{{ 'Test'|t('preparse-field') }}</button>
-            <div class="spinner hidden" data-preparse-spinner></div>
-        </div>
+		<div class="buttons">
+			<button type="button" class="btn" data-preparse-test>{{ 'Test'|t('preparse-field') }}</button>
+			<div class="spinner hidden" data-preparse-spinner></div>
+		</div>
 
-        <div data-preparse-result></div>
-    </div>
+		<div data-preparse-result></div>
+	</div>
 
-    {% js %}
-        (function() {
-            var scope = document.getElementById('{{ testId }}');
-            if (!scope) { return; }
+	{% js %}
+		(function() {
+			var scope = document.getElementById('{{ testId }}');
+			if (!scope) { return; }
 
-            var button = scope.querySelector('[data-preparse-test]');
-            var spinner = scope.querySelector('[data-preparse-spinner]');
-            var output = scope.querySelector('[data-preparse-result]');
+			var button = scope.querySelector('[data-preparse-test]');
+			var spinner = scope.querySelector('[data-preparse-spinner]');
+			var output = scope.querySelector('[data-preparse-result]');
 
-            var namespace = '{{ view.namespace|e('js') }}';
+			var namespace = '{{ view.namespace|e('js') }}';
 
-            var read = function(id) {
-                var resolved = namespace ? Craft.namespaceId(id, namespace) : id;
-                var el = document.getElementById(resolved);
-                return el ? el.value : '';
-            };
+			var read = function(id) {
+				var resolved = namespace ? Craft.namespaceId(id, namespace) : id;
+				var el = document.getElementById(resolved);
+				return el ? el.value : '';
+			};
 
-            button.addEventListener('click', function() {
-                spinner.classList.remove('hidden');
-                output.innerHTML = '';
+			button.addEventListener('click', function() {
+				spinner.classList.remove('hidden');
+				output.innerHTML = '';
 
-                var mode = read('templateMode');
-                var selected = $(scope).find('.elementselect').data('elementSelect');
-                var elementId = selected && selected.getElementIds().length ? selected.getElementIds()[0] : '';
+				var mode = read('templateMode');
+				var selected = $(scope).find('.elementselect').data('elementSelect');
+				var elementId = selected && selected.getElementIds().length ? selected.getElementIds()[0] : '';
 
-                Craft.sendActionRequest('POST', 'preparse-field/preview/render', {
-                    data: {
-                        decimals: read('decimals'),
-                        elementId: elementId,
-                        template: read(mode === 'file' ? 'template-file' : 'template-inline'),
-                        templateMode: mode,
-                        valueType: read('valueType')
-                    }
-                }).then(function(response) {
-                    var body = response.data || {};
-                    if (body.error) {
-                        output.innerHTML = '<blockquote class="note warning"><p></p></blockquote>';
-                        output.querySelector('p').textContent = body.error;
-                        return;
-                    }
-                    output.innerHTML = '<blockquote class="note"><p></p><p class="light smalltext"></p></blockquote>';
-                    output.querySelectorAll('p')[0].textContent = body.value;
-                    output.querySelectorAll('p')[1].textContent = body.element || '';
-                }).catch(function(error) {
-                    output.innerHTML = '<blockquote class="note warning"><p></p></blockquote>';
-                    output.querySelector('p').textContent =
-                        (error && error.response && error.response.data && error.response.data.message) ||
-                        '{{ 'Couldn’t run the test.'|t('preparse-field')|e('js') }}';
-                }).finally(function() {
-                    spinner.classList.add('hidden');
-                });
-            });
-        })();
-    {% endjs %}
+				Craft.sendActionRequest('POST', 'preparse-field/preview/render', {
+					data: {
+						decimals: read('decimals'),
+						elementId: elementId,
+						template: read(mode === 'file' ? 'template-file' : 'template-inline'),
+						templateMode: mode,
+						valueType: read('valueType')
+					}
+				}).then(function(response) {
+					var body = response.data || {};
+					if (body.error) {
+						output.innerHTML = '<blockquote class="note warning"><p></p></blockquote>';
+						output.querySelector('p').textContent = body.error;
+						return;
+					}
+					output.innerHTML = '<blockquote class="note"><p></p><p class="light smalltext"></p></blockquote>';
+					output.querySelectorAll('p')[0].textContent = body.value;
+					output.querySelectorAll('p')[1].textContent = body.element || '';
+				}).catch(function(error) {
+					output.innerHTML = '<blockquote class="note warning"><p></p></blockquote>';
+					output.querySelector('p').textContent =
+						(error && error.response && error.response.data && error.response.data.message) ||
+						'{{ 'Couldn’t run the test.'|t('preparse-field')|e('js') }}';
+				}).finally(function() {
+					spinner.classList.add('hidden');
+				});
+			});
+		})();
+	{% endjs %}
 {% endif %}
 
 {{ forms.selectField({
-    label: 'Parse timing'|t('preparse-field'),
-    instructions: '“After propagate” waits until the element and everything it owns has saved — that’s what makes nested Matrix content visible to the template. “Inline” renders during the save itself, so the value is final before other plugins see it, but nested elements may not have been written yet.'|t('preparse-field'),
-    id: 'parseTiming',
-    name: 'parseTiming',
-    options: [
-        { label: 'After propagate'|t('preparse-field'), value: 'afterPropagate' },
-        { label: 'Inline'|t('preparse-field'), value: 'inline' },
-    ],
-    value: field.parseTiming,
-    errors: field.getErrors('parseTiming'),
-    disabled: readOnly,
+	label: 'Parse timing'|t('preparse-field'),
+	instructions: '“After propagate” waits until the element and everything it owns has saved — that’s what makes nested Matrix content visible to the template. “Inline” renders during the save itself, so the value is final before other plugins see it, but nested elements may not have been written yet.'|t('preparse-field'),
+	id: 'parseTiming',
+	name: 'parseTiming',
+	options: [
+		{ label: 'After propagate'|t('preparse-field'), value: 'afterPropagate' },
+		{ label: 'Inline'|t('preparse-field'), value: 'inline' },
+	],
+	value: field.parseTiming,
+	errors: field.getErrors('parseTiming'),
+	disabled: readOnly,
 }) }}
 
 {{ forms.selectField({
-    label: 'When to parse'|t('preparse-field'),
-    instructions: '“Only when empty” renders once and then leaves the value alone.'|t('preparse-field'),
-    id: 'whenToParse',
-    name: 'whenToParse',
-    options: [
-        { label: 'Always'|t('preparse-field'), value: 'always' },
-        { label: 'Only when empty'|t('preparse-field'), value: 'whenEmpty' },
-    ],
-    value: field.whenToParse,
-    errors: field.getErrors('whenToParse'),
-    disabled: readOnly,
+	label: 'When to parse'|t('preparse-field'),
+	instructions: '“Only when empty” renders once and then leaves the value alone.'|t('preparse-field'),
+	id: 'whenToParse',
+	name: 'whenToParse',
+	options: [
+		{ label: 'Always'|t('preparse-field'), value: 'always' },
+		{ label: 'Only when empty'|t('preparse-field'), value: 'whenEmpty' },
+	],
+	value: field.whenToParse,
+	errors: field.getErrors('whenToParse'),
+	disabled: readOnly,
 }) }}
 
 {{ forms.selectField({
-    label: 'On error'|t('preparse-field'),
-    instructions: 'What to do when the template fails to render. The error is recorded either way and shown on the element’s edit page.'|t('preparse-field'),
-    id: 'onError',
-    name: 'onError',
-    options: [
-        { label: 'Keep previous value'|t('preparse-field'), value: 'keepPrevious' },
-        { label: 'Use fallback value'|t('preparse-field'), value: 'fallback' },
-        { label: 'Block the save'|t('preparse-field'), value: 'blockSave' },
-    ],
-    value: field.onError,
-    errors: field.getErrors('onError'),
-    disabled: readOnly,
-    toggle: true,
-    targetPrefix: 'on-error-',
+	label: 'On error'|t('preparse-field'),
+	instructions: 'What to do when the template fails to render. The error is recorded either way and shown on the element’s edit page.'|t('preparse-field'),
+	id: 'onError',
+	name: 'onError',
+	options: [
+		{ label: 'Keep previous value'|t('preparse-field'), value: 'keepPrevious' },
+		{ label: 'Use fallback value'|t('preparse-field'), value: 'fallback' },
+		{ label: 'Block the save'|t('preparse-field'), value: 'blockSave' },
+	],
+	value: field.onError,
+	errors: field.getErrors('onError'),
+	disabled: readOnly,
+	toggle: true,
+	targetPrefix: 'on-error-',
 }) }}
 
 <div id="on-error-fallback" {{ field.onError != 'fallback' ? 'class="hidden"' }}>
-    {{ forms.textField({
-        label: 'Fallback value'|t('preparse-field'),
-        instructions: 'Stored when a render fails. It’s coerced to the value type just like a rendered result.'|t('preparse-field'),
-        id: 'fallbackValue',
-        name: 'fallbackValue',
-        value: field.fallbackValue,
-        errors: field.getErrors('fallbackValue'),
-        disabled: readOnly,
-    }) }}
+	{{ forms.textField({
+		label: 'Fallback value'|t('preparse-field'),
+		instructions: 'Stored when a render fails. It’s coerced to the value type just like a rendered result.'|t('preparse-field'),
+		id: 'fallbackValue',
+		name: 'fallbackValue',
+		value: field.fallbackValue,
+		errors: field.getErrors('fallbackValue'),
+		disabled: readOnly,
+	}) }}
 </div>
 
 {{ forms.lightswitchField({
-    label: 'Parse on move'|t('preparse-field'),
-    instructions: 'Re-render when the element is moved within a structure. Turn this on if the template uses `parent`, `level`, or anything else that depends on the element’s position.'|t('preparse-field'),
-    id: 'parseOnMove',
-    name: 'parseOnMove',
-    on: field.parseOnMove,
-    errors: field.getErrors('parseOnMove'),
-    disabled: readOnly,
+	label: 'Parse on move'|t('preparse-field'),
+	instructions: 'Re-render when the element is moved within a structure. Turn this on if the template uses `parent`, `level`, or anything else that depends on the element’s position.'|t('preparse-field'),
+	id: 'parseOnMove',
+	name: 'parseOnMove',
+	on: field.parseOnMove,
+	errors: field.getErrors('parseOnMove'),
+	disabled: readOnly,
 }) }}
 
 {{ forms.selectField({
-    label: 'Display'|t('preparse-field'),
-    instructions: 'Whether the stored value is shown, read-only, on element edit pages. Errors are shown either way.'|t('preparse-field'),
-    id: 'display',
-    name: 'display',
-    options: [
-        { label: 'Hidden'|t('preparse-field'), value: 'hidden' },
-        { label: 'Value'|t('preparse-field'), value: 'value' },
-    ],
-    value: field.display,
-    errors: field.getErrors('display'),
-    disabled: readOnly,
+	label: 'Display'|t('preparse-field'),
+	instructions: 'Whether the stored value is shown, read-only, on element edit pages. Errors are shown either way.'|t('preparse-field'),
+	id: 'display',
+	name: 'display',
+	options: [
+		{ label: 'Hidden'|t('preparse-field'), value: 'hidden' },
+		{ label: 'Value'|t('preparse-field'), value: 'value' },
+	],
+	value: field.display,
+	errors: field.getErrors('display'),
+	disabled: readOnly,
 }) }}

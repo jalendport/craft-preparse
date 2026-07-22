@@ -222,6 +222,7 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
      *
      * @inheritdoc
      * @return array<string, string>
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -236,6 +237,7 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
 
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -246,6 +248,7 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
 
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -256,6 +259,7 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
 
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -273,6 +277,7 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
      * parser produces a genuine typed comparison.
      *
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -310,6 +315,7 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
      * reject exactly the queries typed storage exists to enable.
      *
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -333,6 +339,7 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
      * advertises the type it actually stores.
      *
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -350,6 +357,7 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
 
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -367,6 +375,7 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
      * Renders the value for element index tables and cards.
      *
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -383,6 +392,7 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
 
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -393,6 +403,7 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
 
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -411,6 +422,7 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
      * generated fields.
      *
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -433,6 +445,7 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
 
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -456,6 +469,7 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
      * control panel picks them up for the error banner.
      *
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -475,6 +489,7 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
      * Renders the value for the card view designer, where there's no element.
      *
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -508,6 +523,7 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
      *
      * @inheritdoc
      * @throws ParseException if the render failed and the field blocks saves on error
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -538,6 +554,7 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
      * Public and un-prefixed because Yii resolves validators by name.
      *
      * @param string $attribute the attribute being validated
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -556,6 +573,7 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
      * Returns the DB type the value key should be compared and sorted as.
      *
      * @return string the column type
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -580,6 +598,7 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
      *
      * @inheritdoc
      * @return array<string, string>
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -594,6 +613,7 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
     /**
      * @inheritdoc
      * @return array<mixed>
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -637,6 +657,7 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
 
     /**
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -659,6 +680,7 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
      * Skips date values, whose formatted keywords are noise in a search index.
      *
      * @inheritdoc
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -686,6 +708,7 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
      *
      * @param string $error the stored error message
      * @return string the indicator HTML
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -704,6 +727,7 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
      *
      * @param mixed $value the value
      * @return string the formatted, HTML-safe value
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -733,6 +757,7 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
      * Returns the DB type for the number value type.
      *
      * @return string the column type
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -753,27 +778,11 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
     }
 
     /**
-     * Returns the element type the settings page's test picker should offer.
-     *
-     * A field that's already in a layout gets that layout's element type; a
-     * brand-new one has no layouts yet, so entries are the sensible default.
-     *
-     * @return class-string<ElementInterface> the element type
-     * @author Jalen Davenport <hello@jalendport.com>
-     * @since 4.0.0
-     */
-    private function _testElementType(): string
-    {
-        $types = Preparse::$plugin->values->elementTypesForField($this);
-
-        return $types[0] ?? Entry::class;
-    }
-
-    /**
      * Renders the field's settings.
      *
      * @param bool $readOnly whether the settings are read-only
      * @return string the rendered settings
+     *
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
      */
@@ -792,5 +801,21 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
             'testElementType' => $this->_testElementType(),
             'utilityUrl' => UrlHelper::cpUrl('utilities/preparse'),
         ]);
+    }    /**
+     * Returns the element type the settings page's test picker should offer.
+     *
+     * A field that's already in a layout gets that layout's element type; a
+     * brand-new one has no layouts yet, so entries are the sensible default.
+     *
+     * @return class-string<ElementInterface> the element type
+     *
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    private function _testElementType(): string
+    {
+        $types = Preparse::$plugin->values->elementTypesForField($this);
+
+        return $types[0] ?? Entry::class;
     }
 }
