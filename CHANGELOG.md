@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Added a `preparse-field/reparse` console command, with `--fields`, `--section`, `--site`, `--queue`, `--force`, and `--full-save` options
 - Added a “Reparse” bulk action to element indexes
 - Added a Preparse utility, for reparsing on demand and reviewing stored parse errors
+- Added Twig syntax validation when field settings are saved ([#78](https://github.com/jalendport/craft-preparse/issues/78))
+- Added a Monaco editor for the Twig snippet, with Twig highlighting and line numbers
+- Added a “Test” button to the field settings, for rendering the current template against a sample element
+- Added a warning on fields that already hold values, when changing the value type or template
 
 ### Changed
 - Changed parsing to patch the element’s content directly instead of saving the element a second time ([#29](https://github.com/jalendport/craft-preparse/issues/29), [#77](https://github.com/jalendport/craft-preparse/issues/77))
