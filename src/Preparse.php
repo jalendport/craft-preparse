@@ -28,6 +28,7 @@ use jalendport\base\Plugin;
 use jalendport\preparse\elements\actions\Reparse;
 use jalendport\preparse\fields\PreparseField;
 use jalendport\preparse\jobs\ReparseElements;
+use jalendport\preparse\services\Converter;
 use jalendport\preparse\services\Parser;
 use jalendport\preparse\services\Values;
 use jalendport\preparse\utilities\Reparse as ReparseUtility;
@@ -44,6 +45,7 @@ use yii\base\Event;
  * @author Jalen Davenport <hello@jalendport.com>
  * @since 4.0.0
  *
+ * @property-read Converter $converter
  * @property-read Parser $parser
  * @property-read Values $values
  */
@@ -94,6 +96,7 @@ class Preparse extends Plugin
     {
         return [
             'components' => [
+                'converter' => Converter::class,
                 'parser' => Parser::class,
                 'values' => Values::class,
             ],
