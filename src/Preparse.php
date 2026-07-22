@@ -18,13 +18,19 @@ use craft\events\BulkOpEvent;
 use craft\events\ModelEvent;
 use craft\events\MoveElementEvent;
 use craft\events\RegisterComponentTypesEvent;
+use craft\events\RegisterElementActionsEvent;
+use craft\helpers\Queue;
 use craft\services\Fields;
 use craft\services\Structures;
+use craft\services\Utilities;
 use craft\web\Application as WebApplication;
 use jalendport\base\Plugin;
+use jalendport\preparse\elements\actions\Reparse;
 use jalendport\preparse\fields\PreparseField;
+use jalendport\preparse\jobs\ReparseElements;
 use jalendport\preparse\services\Parser;
 use jalendport\preparse\services\Values;
+use jalendport\preparse\utilities\Reparse as ReparseUtility;
 use Throwable;
 use yii\base\Event;
 
@@ -62,14 +68,16 @@ class Preparse extends Plugin
     public bool $hasCpSettings = false;
 
     /**
-     * @var string the plugin's schema version
-     *
-     * Carried over from the 3.x line so the 4.0 upgrade migration has a known
-     * starting point on existing installs.
-     *
+     * @var string the minimum 3.x version that can upgrade directly to 4.0
      * @since 4.0.0
      */
-    public string $schemaVersion = '1.1.0';
+    public string $minVersionRequired = '1.5.1';
+
+    /**
+     * @var string the plugin's schema version
+     * @since 4.0.0
+     */
+    public string $schemaVersion = '2.0.0';
 
     // Static Methods
     // =========================================================================
@@ -106,8 +114,10 @@ class Preparse extends Plugin
         self::$plugin = $this;
 
         $this->_registerFieldTypes();
+        $this->_registerElementActions();
         $this->_registerElementEvents();
         $this->_registerStructureEvents();
+        $this->_registerUtilities();
     }
 
     // Private Methods
@@ -208,6 +218,69 @@ class Preparse extends Plugin
     }
 
     /**
+     * Registers the reparse bulk action on element indexes.
+     *
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    private function _registerElementActions(): void
+    {
+        Event::on(
+            Element::class,
+            Element::EVENT_REGISTER_ACTIONS,
+            static function(RegisterElementActionsEvent $event): void {
+                /** @var class-string<ElementInterface> $elementType */
+                $elementType = $event->sender ?? Element::class;
+
+                // Only offer the action where it would actually do something.
+                if (!in_array($elementType, self::$plugin->values->elementTypesWithFields(), true)) {
+                    return;
+                }
+
+                $event->actions[] = Reparse::class;
+            },
+        );
+    }
+
+    /**
+     * Registers the control panel utility.
+     *
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    private function _registerUtilities(): void
+    {
+        Event::on(
+            Utilities::class,
+            Utilities::EVENT_REGISTER_UTILITIES,
+            static function(RegisterComponentTypesEvent $event): void {
+                $event->types[] = ReparseUtility::class;
+            },
+        );
+    }
+
+    /**
+     * Returns the handles of every field set to reparse on structure moves.
+     *
+     * @return string[] the field handles
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    private function _parseOnMoveHandles(): array
+    {
+        /** @var WebApplication|ConsoleApplication $app */
+        $app = Craft::$app;
+
+        /** @var PreparseField[] $fields */
+        $fields = $app->getFields()->getFieldsByType(PreparseField::class);
+
+        return array_values(array_map(
+            static fn(PreparseField $field) => $field->handle,
+            array_filter($fields, static fn(PreparseField $field) => $field->parseOnMove),
+        ));
+    }
+
+    /**
      * Wires up structure moves, for fields whose templates depend on where the
      * element sits in the hierarchy.
      *
@@ -238,6 +311,23 @@ class Preparse extends Plugin
             Structures::class,
             Structures::EVENT_AFTER_MOVE_ELEMENT,
             function(BulkOpEvent $event): void {
+                $ids = $event->query->ids();
+
+                if (count($ids) > ReparseElements::SYNC_THRESHOLD) {
+                    // A full structure reorder can touch thousands of elements,
+                    // and this runs at the tail of somebody's request.
+                    /** @var class-string<ElementInterface> $elementType */
+                    $elementType = $event->query->elementType;
+
+                    Queue::push(new ReparseElements([
+                        'criteria' => ['id' => $ids],
+                        'elementType' => $elementType,
+                        'fieldHandles' => $this->_parseOnMoveHandles(),
+                    ]));
+
+                    return;
+                }
+
                 foreach ($event->query->all() as $element) {
                     $this->_parseMovedElement($element);
                 }
