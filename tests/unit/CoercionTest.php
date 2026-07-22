@@ -68,3 +68,55 @@ it('leaves already-coerced values alone', function() {
         ->and(ParseResult::coerce(false, PreparseField::VALUE_TYPE_BOOLEAN))->toBeFalse()
         ->and(ParseResult::coerce('done', PreparseField::VALUE_TYPE_TEXT))->toBe('done');
 });
+
+/*
+| Coercion runs more than once over a value's life — a patched value is pushed
+| back onto the element and normalized again on the next read — so coercing an
+| already-coerced value has to be a no-op. This pins that invariant rather than
+| trusting it.
+*/
+
+it('is idempotent', function(string $valueType, mixed $rendered, int $decimals) {
+    $once = ParseResult::coerce($rendered, $valueType, $decimals);
+
+    expect(ParseResult::coerce($once, $valueType, $decimals))->toBe($once);
+})->with([
+    'text' => [PreparseField::VALUE_TYPE_TEXT, '  spaced  ', 0],
+    'empty text' => [PreparseField::VALUE_TYPE_TEXT, '   ', 0],
+    'whole number' => [PreparseField::VALUE_TYPE_NUMBER, '42.6', 0],
+    'decimal number' => [PreparseField::VALUE_TYPE_NUMBER, '3.14159', 2],
+    'unparseable number' => [PreparseField::VALUE_TYPE_NUMBER, 'nope', 0],
+    'true' => [PreparseField::VALUE_TYPE_BOOLEAN, 'yes', 0],
+    'false' => [PreparseField::VALUE_TYPE_BOOLEAN, 'off', 0],
+    'empty boolean' => [PreparseField::VALUE_TYPE_BOOLEAN, '', 0],
+]);
+
+it('accepts scientific notation as a number', function() {
+    expect(ParseResult::coerce('1e3', PreparseField::VALUE_TYPE_NUMBER))->toBe(1000);
+});
+
+it('rounds rather than truncates', function() {
+    expect(ParseResult::coerce('2.5', PreparseField::VALUE_TYPE_NUMBER))->toBe(3)
+        ->and(ParseResult::coerce('-2.5', PreparseField::VALUE_TYPE_NUMBER))->toBe(-3);
+});
+
+it('refuses to make text out of structured output', function(mixed $rendered) {
+    expect(ParseResult::coerce($rendered, PreparseField::VALUE_TYPE_TEXT))->toBeNull();
+})->with([
+    'array' => [['a', 'b']],
+    'object' => [new stdClass()],
+]);
+
+it('reads a boolean out of numeric output', function(mixed $rendered, bool $expected) {
+    expect(ParseResult::coerce($rendered, PreparseField::VALUE_TYPE_BOOLEAN))->toBe($expected);
+})->with([
+    [1, true],
+    [0, false],
+    ['0.0', false],
+    ['-1', true],
+]);
+
+it('never makes a date out of a boolean', function() {
+    expect(ParseResult::coerce(true, PreparseField::VALUE_TYPE_DATE))->toBeNull()
+        ->and(ParseResult::coerce(false, PreparseField::VALUE_TYPE_DATE))->toBeNull();
+});

@@ -79,6 +79,43 @@ it('stores nothing for an empty result', function() {
     expect((new ParseResult())->toStoredValue())->toBeNull();
 });
 
+it('treats a plain array as a value, not an envelope', function() {
+    // Only the envelope keys mark an envelope. Anything else is a value that
+    // happens to be an array, and mistaking one for the other would silently
+    // drop it.
+    $result = ParseResult::fromStoredValue(['first', 'second']);
+
+    expect($result->value)->toBe(['first', 'second'])
+        ->and($result->error)->toBeNull();
+});
+
+it('ignores a blank error', function() {
+    $result = ParseResult::fromStoredValue([
+        ParseResult::KEY_VALUE => 'fine',
+        ParseResult::KEY_ERROR => '',
+    ]);
+
+    expect($result->hasError())->toBeFalse()
+        ->and($result->toStoredValue())->toBe([ParseResult::KEY_VALUE => 'fine']);
+});
+
+it('ignores a blank timestamp', function() {
+    $result = ParseResult::fromStoredValue([
+        ParseResult::KEY_VALUE => 'fine',
+        ParseResult::KEY_PARSED_AT => '',
+    ]);
+
+    expect($result->parsedAt)->toBeNull();
+});
+
+it('stores a zero, which is not the same as no value', function() {
+    $result = new ParseResult();
+    $result->value = 0;
+
+    expect($result->isEmpty())->toBeFalse()
+        ->and($result->toStoredValue())->toBe([ParseResult::KEY_VALUE => 0]);
+});
+
 it('stores a false value, which is not the same as no value', function() {
     $result = new ParseResult();
     $result->value = false;
