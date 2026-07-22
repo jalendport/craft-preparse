@@ -43,6 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Removed the `displayType`, `allowSelect`, `textareaRows`, and `showField` settings, replaced by the “Display” setting
 
 ### Fixed
+- Fixed resaves and imports not regenerating preparse values ([#40](https://github.com/jalendport/craft-preparse/issues/40))
 - Fixed front-end file uploads being lost when an element had a preparse field ([#57](https://github.com/jalendport/craft-preparse/issues/57), [#85](https://github.com/jalendport/craft-preparse/issues/85))
 - Fixed an `UnsupportedSiteException` when saving elements in some multi-site setups ([#67](https://github.com/jalendport/craft-preparse/issues/67))
 - Fixed every field on an element being marked as changed when a preparse field was parsed ([#77](https://github.com/jalendport/craft-preparse/issues/77))
