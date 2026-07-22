@@ -14,17 +14,21 @@ use Craft;
 use craft\base\Component;
 use craft\base\ElementInterface;
 use craft\console\Application as ConsoleApplication;
+use craft\db\Query;
+use craft\db\Table;
 use craft\elements\db\ElementQueryInterface;
 use craft\helpers\ElementHelper;
 use craft\helpers\Json;
 use craft\records\Element_SiteSettings as Element_SiteSettingsRecord;
 use craft\web\Application as WebApplication;
+use DateTime;
 use jalendport\preparse\errors\ParseException;
 use jalendport\preparse\fields\PreparseField;
 use jalendport\preparse\models\ParseResult;
 use jalendport\preparse\Preparse;
 use Throwable;
 use WeakMap;
+use yii\db\Expression;
 
 /**
  * Reads, writes, and patches preparse values.
@@ -43,8 +47,27 @@ use WeakMap;
  */
 class Values extends Component
 {
+    // Const Properties
+    // =========================================================================
+
+    /**
+     * @var int The most `elements_sites` rows {@see recentErrors()} will pull back in one go.
+     *
+     * Parse errors are meant to be rare. If an install has more than this many,
+     * the utility's job is to say so, not to render thousands of rows.
+     *
+     * @since 4.0.0
+     */
+    public const MAX_ERROR_ROWS = 500;
+
     // Private Properties
     // =========================================================================
+
+    /**
+     * @var array<int, class-string<ElementInterface>>|null The element types that have preparse fields
+     * @see elementTypesWithFields()
+     */
+    private ?array $_elementTypes = null;
 
     /**
      * @var WeakMap<ElementInterface, array<string, ParseResult>> Envelopes seen for each element, keyed by field handle
@@ -69,6 +92,46 @@ class Values extends Component
         // normalized. Weak keys mean a long-running resave doesn't accumulate
         // every element it has touched.
         $this->_results = new WeakMap();
+    }
+
+    /**
+     * Returns the element types that have a preparse field somewhere in a field layout.
+     *
+     * Used to decide which element indexes get the reparse bulk action, and
+     * which element types a bare `reparse` command should sweep.
+     *
+     * @return array<int, class-string<ElementInterface>> the element types
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    public function elementTypesWithFields(): array
+    {
+        if (isset($this->_elementTypes)) {
+            return $this->_elementTypes;
+        }
+
+        /** @var WebApplication|ConsoleApplication $app */
+        $app = Craft::$app;
+        $types = [];
+
+        foreach ($app->getFields()->getAllLayouts() as $layout) {
+            if ($layout->type === null || isset($types[$layout->type])) {
+                continue;
+            }
+
+            foreach ($layout->getCustomFields() as $field) {
+                if ($field instanceof PreparseField) {
+                    $types[$layout->type] = true;
+                    break;
+                }
+            }
+        }
+
+        /** @var array<int, class-string<ElementInterface>> $keys */
+        $keys = array_keys($types);
+        $this->_elementTypes = $keys;
+
+        return $this->_elementTypes;
     }
 
     /**
@@ -152,6 +215,8 @@ class Values extends Component
      * @param ElementInterface $element the element that was saved or moved
      * @param callable(PreparseField): bool|null $filter which fields to parse
      * @param bool $invalidateCaches whether to invalidate the element's caches afterwards
+     * @param bool $force whether to parse even fields set to only parse when empty
+     * @param int[]|null $siteIds only write values for these sites, or `null` for all of them
      * @throws ParseException if a render failed and the field blocks saves on error
      * @throws Throwable if the content couldn't be written
      * @author Jalen Davenport <hello@jalendport.com>
@@ -161,6 +226,8 @@ class Values extends Component
         ElementInterface $element,
         ?callable $filter = null,
         bool $invalidateCaches = false,
+        bool $force = false,
+        ?array $siteIds = null,
     ): void {
         // Revisions are frozen history; re-rendering them would rewrite the past (#103).
         if ($element->getIsRevision() || ElementHelper::isRevision($element)) {
@@ -185,7 +252,7 @@ class Values extends Component
                 $source = reset($group);
                 $previous = $this->_previousResult($source, $field);
 
-                if (!$this->shouldParse($field, $previous)) {
+                if (!$force && !$this->shouldParse($field, $previous)) {
                     continue;
                 }
 
@@ -198,6 +265,13 @@ class Values extends Component
         }
 
         foreach ($results as $siteId => $siteResults) {
+            // Grouping needs every site — a translation group is only meaningful
+            // whole — but writing can be narrowed, which is what lets a reparse
+            // refresh one site of a translatable field without touching the rest.
+            if ($siteIds !== null && !in_array($siteId, $siteIds, true)) {
+                continue;
+            }
+
             $this->patch($siteElements[$siteId], $fields, $siteResults, $invalidateCaches);
         }
     }
@@ -274,6 +348,87 @@ class Values extends Component
     }
 
     /**
+     * Returns the stored parse errors across every element, newest first.
+     *
+     * Errors aren't kept in a table of their own — they live in the same
+     * content JSON as the values they belong to, which means they can never
+     * drift out of sync with what's actually stored, and they disappear on
+     * their own the moment a field parses cleanly again.
+     *
+     * @param int $limit the maximum number of errors to return
+     * @return array<int, array{elementId: int, siteId: int, handle: string, name: string, error: string, parsedAt: DateTime|null}>
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    public function recentErrors(int $limit = 50): array
+    {
+        $placements = $this->_fieldPlacements();
+
+        if (empty($placements)) {
+            return [];
+        }
+
+        /** @var WebApplication|ConsoleApplication $app */
+        $app = Craft::$app;
+        $db = $app->getDb();
+        $qb = $db->getQueryBuilder();
+
+        $condition = ['or'];
+
+        foreach (array_keys($placements) as $uid) {
+            // jsonExtract() quotes the path itself, so the UID can't escape it.
+            $condition[] = new Expression(sprintf(
+                '%s IS NOT NULL',
+                $qb->jsonExtract('content', [$uid, ParseResult::KEY_ERROR]),
+            ));
+        }
+
+        $rows = (new Query())
+            ->select(['elementId', 'siteId', 'content'])
+            ->from([Table::ELEMENTS_SITES])
+            ->where($condition)
+            ->limit(self::MAX_ERROR_ROWS)
+            ->all($db);
+
+        $errors = [];
+
+        foreach ($rows as $row) {
+            $content = $row['content'] ?? null;
+
+            if (is_string($content)) {
+                $content = $content !== '' ? Json::decode($content) : [];
+            }
+
+            if (!is_array($content)) {
+                continue;
+            }
+
+            foreach ($placements as $uid => $placement) {
+                $result = ParseResult::fromStoredValue($content[$uid] ?? null);
+
+                if (!$result->hasError()) {
+                    continue;
+                }
+
+                $errors[] = [
+                    'elementId' => (int)$row['elementId'],
+                    'siteId' => (int)$row['siteId'],
+                    'handle' => $placement['handle'],
+                    'name' => $placement['name'],
+                    'error' => (string)$result->error,
+                    'parsedAt' => $result->parsedAt,
+                ];
+            }
+        }
+
+        // The rows can't be ordered by timestamp in SQL, because the timestamp
+        // sits inside the JSON at a different path per field placement.
+        usort($errors, static fn(array $a, array $b) => ($b['parsedAt']?->getTimestamp() ?? 0) <=> ($a['parsedAt']?->getTimestamp() ?? 0));
+
+        return array_slice($errors, 0, $limit);
+    }
+
+    /**
      * Records the envelope seen for an element's field.
      *
      * @param ElementInterface $element the element
@@ -309,6 +464,45 @@ class Values extends Component
 
     // Private Methods
     // =========================================================================
+
+    /**
+     * Returns every preparse field placement across all field layouts.
+     *
+     * Keyed by layout element UID, because that's the key a value is stored
+     * under in the content JSON — the same field placed twice in one layout has
+     * two entries, and two different values.
+     *
+     * @return array<string, array{handle: string, name: string}> the placements
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    private function _fieldPlacements(): array
+    {
+        /** @var WebApplication|ConsoleApplication $app */
+        $app = Craft::$app;
+        $placements = [];
+
+        foreach ($app->getFields()->getAllLayouts() as $layout) {
+            foreach ($layout->getCustomFields() as $field) {
+                if (!$field instanceof PreparseField) {
+                    continue;
+                }
+
+                $uid = $field->layoutElement->uid ?? null;
+
+                if ($uid === null) {
+                    continue;
+                }
+
+                $placements[$uid] = [
+                    'handle' => $field->handle,
+                    'name' => $field->getUiLabel(),
+                ];
+            }
+        }
+
+        return $placements;
+    }
 
     /**
      * Returns a site settings record's content as an array.
