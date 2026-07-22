@@ -7,36 +7,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## Unreleased
 
+> Preparse 4 is a ground-up rebuild. Stored values carry over untouched and field settings are migrated automatically, but templates that used the reference-handle alias need a find/replace. See [Upgrading from 3.x](https://github.com/jalendport/craft-preparse/blob/master/README.md#upgrading-from-3x).
+
 ### Added
-- Added typed value storage, so number, boolean, and date fields sort and filter as their real type ([#60](https://github.com/jalendport/craft-preparse/issues/60), [#74](https://github.com/jalendport/craft-preparse/issues/74), [#93](https://github.com/jalendport/craft-preparse/issues/93))
-- Added an “On error” setting, choosing between keeping the previous value, storing a fallback, and blocking the save
-- Added a “When to parse” setting, for values that should only be rendered once
-- Added a “Template mode” setting, for keeping the Twig in a site template file instead of the field settings
+- Added typed value storage — text, number, boolean, and date values are stored and queried as their real type ([#60](https://github.com/jalendport/craft-preparse/issues/60), [#74](https://github.com/jalendport/craft-preparse/issues/74), [#93](https://github.com/jalendport/craft-preparse/issues/93))
 - Added element index sort options that order by the field’s real type ([#104](https://github.com/jalendport/craft-preparse/issues/104))
-- Added preparse values to element index tables and cards, with an indicator when the stored value is out of date
 - Added typed condition rules, including numeric and date ranges
 - Added typed GraphQL support, so a number field resolves as a number and a date field as a `DateTime`
+- Added an “On error” setting, for keeping the previous value, storing a fallback, or blocking the save
+- Added a “When to parse” setting, for values that should be rendered once and then left alone
+- Added a “Template mode” setting, for keeping the Twig in a site template file instead of the field settings
+- Added stored parse errors, surfaced on element edit pages, in element indexes, and in the Preparse utility
 - Added a `preparse-field/reparse` console command, with `--fields`, `--section`, `--site`, `--queue`, `--force`, and `--full-save` options
 - Added a “Reparse” bulk action to element indexes
 - Added a Preparse utility, for reparsing on demand and reviewing stored parse errors
+- Added a `preparse-field/convert` console command, for converting a Craft generated field into a Preparse field
+- Added preparse values to element index tables and cards, with an indicator when a stored value is out of date
 - Added Twig syntax validation when field settings are saved ([#78](https://github.com/jalendport/craft-preparse/issues/78))
 - Added a Monaco editor for the Twig snippet, with Twig highlighting and line numbers
 - Added a “Test” button to the field settings, for rendering the current template against a sample element
-- Added a warning on fields that already hold values, when changing the value type or template
+- Added a warning when changing the value type or template of a field that already holds values
 
 ### Changed
-- Changed parsing to patch the element’s content directly instead of saving the element a second time ([#29](https://github.com/jalendport/craft-preparse/issues/29), [#77](https://github.com/jalendport/craft-preparse/issues/77))
+- Changed parsing to write the element’s content directly instead of saving the element a second time ([#29](https://github.com/jalendport/craft-preparse/issues/29), [#77](https://github.com/jalendport/craft-preparse/issues/77))
 - Changed multi-site parsing to follow the field’s translation method ([#96](https://github.com/jalendport/craft-preparse/issues/96))
-- Changed templates to render with the element’s site language rather than the current user’s ([#45](https://github.com/jalendport/craft-preparse/issues/45))
-- Changed `parseBeforeSave` to the “Parse timing” setting, which now renders during the save itself rather than before it
+- Changed templates to render in the language of the element’s site rather than the current user’s ([#45](https://github.com/jalendport/craft-preparse/issues/45))
+- Changed number coercion to reject formatted output such as `1,234.50`, which is now stored as no value
+- Changed `parseBeforeSave` to the “Parse timing” setting, which renders during the save rather than before it
+- Changed the minimum requirement to Craft CMS 5.7
+- Changed 3.x field settings to be mapped to their 4.0 equivalents automatically on update
 
 ### Removed
+- Removed the reference-handle template alias (`entry`, `asset`, and so on); use `object`, `element`, or `{shorthand}`
 - Removed the `aelvan` and `besteadfast` namespace aliases
 - Removed the `displayType`, `allowSelect`, `textareaRows`, and `showField` settings, replaced by the “Display” setting
 
 ### Fixed
 - Fixed front-end file uploads being lost when an element had a preparse field ([#57](https://github.com/jalendport/craft-preparse/issues/57), [#85](https://github.com/jalendport/craft-preparse/issues/85))
 - Fixed an `UnsupportedSiteException` when saving elements in some multi-site setups ([#67](https://github.com/jalendport/craft-preparse/issues/67))
+- Fixed every field on an element being marked as changed when a preparse field was parsed ([#77](https://github.com/jalendport/craft-preparse/issues/77))
 - Fixed revisions being parsed ([#103](https://github.com/jalendport/craft-preparse/issues/103))
 
 ## 3.0.0-alpha.2 - 2024-07-15
