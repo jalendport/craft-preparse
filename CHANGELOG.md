@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## Unreleased
 
+### Added
+- Added typed value storage, so number, boolean, and date fields sort and filter as their real type ([#60](https://github.com/jalendport/craft-preparse/issues/60), [#74](https://github.com/jalendport/craft-preparse/issues/74), [#93](https://github.com/jalendport/craft-preparse/issues/93))
+- Added an “On error” setting, choosing between keeping the previous value, storing a fallback, and blocking the save
+- Added a “When to parse” setting, for values that should only be rendered once
+- Added a “Template mode” setting, for keeping the Twig in a site template file instead of the field settings
+
+### Changed
+- Changed parsing to patch the element’s content directly instead of saving the element a second time ([#29](https://github.com/jalendport/craft-preparse/issues/29), [#77](https://github.com/jalendport/craft-preparse/issues/77))
+- Changed multi-site parsing to follow the field’s translation method ([#96](https://github.com/jalendport/craft-preparse/issues/96))
+- Changed templates to render with the element’s site language rather than the current user’s ([#45](https://github.com/jalendport/craft-preparse/issues/45))
+- Changed `parseBeforeSave` to the “Parse timing” setting, which now renders during the save itself rather than before it
+
+### Removed
+- Removed the `aelvan` and `besteadfast` namespace aliases
+- Removed the `displayType`, `allowSelect`, `textareaRows`, and `showField` settings, replaced by the “Display” setting
+
+### Fixed
+- Fixed front-end file uploads being lost when an element had a preparse field ([#57](https://github.com/jalendport/craft-preparse/issues/57), [#85](https://github.com/jalendport/craft-preparse/issues/85))
+- Fixed an `UnsupportedSiteException` when saving elements in some multi-site setups ([#67](https://github.com/jalendport/craft-preparse/issues/67))
+- Fixed revisions being parsed ([#103](https://github.com/jalendport/craft-preparse/issues/103))
+
 ## 3.0.0-alpha.2 - 2024-07-15
 ### Fixed
 - Fixed reference to renamed method that was preventing preparse fields from rendering in the table view in certain cases ([#101](https://github.com/jalendport/craft-preparse/issues/101))
