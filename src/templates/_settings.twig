@@ -1,12 +1,31 @@
-{# Preparse field settings. Monaco/code-editor polish lands in a later release. #}
+{# Preparse field settings. #}
 
 {% import '_includes/forms.twig' as forms %}
+{% if hasCodeEditor %}
+    {% import 'codeeditor/codeEditor' as codeEditor %}
+{% endif %}
 
 {% set readOnly = readOnly ?? false %}
+{% set hasStoredValues = hasStoredValues ?? false %}
+
+{% if hasStoredValues %}
+    <blockquote class="note warning">
+        <p>
+            {{ 'This field already has stored values. Changing the value type or the template does not re-render them — existing elements keep whatever was last parsed until they’re saved again or reparsed.'|t('preparse-field') }}
+        </p>
+        <p>
+            {{ 'Changing the value type also changes how the field sorts, filters, and resolves in GraphQL, so saved condition rules and queries built against the old type may stop matching.'|t('preparse-field') }}
+        </p>
+        <p>
+            <a href="{{ utilityUrl }}">{{ 'Reparse existing values →'|t('preparse-field') }}</a>
+        </p>
+    </blockquote>
+{% endif %}
 
 {{ forms.selectField({
     label: 'Value type'|t('preparse-field'),
     instructions: 'The type the rendered result is stored as. Number, boolean, and date values sort and filter as their real type, unlike Craft’s generated fields.'|t('preparse-field'),
+    warning: hasStoredValues ? 'Existing values are not re-rendered when this changes.'|t('preparse-field'),
     id: 'valueType',
     name: 'valueType',
     options: [
@@ -52,24 +71,40 @@
     targetPrefix: 'template-mode-',
 }) }}
 
+{% set snippetConfig = {
+    label: 'Twig snippet'|t('preparse-field'),
+    instructions: 'The Twig to render. The element is available as `object` and as `element`, and `{shorthand}` syntax works the same way it does in a generated field.'|t('preparse-field'),
+    warning: hasStoredValues ? 'Existing values are not re-rendered when this changes.'|t('preparse-field'),
+    id: 'template-inline',
+    name: 'template',
+    class: 'code',
+    rows: 12,
+    value: field.templateMode == 'inline' ? field.template : '',
+    errors: field.getErrors('template'),
+    disabled: readOnly,
+} %}
+
 <div id="template-mode-inline" {{ field.templateMode != 'inline' ? 'class="hidden"' }}>
-    {{ forms.textareaField({
-        label: 'Twig snippet'|t('preparse-field'),
-        instructions: 'The Twig to render. The element is available as `object` and as `element`, and `{shorthand}` syntax works the same way it does in a generated field.'|t('preparse-field'),
-        id: 'template-inline',
-        name: 'template',
-        class: 'code',
-        rows: 10,
-        value: field.templateMode == 'inline' ? field.template : '',
-        errors: field.getErrors('template'),
-        disabled: readOnly,
-    }) }}
+    {% if hasCodeEditor %}
+        {# Line numbers are on because template validation reports line numbers. #}
+        {{ codeEditor.textareaField(snippetConfig, 'CodeEditor', {
+            language: 'twig',
+            lineNumbers: 'on',
+            folding: true,
+            minimap: { enabled: false },
+        }, {
+            wrapperClass: 'monaco-editor-background-frame',
+        }) }}
+    {% else %}
+        {{ forms.textareaField(snippetConfig) }}
+    {% endif %}
 </div>
 
 <div id="template-mode-file" {{ field.templateMode != 'file' ? 'class="hidden"' }}>
     {{ forms.autosuggestField({
         label: 'Template path'|t('preparse-field'),
         instructions: 'The path to a template in your site’s template folder. The element is available as `object` and as `element`.'|t('preparse-field'),
+        warning: hasStoredValues ? 'Existing values are not re-rendered when this changes.'|t('preparse-field'),
         id: 'template-file',
         name: 'template',
         suggestEnvVars: false,
