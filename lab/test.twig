@@ -1,0 +1,119 @@
+{% set plugin = craft.app.plugins.getPlugin('preparse-field') %}
+{% set primarySite = craft.app.sites.primarySite %}
+{% set germanSite = craft.app.sites.getSiteByHandle('labGerman') %}
+{% set slugs = ['preparse-2', 'preparse-10', 'preparse-100'] %}
+{% set primaryEntry = craft.entries.section('labArticles').siteId(primarySite.id).slug('preparse-10').status(null).one() %}
+{% set germanEntry = germanSite ? craft.entries.section('labArticles').siteId(germanSite.id).slug('preparse-10').status(null).one() : null %}
+{% set sortedEntries = craft.entries.section('labArticles').siteId(primarySite.id).slug(slugs).status(null).orderBy('labPreparseNumber asc').all() %}
+{% set sortedValues = sortedEntries|map(entry => entry.labPreparseNumber)|join(',') %}
+{% set matrixBlock = primaryEntry ? primaryEntry.labPreparseMatrix.one() : null %}
+{% set dateActual = primaryEntry and primaryEntry.labPreparseDate ? primaryEntry.labPreparseDate|date('Y-m-d') : null %}
+{% set checks = [
+	{
+		label: 'Plugin installed',
+		site: 'global',
+		expected: 'yes',
+		actual: plugin ? 'yes' : 'no',
+		pass: plugin,
+	},
+	{
+		label: 'Shared text',
+		site: primarySite.handle,
+		expected: 'en-US',
+		actual: primaryEntry ? primaryEntry.labPreparseShared : null,
+		pass: primaryEntry and primaryEntry.labPreparseShared == 'en-US',
+	},
+	{
+		label: 'Shared text',
+		site: germanSite ? germanSite.handle : 'missing',
+		expected: 'en-US',
+		actual: germanEntry ? germanEntry.labPreparseShared : null,
+		pass: germanEntry and germanEntry.labPreparseShared == 'en-US',
+	},
+	{
+		label: 'Translated text',
+		site: primarySite.handle,
+		expected: 'en-US',
+		actual: primaryEntry ? primaryEntry.labPreparseTranslated : null,
+		pass: primaryEntry and primaryEntry.labPreparseTranslated == 'en-US',
+	},
+	{
+		label: 'Translated text',
+		site: germanSite ? germanSite.handle : 'missing',
+		expected: 'de',
+		actual: germanEntry ? germanEntry.labPreparseTranslated : null,
+		pass: germanEntry and germanEntry.labPreparseTranslated == 'de',
+	},
+	{
+		label: 'Number value',
+		site: primarySite.handle,
+		expected: 10,
+		actual: primaryEntry ? primaryEntry.labPreparseNumber : null,
+		pass: primaryEntry and primaryEntry.labPreparseNumber is same as(10),
+	},
+	{
+		label: 'Typed number sort',
+		site: primarySite.handle,
+		expected: '2,10,100',
+		actual: sortedValues,
+		pass: sortedValues == '2,10,100',
+	},
+	{
+		label: 'Date value',
+		site: primarySite.handle,
+		expected: '2026-07-22',
+		actual: dateActual,
+		pass: dateActual == '2026-07-22',
+	},
+	{
+		label: 'Boolean value',
+		site: primarySite.handle,
+		expected: 'true',
+		actual: primaryEntry and primaryEntry.labPreparseBoolean ? 'true' : 'false',
+		pass: primaryEntry and primaryEntry.labPreparseBoolean is same as(true),
+	},
+	{
+		label: 'Matrix nested value',
+		site: primarySite.handle,
+		expected: 'nested-preparse-10',
+		actual: matrixBlock ? matrixBlock.labPreparseNested : null,
+		pass: matrixBlock and matrixBlock.labPreparseNested == 'nested-preparse-10',
+	},
+] %}
+{% set failures = checks|filter(check => not check.pass)|length %}
+
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Preparse smoke test</title>
+	</head>
+	<body>
+		<h1>Preparse smoke test</h1>
+		<table border="1" cellpadding="6">
+			<thead>
+				<tr>
+					<th>Surface</th>
+					<th>Site</th>
+					<th>Expected</th>
+					<th>Actual</th>
+					<th>Result</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for check in checks %}
+					<tr>
+						<td>{{ check.label }}</td>
+						<td>{{ check.site }}</td>
+						<td><code>{{ check.expected }}</code></td>
+						<td><code>{{ check.actual ?? 'null' }}</code></td>
+						<td>{{ check.pass ? 'PASS' : 'FAIL' }}</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+
+		<h2>Verdict</h2>
+		<p id="verdict">{{ failures == 0 ? 'ALL PASS' : failures ~ ' FAILURES' }}</p>
+	</body>
+</html>
