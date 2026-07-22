@@ -50,6 +50,14 @@ return [
     'Whether the stored value is shown, read-only, on element edit pages. Errors are shown either way.' => 'Whether the stored value is shown, read-only, on element edit pages. Errors are shown either way.',
     'Whether the Twig lives in this field’s settings or in a template file.' => 'Whether the Twig lives in this field’s settings or in a template file.',
 
+    // Settings test render
+    'Couldn’t find an element to test against. Pick one above.' => 'Couldn’t find an element to test against. Pick one above.',
+    'Couldn’t run the test.' => 'Couldn’t run the test.',
+    'Optional. Leave empty to test against the most recent entry.' => 'Optional. Leave empty to test against the most recent entry.',
+    'Test' => 'Test',
+    'Test against' => 'Test against',
+    'There’s no template to test yet.' => 'There’s no template to test yet.',
+
     // Template validation
     'Couldn’t read the template at “{path}”.' => 'Couldn’t read the template at “{path}”.',
     'No template exists at “{path}”.' => 'No template exists at “{path}”.',

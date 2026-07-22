@@ -163,6 +163,43 @@ class Values extends Component
     }
 
     /**
+     * Returns the element types whose field layouts include a given field.
+     *
+     * @param PreparseField $field the field
+     * @return array<int, class-string<ElementInterface>> the element types
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    public function elementTypesForField(PreparseField $field): array
+    {
+        if (!isset($field->id)) {
+            return [];
+        }
+
+        /** @var WebApplication|ConsoleApplication $app */
+        $app = Craft::$app;
+        $types = [];
+
+        foreach ($app->getFields()->getAllLayouts() as $layout) {
+            if ($layout->type === null || isset($types[$layout->type])) {
+                continue;
+            }
+
+            foreach ($layout->getCustomFields() as $instance) {
+                if ($instance instanceof PreparseField && $instance->id === $field->id) {
+                    $types[$layout->type] = true;
+                    break;
+                }
+            }
+        }
+
+        /** @var array<int, class-string<ElementInterface>> $keys */
+        $keys = array_keys($types);
+
+        return $keys;
+    }
+
+    /**
      * Returns whether a field has any values stored anywhere.
      *
      * The settings page uses this to decide whether changing the value type or

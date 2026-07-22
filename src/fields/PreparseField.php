@@ -16,6 +16,7 @@ use craft\base\Field;
 use craft\base\PreviewableFieldInterface;
 use craft\base\SortableFieldInterface;
 use craft\console\Application as ConsoleApplication;
+use craft\elements\Entry;
 use craft\gql\types\DateTime as DateTimeType;
 use craft\gql\types\Number as NumberType;
 use craft\helpers\Db;
@@ -752,6 +753,23 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
     }
 
     /**
+     * Returns the element type the settings page's test picker should offer.
+     *
+     * A field that's already in a layout gets that layout's element type; a
+     * brand-new one has no layouts yet, so entries are the sensible default.
+     *
+     * @return class-string<ElementInterface> the element type
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    private function _testElementType(): string
+    {
+        $types = Preparse::$plugin->values->elementTypesForField($this);
+
+        return $types[0] ?? Entry::class;
+    }
+
+    /**
      * Renders the field's settings.
      *
      * @param bool $readOnly whether the settings are read-only
@@ -771,6 +789,7 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
             'hasCodeEditor' => CodeEditor::getInstance() !== null,
             'hasStoredValues' => Preparse::$plugin->values->hasStoredValues($this),
             'readOnly' => $readOnly,
+            'testElementType' => $this->_testElementType(),
             'utilityUrl' => UrlHelper::cpUrl('utilities/preparse'),
         ]);
     }

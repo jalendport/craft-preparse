@@ -114,6 +114,84 @@
     }) }}
 </div>
 
+{% if not readOnly %}
+    {% set testId = "preparse-test-#{random()}" %}
+
+    <div id="{{ testId }}" class="preparse-test">
+        {{ forms.elementSelectField({
+            label: 'Test against'|t('preparse-field'),
+            instructions: 'Optional. Leave empty to test against the most recent entry.'|t('preparse-field'),
+            id: "#{testId}-element",
+            name: 'preparseTestElement',
+            elementType: testElementType,
+            limit: 1,
+            elements: [],
+        }) }}
+
+        <div class="buttons">
+            <button type="button" class="btn" data-preparse-test>{{ 'Test'|t('preparse-field') }}</button>
+            <div class="spinner hidden" data-preparse-spinner></div>
+        </div>
+
+        <div data-preparse-result></div>
+    </div>
+
+    {% js %}
+        (function() {
+            var scope = document.getElementById('{{ testId }}');
+            if (!scope) { return; }
+
+            var button = scope.querySelector('[data-preparse-test]');
+            var spinner = scope.querySelector('[data-preparse-spinner]');
+            var output = scope.querySelector('[data-preparse-result]');
+
+            var namespace = '{{ view.namespace|e('js') }}';
+
+            var read = function(id) {
+                var resolved = namespace ? Craft.namespaceId(id, namespace) : id;
+                var el = document.getElementById(resolved);
+                return el ? el.value : '';
+            };
+
+            button.addEventListener('click', function() {
+                spinner.classList.remove('hidden');
+                output.innerHTML = '';
+
+                var mode = read('templateMode');
+                var selected = $(scope).find('.elementselect').data('elementSelect');
+                var elementId = selected && selected.getElementIds().length ? selected.getElementIds()[0] : '';
+
+                Craft.sendActionRequest('POST', 'preparse-field/preview/render', {
+                    data: {
+                        decimals: read('decimals'),
+                        elementId: elementId,
+                        template: read(mode === 'file' ? 'template-file' : 'template-inline'),
+                        templateMode: mode,
+                        valueType: read('valueType')
+                    }
+                }).then(function(response) {
+                    var body = response.data || {};
+                    if (body.error) {
+                        output.innerHTML = '<blockquote class="note warning"><p></p></blockquote>';
+                        output.querySelector('p').textContent = body.error;
+                        return;
+                    }
+                    output.innerHTML = '<blockquote class="note"><p></p><p class="light smalltext"></p></blockquote>';
+                    output.querySelectorAll('p')[0].textContent = body.value;
+                    output.querySelectorAll('p')[1].textContent = body.element || '';
+                }).catch(function(error) {
+                    output.innerHTML = '<blockquote class="note warning"><p></p></blockquote>';
+                    output.querySelector('p').textContent =
+                        (error && error.response && error.response.data && error.response.data.message) ||
+                        '{{ 'Couldn’t run the test.'|t('preparse-field')|e('js') }}';
+                }).finally(function() {
+                    spinner.classList.add('hidden');
+                });
+            });
+        })();
+    {% endjs %}
+{% endif %}
+
 {{ forms.selectField({
     label: 'Parse timing'|t('preparse-field'),
     instructions: '“After propagate” waits until the element and everything it owns has saved — that’s what makes nested Matrix content visible to the template. “Inline” renders during the save itself, so the value is final before other plugins see it, but nested elements may not have been written yet.'|t('preparse-field'),
