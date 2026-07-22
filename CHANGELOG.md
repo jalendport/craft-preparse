@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Added preparse values to element index tables and cards, with an indicator when the stored value is out of date
 - Added typed condition rules, including numeric and date ranges
 - Added typed GraphQL support, so a number field resolves as a number and a date field as a `DateTime`
+- Added a `preparse-field/reparse` console command, with `--fields`, `--section`, `--site`, `--queue`, `--force`, and `--full-save` options
+- Added a “Reparse” bulk action to element indexes
+- Added a Preparse utility, for reparsing on demand and reviewing stored parse errors
 
 ### Changed
 - Changed parsing to patch the element’s content directly instead of saving the element a second time ([#29](https://github.com/jalendport/craft-preparse/issues/29), [#77](https://github.com/jalendport/craft-preparse/issues/77))
