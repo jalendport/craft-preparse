@@ -13,11 +13,22 @@ namespace jalendport\preparse\fields;
 use Craft;
 use craft\base\ElementInterface;
 use craft\base\Field;
+use craft\base\PreviewableFieldInterface;
+use craft\base\SortableFieldInterface;
 use craft\console\Application as ConsoleApplication;
+use craft\gql\types\DateTime as DateTimeType;
+use craft\gql\types\Number as NumberType;
 use craft\helpers\Db;
+use craft\helpers\Html;
+use craft\i18n\Locale;
 use craft\web\Application as WebApplication;
 use DateTime;
+use GraphQL\Type\Definition\Type;
 use jalendport\preparse\errors\ParseException;
+use jalendport\preparse\fields\conditions\BooleanConditionRule;
+use jalendport\preparse\fields\conditions\DateConditionRule;
+use jalendport\preparse\fields\conditions\NumberConditionRule;
+use jalendport\preparse\fields\conditions\TextConditionRule;
 use jalendport\preparse\models\ParseResult;
 use jalendport\preparse\Preparse;
 use yii\db\ExpressionInterface;
@@ -39,7 +50,7 @@ use yii\db\Schema;
  * @author Jalen Davenport <hello@jalendport.com>
  * @since 4.0.0
  */
-class PreparseField extends Field
+class PreparseField extends Field implements PreviewableFieldInterface, SortableFieldInterface
 {
     // Const Properties
     // =========================================================================
@@ -288,6 +299,86 @@ class PreparseField extends Field
     // =========================================================================
 
     /**
+     * Returns the GraphQL type accepted when querying against this field.
+     *
+     * Only booleans get a narrowed type. The other three keep Craft's flexible
+     * `QueryArgument` list, because their useful queries are operator strings —
+     * `'>= 5'`, `'>= 2026-01-01'`, `'not foo'` — and a narrower scalar would
+     * reject exactly the queries typed storage exists to enable.
+     *
+     * @inheritdoc
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    public function getContentGqlQueryArgumentType(): Type|array
+    {
+        if ($this->valueType !== self::VALUE_TYPE_BOOLEAN) {
+            return parent::getContentGqlQueryArgumentType();
+        }
+
+        return [
+            'name' => $this->handle,
+            'type' => Type::boolean(),
+        ];
+    }
+
+    /**
+     * Returns the GraphQL type this field resolves to.
+     *
+     * Craft's generated fields are `String` and nothing else, so a consumer has
+     * to parse numbers and dates back out on the client. A preparse field
+     * advertises the type it actually stores.
+     *
+     * @inheritdoc
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    public function getContentGqlType(): Type|array
+    {
+        return match ($this->valueType) {
+            self::VALUE_TYPE_BOOLEAN => Type::boolean(),
+            self::VALUE_TYPE_DATE => DateTimeType::getType(),
+            // `Number` covers both integer and float configurations, and passes
+            // null through rather than coercing it to 0.
+            self::VALUE_TYPE_NUMBER => NumberType::getType(),
+            default => Type::string(),
+        };
+    }
+
+    /**
+     * @inheritdoc
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    public function getElementConditionRuleType(): array|string|null
+    {
+        return match ($this->valueType) {
+            self::VALUE_TYPE_BOOLEAN => BooleanConditionRule::class,
+            self::VALUE_TYPE_DATE => DateConditionRule::class,
+            self::VALUE_TYPE_NUMBER => NumberConditionRule::class,
+            default => TextConditionRule::class,
+        };
+    }
+
+    /**
+     * Renders the value for element index tables and cards.
+     *
+     * @inheritdoc
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    public function getPreviewHtml(mixed $value, ElementInterface $element): string
+    {
+        $error = Preparse::$plugin->values->getResult($element, $this)?->error;
+
+        if ($error !== null && $error !== '') {
+            return $this->_errorIndicatorHtml($error) . $this->_formatValue($value);
+        }
+
+        return $this->_formatValue($value);
+    }
+
+    /**
      * @inheritdoc
      * @author Jalen Davenport <hello@jalendport.com>
      * @since 4.0.0
@@ -305,6 +396,36 @@ class PreparseField extends Field
     public function getSettingsHtml(): ?string
     {
         return $this->_settingsHtml(false);
+    }
+
+    /**
+     * Returns the sort option, ordering by the typed value expression.
+     *
+     * This is where typed storage pays off. `getValueSql()` already wraps the
+     * extracted value in a `CAST` derived from {@see dbTypeForValueSql()}, so a
+     * number field sorts 2, 10, 100 rather than “10”, “100”, “2” — the Postgres
+     * integer-sort complaint in #104, and the same class of bug people hit with
+     * generated fields.
+     *
+     * @inheritdoc
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    public function getSortOption(): array
+    {
+        $option = parent::getSortOption();
+
+        /** @var WebApplication|ConsoleApplication $app */
+        $app = Craft::$app;
+
+        // Core applies the MySQL text-to-CHAR cast only when dbType() is a plain
+        // string (craftcms#15609); ours is always an array, so the text case has
+        // to be handled here or text sorting stays broken on MySQL.
+        if ($this->valueType === self::VALUE_TYPE_TEXT && $app->getDb()->getIsMysql()) {
+            $option['orderBy'] = "CAST({$option['orderBy']} AS CHAR(255))";
+        }
+
+        return $option;
     }
 
     /**
@@ -345,6 +466,33 @@ class PreparseField extends Field
         }
 
         return $result->value;
+    }
+
+    /**
+     * Renders the value for the card view designer, where there's no element.
+     *
+     * @inheritdoc
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    public function previewPlaceholderHtml(mixed $value, ?ElementInterface $element): string
+    {
+        if ($value === null && $element !== null) {
+            $value = $element->getFieldValue($this->handle);
+        }
+
+        if ($value !== null) {
+            return $this->_formatValue($value);
+        }
+
+        // Nothing to show a real value for, so stand in with something shaped
+        // like one rather than leaving the card preview blank.
+        return match ($this->valueType) {
+            self::VALUE_TYPE_BOOLEAN => Craft::t('preparse-field', 'Yes'),
+            self::VALUE_TYPE_DATE => $this->_formatValue(new DateTime()),
+            self::VALUE_TYPE_NUMBER => $this->_formatValue($this->decimals > 0 ? 1.5 : 42),
+            default => Craft::t('preparse-field', 'Parsed value'),
+        };
     }
 
     /**
@@ -501,6 +649,57 @@ class PreparseField extends Field
 
     // Private Methods
     // =========================================================================
+
+    /**
+     * Returns a small alert marker for a value whose last render failed.
+     *
+     * The stale value is still shown alongside it — an editor scanning an index
+     * needs to know the number is out of date, not to lose it.
+     *
+     * @param string $error the stored error message
+     * @return string the indicator HTML
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    private function _errorIndicatorHtml(string $error): string
+    {
+        return Html::tag('span', '', [
+            'class' => ['error'],
+            'data' => ['icon' => 'alert'],
+            'title' => $error,
+            'aria' => ['label' => Craft::t('preparse-field', 'This field couldn’t be parsed.')],
+        ]);
+    }
+
+    /**
+     * Formats a value for display, according to the value type.
+     *
+     * @param mixed $value the value
+     * @return string the formatted, HTML-safe value
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    private function _formatValue(mixed $value): string
+    {
+        if ($value === null) {
+            return '';
+        }
+
+        /** @var WebApplication|ConsoleApplication $app */
+        $app = Craft::$app;
+        $formatter = $app->getFormatter();
+
+        return match (true) {
+            $this->valueType === self::VALUE_TYPE_BOOLEAN => $value
+                ? Craft::t('preparse-field', 'Yes')
+                : Craft::t('preparse-field', 'No'),
+            $this->valueType === self::VALUE_TYPE_DATE && $value instanceof DateTime =>
+                $formatter->asDatetime($value, Locale::LENGTH_SHORT),
+            $this->valueType === self::VALUE_TYPE_NUMBER && is_numeric($value) =>
+                $formatter->asDecimal($value, $this->decimals),
+            default => Html::encode((string)$value),
+        };
+    }
 
     /**
      * Returns the DB type for the number value type.
