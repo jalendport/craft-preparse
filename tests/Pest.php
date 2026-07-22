@@ -17,6 +17,7 @@
 */
 
 use jalendport\preparse\fields\PreparseField;
+use jalendport\preparse\jobs\ReparseElements;
 
 /**
  * @return array<string, mixed>
@@ -27,21 +28,40 @@ function composerJson(): array
 }
 
 /*
-| Constructing a field normally runs Craft's component `init()` chain, which
-| reaches for a booted application. Reflection skips the constructor so the
-| settings-driven mapping methods can be exercised on their own.
+| Constructing a field or a queue job normally runs Yii's `init()` chain, which
+| reaches for a booted application — `BaseBatchedJob::init()` reads the queue's
+| TTR, for one. Reflection skips the constructor; declared property defaults
+| still apply, so the configuration these objects expose is real.
 */
+
+/**
+ * @param array<string, mixed> $config
+ */
+function configured(string $class, array $config = []): object
+{
+    $object = (new ReflectionClass($class))->newInstanceWithoutConstructor();
+
+    foreach ($config as $name => $value) {
+        $object->$name = $value;
+    }
+
+    return $object;
+}
 
 /**
  * @param array<string, mixed> $settings
  */
 function preparseField(array $settings = []): PreparseField
 {
-    $field = (new ReflectionClass(PreparseField::class))->newInstanceWithoutConstructor();
+    /** @var PreparseField */
+    return configured(PreparseField::class, $settings);
+}
 
-    foreach ($settings as $name => $value) {
-        $field->$name = $value;
-    }
-
-    return $field;
+/**
+ * @param array<string, mixed> $config
+ */
+function reparseJob(array $config = []): ReparseElements
+{
+    /** @var ReparseElements */
+    return configured(ReparseElements::class, $config);
 }
