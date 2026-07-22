@@ -20,6 +20,7 @@ use craft\gql\types\DateTime as DateTimeType;
 use craft\gql\types\Number as NumberType;
 use craft\helpers\Db;
 use craft\helpers\Html;
+use craft\helpers\UrlHelper;
 use craft\i18n\Locale;
 use craft\web\Application as WebApplication;
 use DateTime;
@@ -31,6 +32,7 @@ use jalendport\preparse\fields\conditions\NumberConditionRule;
 use jalendport\preparse\fields\conditions\TextConditionRule;
 use jalendport\preparse\models\ParseResult;
 use jalendport\preparse\Preparse;
+use nystudio107\codeeditor\CodeEditor;
 use yii\db\ExpressionInterface;
 use yii\db\Schema;
 
@@ -526,6 +528,30 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
     }
 
     /**
+     * Validates the field's template.
+     *
+     * Catching a typo here means the editor finds out while they're looking at
+     * the template, rather than an author finding out days later when a save
+     * quietly stores an error against their entry (#78).
+     *
+     * Public and un-prefixed because Yii resolves validators by name.
+     *
+     * @param string $attribute the attribute being validated
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    public function validateTemplate(string $attribute): void
+    {
+        $error = Preparse::$plugin->parser->validateTemplate($this->template, $this->templateMode);
+
+        if ($error === null) {
+            return;
+        }
+
+        $this->addError($attribute, $error);
+    }
+
+    /**
      * Returns the DB type the value key should be compared and sorted as.
      *
      * @return string the column type
@@ -603,6 +629,7 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
         ]];
         $rules[] = [['decimals'], 'integer', 'min' => 0, 'max' => 8];
         $rules[] = [['template'], 'required'];
+        $rules[] = [['template'], 'validateTemplate'];
 
         return $rules;
     }
@@ -739,7 +766,12 @@ class PreparseField extends Field implements PreviewableFieldInterface, Sortable
 
         return $app->getView()->renderTemplate('preparse-field/_settings.twig', [
             'field' => $this,
+            // The code editor is a bootstrapped module, and only for web
+            // requests — so the template has to be able to do without it.
+            'hasCodeEditor' => CodeEditor::getInstance() !== null,
+            'hasStoredValues' => Preparse::$plugin->values->hasStoredValues($this),
             'readOnly' => $readOnly,
+            'utilityUrl' => UrlHelper::cpUrl('utilities/preparse'),
         ]);
     }
 }

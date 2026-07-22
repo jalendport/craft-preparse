@@ -163,6 +163,61 @@ class Values extends Component
     }
 
     /**
+     * Returns whether a field has any values stored anywhere.
+     *
+     * The settings page uses this to decide whether changing the value type or
+     * the template is actually risky. On a field nobody has used yet, a warning
+     * about existing values would be noise.
+     *
+     * @param PreparseField $field the field
+     * @return bool whether any element has a value for it
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    public function hasStoredValues(PreparseField $field): bool
+    {
+        if (!isset($field->id)) {
+            return false;
+        }
+
+        /** @var WebApplication|ConsoleApplication $app */
+        $app = Craft::$app;
+        $uids = [];
+
+        foreach ($app->getFields()->getAllLayouts() as $layout) {
+            foreach ($layout->getCustomFields() as $instance) {
+                if ($instance instanceof PreparseField && $instance->id === $field->id) {
+                    $uid = $instance->layoutElement->uid ?? null;
+
+                    if ($uid !== null) {
+                        $uids[$uid] = true;
+                    }
+                }
+            }
+        }
+
+        if (empty($uids)) {
+            return false;
+        }
+
+        $db = $app->getDb();
+        $qb = $db->getQueryBuilder();
+        $condition = ['or'];
+
+        foreach (array_keys($uids) as $uid) {
+            $condition[] = new Expression(sprintf(
+                '%s IS NOT NULL',
+                $qb->jsonExtract('content', [$uid, ParseResult::KEY_VALUE]),
+            ));
+        }
+
+        return (new Query())
+            ->from([Table::ELEMENTS_SITES])
+            ->where($condition)
+            ->exists($db);
+    }
+
+    /**
      * Returns the envelope last seen for an element's field, if any.
      *
      * @param ElementInterface $element the element

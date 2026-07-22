@@ -23,6 +23,8 @@ use jalendport\preparse\fields\PreparseField;
 use jalendport\preparse\models\ParseResult;
 use jalendport\preparse\Preparse;
 use Throwable;
+use Twig\Error\SyntaxError;
+use Twig\Source;
 
 /**
  * Renders preparse templates.
@@ -97,8 +99,93 @@ class Parser extends Component
         return $result;
     }
 
+    /**
+     * Checks a template for syntax errors without rendering it.
+     *
+     * Tokenizing and parsing is enough to catch an unclosed tag or a stray
+     * bracket, and it does that without executing a line of the template — so
+     * validating a snippet on save can't have side effects, and can't be slow
+     * because of what the template happens to do.
+     *
+     * @param string $template the snippet or template path
+     * @param string $templateMode one of the `PreparseField::TEMPLATE_MODE_*` constants
+     * @return string|null the error message, or `null` if the template is valid
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    public function validateTemplate(string $template, string $templateMode = PreparseField::TEMPLATE_MODE_INLINE): ?string
+    {
+        $template = trim($template);
+
+        if ($template === '') {
+            // Emptiness is the `required` rule's business, not ours.
+            return null;
+        }
+
+        /** @var WebApplication|ConsoleApplication $app */
+        $app = Craft::$app;
+        $view = $app->getView();
+        $oldTemplateMode = $view->getTemplateMode();
+
+        try {
+            $view->setTemplateMode(View::TEMPLATE_MODE_SITE);
+
+            if ($templateMode === PreparseField::TEMPLATE_MODE_FILE) {
+                $source = $this->_fileSource($view, $template);
+
+                if (is_string($source)) {
+                    return $source;
+                }
+            } else {
+                // `{foo}` shorthand is only Twig after normalization, so the
+                // snippet has to be normalized to be checked the way it renders.
+                $source = new Source($view->normalizeObjectTemplate($template), 'preparse');
+            }
+
+            $twig = $view->getTwig();
+            $twig->parse($twig->tokenize($source));
+        } catch (SyntaxError $e) {
+            return Craft::t('preparse-field', 'Twig error on line {line}: {message}', [
+                'line' => $e->getTemplateLine(),
+                'message' => $e->getRawMessage(),
+            ]);
+        } catch (Throwable $e) {
+            return $e->getMessage();
+        } finally {
+            $view->setTemplateMode($oldTemplateMode);
+        }
+
+        return null;
+    }
+
     // Private Methods
     // =========================================================================
+
+    /**
+     * Returns the Twig source for a site template path.
+     *
+     * @param View $view the view
+     * @param string $path the template path
+     * @return Source|string the source, or an error message
+     * @author Jalen Davenport <hello@jalendport.com>
+     * @since 4.0.0
+     */
+    private function _fileSource(View $view, string $path): Source|string
+    {
+        $resolved = $view->resolveTemplate($path, View::TEMPLATE_MODE_SITE);
+
+        if ($resolved === false) {
+            return Craft::t('preparse-field', 'No template exists at “{path}”.', ['path' => $path]);
+        }
+
+        $code = @file_get_contents($resolved);
+
+        if ($code === false) {
+            return Craft::t('preparse-field', 'Couldn’t read the template at “{path}”.', ['path' => $resolved]);
+        }
+
+        return new Source($code, $path, $resolved);
+    }
 
     /**
      * Renders the field's template in site template mode.
