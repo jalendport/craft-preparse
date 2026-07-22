@@ -362,8 +362,8 @@ Drafts and provisional drafts are parsed like any other save. Revisions are neve
 
 ## Support
 
-Found a bug or have a question? [Open an issue](https://github.com/jalendport/craft-preparse/issues).
+Found a bug or need help? Open an [issue](https://github.com/jalendport/craft-preparse/issues).
 
----
+<hr>
 
 <p align="center">Made by <a href="https://jalendport.com">Jalen Davenport</a></p>

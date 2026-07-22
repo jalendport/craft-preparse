@@ -15,9 +15,7 @@ use craft\console\Controller;
 use InvalidArgumentException;
 use jalendport\base\controllers\ConsoleControllerTrait;
 use jalendport\preparse\Preparse;
-use jalendport\preparse\services\Converter;
 use Throwable;
-use yii\base\InvalidConfigException;
 use yii\console\ExitCode;
 
 /**
@@ -65,9 +63,9 @@ class ConvertController extends Controller
     public function actionIndex(string $generatedFieldHandle): int
     {
         try {
-            $converter = $this->_converter();
+            $converter = Preparse::$plugin->converter;
             $plan = $converter->plan($generatedFieldHandle);
-        } catch (InvalidArgumentException|InvalidConfigException $e) {
+        } catch (InvalidArgumentException $e) {
             $this->writeError($e->getMessage());
 
             return ExitCode::UNSPECIFIED_ERROR;
@@ -128,28 +126,5 @@ class ConvertController extends Controller
         }
 
         return ExitCode::OK;
-    }
-
-    // Private Methods
-    // =========================================================================
-
-    /**
-     * Returns the registered converter service.
-     *
-     * @return Converter the converter service
-     * @throws InvalidConfigException if the service has not been registered
-     *
-     * @author Jalen Davenport <hello@jalendport.com>
-     * @since 4.0.0
-     */
-    private function _converter(): Converter
-    {
-        $converter = Preparse::$plugin->get('converter');
-
-        if (!$converter instanceof Converter) {
-            throw new InvalidConfigException('The Preparse converter service is not registered.');
-        }
-
-        return $converter;
     }
 }
