@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/).
 - Added an “On error” setting, choosing between keeping the previous value, storing a fallback, and blocking the save
 - Added a “When to parse” setting, for values that should only be rendered once
 - Added a “Template mode” setting, for keeping the Twig in a site template file instead of the field settings
+- Added element index sort options that order by the field’s real type ([#104](https://github.com/jalendport/craft-preparse/issues/104))
+- Added preparse values to element index tables and cards, with an indicator when the stored value is out of date
+- Added typed condition rules, including numeric and date ranges
+- Added typed GraphQL support, so a number field resolves as a number and a date field as a `DateTime`
 
 ### Changed
 - Changed parsing to patch the element’s content directly instead of saving the element a second time ([#29](https://github.com/jalendport/craft-preparse/issues/29), [#77](https://github.com/jalendport/craft-preparse/issues/77))
